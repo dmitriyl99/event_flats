@@ -1,4 +1,4 @@
-import 'package:event_flats/ui/bezier_container.dart';
+import 'package:event_flats/view/ui/bezier_container.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -32,7 +32,10 @@ class LoginScreen extends StatelessWidget {
 
   Widget _submitButton(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/flats', (route) => false);
+      },
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 15),

@@ -1,4 +1,6 @@
-import 'package:event_flats/screens/login.screen.dart';
+import 'package:event_flats/view/resources/colors.dart';
+import 'package:event_flats/view/screens/flats/list.screen.dart';
+import 'package:event_flats/view/screens/login.screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,9 +14,12 @@ class MyApp extends StatelessWidget {
       title: 'Event Flats',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: AppColors.primaryColor,
       ),
-      routes: {LoginScreen.route: (context) => new LoginScreen()},
+      routes: {
+        LoginScreen.route: (context) => new LoginScreen(),
+        FlatsListScreen.route: (context) => new FlatsListScreen()
+      },
       initialRoute: LoginScreen.route,
     );
   }
