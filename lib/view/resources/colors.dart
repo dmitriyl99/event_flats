@@ -21,5 +21,5 @@ class AppColors {
     return MaterialColor(color.value, swatch);
   }
 
-  static MaterialColor primaryColor = createMaterialColor(Colors.black);
+  static MaterialColor primaryColor = Colors.amber;
 }
