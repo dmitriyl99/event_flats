@@ -52,6 +52,10 @@ class _LoginScreenState extends State<LoginScreen> {
       } on AuthenticationFailed catch (ex) {
         ScaffoldMessenger.of(context)
             .showSnackBar(new SnackBar(content: Text(ex.getMessage())));
+        setState(() {
+          _isLoading = false;
+        });
+        return;
       }
       setState(() {
         _isLoading = false;
