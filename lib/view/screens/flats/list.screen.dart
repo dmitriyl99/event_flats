@@ -17,69 +17,152 @@ class FlatsListScreen extends StatelessWidget {
         ],
         title: Text('Event Flats'),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Color(0xff21B5E1),
         onPressed: () {},
-        child: Icon(Icons.add),
+        label: Text(
+          'Добавить',
+          style: TextStyle(color: Colors.white),
+        ),
+        icon: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
       body: ListView(children: [
         Card(
           elevation: 4,
           child: ListTile(
-            leading: Icon(Icons.home),
+            leading: Image.asset(
+              'assets/house.png',
+              height: 30,
+            ),
             onTap: () {},
-            title: Text('Яккасарай 1-2'),
-            subtitle: Text('13000'),
-            trailing: Text('2-4-5'),
+            title: Text(
+              'Яккасарай 1-2',
+              style: TextStyle(fontSize: 18),
+            ),
+            subtitle: Text('2-4-5'),
+            trailing: Column(
+              children: [
+                Text(
+                  'Евро ремонт',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  '13.09.2021',
+                  style: TextStyle(fontSize: 16),
+                )
+              ],
+            ),
           ),
         ),
         Card(
           elevation: 4,
           child: ListTile(
-            leading: Icon(Icons.home),
+            leading: Image.asset(
+              'assets/house.png',
+              height: 30,
+            ),
             onTap: () {},
-            title: Text('Яккасарай 1-2'),
-            subtitle: Text('13000'),
-            trailing: Text('2-4-5'),
+            title: Text(
+              'Яккасарай 1-2',
+              style: TextStyle(fontSize: 18),
+            ),
+            subtitle: Text('2-4-5'),
+            trailing: Column(
+              children: [
+                Text(
+                  'Евро ремонт',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  '13.09.2021',
+                  style: TextStyle(fontSize: 16),
+                )
+              ],
+            ),
           ),
         ),
         Card(
           elevation: 4,
           child: ListTile(
-            leading: Icon(Icons.home),
+            leading: Image.asset(
+              'assets/house.png',
+              height: 30,
+            ),
             onTap: () {},
-            title: Text('Яккасарай 1-2'),
-            subtitle: Text('13000'),
-            trailing: Text('2-4-5'),
+            title: Text(
+              'Яккасарай 1-2',
+              style: TextStyle(fontSize: 18),
+            ),
+            subtitle: Text('2-4-5'),
+            trailing: Column(
+              children: [
+                Text(
+                  'Евро ремонт',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  '13.09.2021',
+                  style: TextStyle(fontSize: 16),
+                )
+              ],
+            ),
           ),
         ),
         Card(
           elevation: 4,
           child: ListTile(
-            leading: Icon(Icons.home),
+            leading: Image.asset(
+              'assets/house.png',
+              height: 30,
+            ),
             onTap: () {},
-            title: Text('Яккасарай 1-2'),
-            subtitle: Text('13000'),
-            trailing: Text('2-4-5'),
+            title: Text(
+              'Яккасарай 1-2',
+              style: TextStyle(fontSize: 18),
+            ),
+            subtitle: Text('2-4-5'),
+            trailing: Column(
+              children: [
+                Text(
+                  'Евро ремонт',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  '13.09.2021',
+                  style: TextStyle(fontSize: 16),
+                )
+              ],
+            ),
           ),
         ),
         Card(
           elevation: 4,
           child: ListTile(
-            leading: Icon(Icons.home),
+            leading: Image.asset(
+              'assets/house.png',
+              height: 30,
+            ),
             onTap: () {},
-            title: Text('Яккасарай 1-2'),
-            subtitle: Text('13000'),
-            trailing: Text('2-4-5'),
-          ),
-        ),
-        Card(
-          elevation: 4,
-          child: ListTile(
-            leading: Icon(Icons.home),
-            onTap: () {},
-            title: Text('Яккасарай 1-2'),
-            subtitle: Text('13000'),
-            trailing: Text('2-4-5'),
+            title: Text(
+              'Яккасарай 1-2',
+              style: TextStyle(fontSize: 18),
+            ),
+            subtitle: Text('2-4-5'),
+            trailing: Column(
+              children: [
+                Text(
+                  'Евро ремонт',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  '13.09.2021',
+                  style: TextStyle(fontSize: 16),
+                )
+              ],
+            ),
           ),
         ),
       ]),

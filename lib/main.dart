@@ -37,9 +37,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Event Flats',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: AppColors.primaryColor,
-      ),
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData.dark().copyWith(accentColor: Colors.red),
       routes: {
         LoginScreen.route: (context) =>
             new LoginScreen(FirebaseAuthenticationService()),
