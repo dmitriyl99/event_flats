@@ -13,7 +13,7 @@ abstract class AuthenticationService {
 class FirebaseAuthenticationService implements AuthenticationService {
   @override
   Future<UserModel.User?> getUser() async {
-    var usersBox = await Hive.openBox('users');
+    var usersBox = await Hive.openBox<UserModel.User>('users');
     if (usersBox.containsKey('authenticated'))
       return usersBox.get('authenticated') as UserModel.User;
     var currentUser = FirebaseAuth.instance.currentUser;
@@ -50,14 +50,14 @@ class FirebaseAuthenticationService implements AuthenticationService {
         .once();
     var value = data.value[userUid];
     UserModel.User user = UserModel.User.fromJson(value);
-    var usersBox = await Hive.openBox('users');
+    var usersBox = await Hive.openBox<UserModel.User>('users');
     usersBox.put('authenticated', user);
   }
 
   @override
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
-    var usersBox = await Hive.openBox('users');
+    var usersBox = await Hive.openBox<UserModel.User>('users');
     usersBox.delete('authenticated');
   }
 }

@@ -9,13 +9,29 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
+
   await Hive.initFlutter();
-  Hive.registerAdapter(new UserAdapter());
-  runApp(MyApp());
+  Hive.registerAdapter(UserAdapter());
+
+  var authenticationService = FirebaseAuthenticationService();
+  var currentUser = await authenticationService.getUser();
+  String initialRoute = LoginScreen.route;
+  if (currentUser != null) {
+    initialRoute = FlatsListScreen.route;
+  }
+  runApp(MyApp(
+    initialRoute: initialRoute,
+  ));
 }
 
 class MyApp extends StatelessWidget {
+  final String initialRoute;
+
+  const MyApp({Key? key, this.initialRoute = LoginScreen.route})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,7 +45,7 @@ class MyApp extends StatelessWidget {
             new LoginScreen(FirebaseAuthenticationService()),
         FlatsListScreen.route: (context) => new FlatsListScreen()
       },
-      initialRoute: LoginScreen.route,
+      initialRoute: initialRoute,
     );
   }
 }

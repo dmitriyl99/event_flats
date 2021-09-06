@@ -1,10 +1,14 @@
-import 'dart:convert';
-
 import 'package:hive/hive.dart';
 
+part 'user.g.dart';
+
+@HiveType(typeId: 0)
 class User {
+  @HiveField(0)
   final String displayName;
+  @HiveField(1)
   final String email;
+  @HiveField(2)
   final bool isAdmin;
 
   User(this.displayName, this.email, this.isAdmin);
@@ -14,19 +18,4 @@ class User {
 
   Map<String, dynamic> toJson() =>
       <String, dynamic>{'email': email, 'isAdmin': isAdmin};
-}
-
-class UserAdapter extends TypeAdapter<User> {
-  @override
-  final typeId = 0;
-
-  @override
-  User read(BinaryReader reader) {
-    return User.fromJson(json.decode(reader.read()));
-  }
-
-  @override
-  void write(BinaryWriter writer, User obj) {
-    writer.writeString(json.encode(obj.toJson()));
-  }
 }
