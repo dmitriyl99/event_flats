@@ -1,171 +1,86 @@
+import 'package:event_flats/models/flat.dart';
+import 'package:event_flats/models/repositories/flats_repository.dart';
+import 'package:event_flats/view/components/flat.component.dart';
+import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class FlatsListScreen extends StatelessWidget {
+  final FlatsRepository _flatsRepository;
+
   static const String route = '/flats';
-  const FlatsListScreen({Key? key}) : super(key: key);
+  const FlatsListScreen(this._flatsRepository, {Key? key}) : super(key: key);
+
+  Widget buildError(String message) {
+    return Center(
+      child: Text(
+        message,
+        style: TextStyle(color: Colors.red),
+      ),
+    );
+  }
+
+  Widget buildLoading() {
+    return Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation(Colors.white),
+      ),
+    );
+  }
+
+  Widget buildList(BuildContext context, List<Flat> flats) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.5),
+      child: ListView.separated(
+          itemBuilder: (context, index) {
+            return FlatComponent(flats[index]);
+          },
+          separatorBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Divider(
+                  color: AppColors.dividerColor,
+                  height: 8,
+                  thickness: 1,
+                ),
+              ),
+          itemCount: flats.length),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 15),
-            child: IconButton(onPressed: () {}, icon: Icon(Icons.sort)),
-          )
-        ],
-        title: Text('Event Flats'),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Color(0xff21B5E1),
-        onPressed: () {},
-        label: Text(
-          'Добавить',
-          style: TextStyle(color: Colors.white),
+        appBar: AppBar(
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 15),
+              child: IconButton(onPressed: () {}, icon: Icon(Icons.sort)),
+            )
+          ],
+          title: Text('Event Flats'),
         ),
-        icon: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
-      body: ListView(children: [
-        Card(
-          elevation: 4,
-          child: ListTile(
-            leading: Image.asset(
-              'assets/house.png',
-              height: 30,
-            ),
-            onTap: () {},
-            title: Text(
-              'Яккасарай 1-2',
-              style: TextStyle(fontSize: 18),
-            ),
-            subtitle: Text('2-4-5'),
-            trailing: Column(
-              children: [
-                Text(
-                  'Евро ремонт',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  '13.09.2021',
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
-            ),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: Color(0xff21B5E1),
+          onPressed: () {},
+          label: Text(
+            'Добавить',
+            style: TextStyle(color: Colors.white),
+          ),
+          icon: Icon(
+            Icons.add,
+            color: Colors.white,
           ),
         ),
-        Card(
-          elevation: 4,
-          child: ListTile(
-            leading: Image.asset(
-              'assets/house.png',
-              height: 30,
-            ),
-            onTap: () {},
-            title: Text(
-              'Яккасарай 1-2',
-              style: TextStyle(fontSize: 18),
-            ),
-            subtitle: Text('2-4-5'),
-            trailing: Column(
-              children: [
-                Text(
-                  'Евро ремонт',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  '13.09.2021',
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
-            ),
-          ),
-        ),
-        Card(
-          elevation: 4,
-          child: ListTile(
-            leading: Image.asset(
-              'assets/house.png',
-              height: 30,
-            ),
-            onTap: () {},
-            title: Text(
-              'Яккасарай 1-2',
-              style: TextStyle(fontSize: 18),
-            ),
-            subtitle: Text('2-4-5'),
-            trailing: Column(
-              children: [
-                Text(
-                  'Евро ремонт',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  '13.09.2021',
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
-            ),
-          ),
-        ),
-        Card(
-          elevation: 4,
-          child: ListTile(
-            leading: Image.asset(
-              'assets/house.png',
-              height: 30,
-            ),
-            onTap: () {},
-            title: Text(
-              'Яккасарай 1-2',
-              style: TextStyle(fontSize: 18),
-            ),
-            subtitle: Text('2-4-5'),
-            trailing: Column(
-              children: [
-                Text(
-                  'Евро ремонт',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  '13.09.2021',
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
-            ),
-          ),
-        ),
-        Card(
-          elevation: 4,
-          child: ListTile(
-            leading: Image.asset(
-              'assets/house.png',
-              height: 30,
-            ),
-            onTap: () {},
-            title: Text(
-              'Яккасарай 1-2',
-              style: TextStyle(fontSize: 18),
-            ),
-            subtitle: Text('2-4-5'),
-            trailing: Column(
-              children: [
-                Text(
-                  'Евро ремонт',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  '13.09.2021',
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
-            ),
-          ),
-        ),
-      ]),
-    );
+        body: FutureBuilder(
+          future: _flatsRepository.getFlats(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return buildError(snapshot.error.toString());
+            } else if (snapshot.connectionState != ConnectionState.done) {
+              return buildLoading();
+            }
+            return buildList(context, snapshot.data as List<Flat>);
+          },
+        ));
   }
 }
