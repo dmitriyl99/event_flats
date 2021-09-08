@@ -1,11 +1,12 @@
+import 'package:event_flats/models/repositories/flats_fake_repository.dart';
 import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/authentication.dart';
-import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/list.screen.dart';
 import 'package:event_flats/view/screens/login.screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,8 @@ void main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(UserAdapter());
+
+  await initializeDateFormatting('ru');
 
   var authenticationService = FirebaseAuthenticationService();
   var currentUser = await authenticationService.getUser();
@@ -38,11 +41,12 @@ class MyApp extends StatelessWidget {
       title: 'Event Flats',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
-      darkTheme: ThemeData.dark().copyWith(accentColor: Colors.red),
+      darkTheme: ThemeData.dark(),
       routes: {
         LoginScreen.route: (context) =>
             new LoginScreen(FirebaseAuthenticationService()),
-        FlatsListScreen.route: (context) => new FlatsListScreen()
+        FlatsListScreen.route: (context) =>
+            new FlatsListScreen(FakeFlatsRepository())
       },
       initialRoute: initialRoute,
     );
