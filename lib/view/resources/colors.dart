@@ -22,4 +22,5 @@ class AppColors {
   }
 
   static MaterialColor primaryColor = Colors.amber;
+  static Color dividerColor = Color.fromRGBO(255, 255, 255, 0.359);
 }
