@@ -1,5 +1,6 @@
 import 'package:event_flats/helpers/date_formatting.dart';
 import 'package:event_flats/models/flat.dart';
+import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
 
 class FlatComponent extends StatelessWidget {
@@ -21,15 +22,21 @@ class FlatComponent extends StatelessWidget {
           ),
           onTap: () {},
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 flat.name,
                 style: TextStyle(fontSize: 18),
               ),
               Container(
-                decoration: BoxDecoration(),
-                padding: EdgeInsets.all(2),
-                child: Text(flat.price.toString()),
+                decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    borderRadius: BorderRadius.circular(10)),
+                padding: EdgeInsets.all(5),
+                child: Text(
+                  flat.price.toString(),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
