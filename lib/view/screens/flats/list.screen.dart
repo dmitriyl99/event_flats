@@ -60,7 +60,7 @@ class FlatsListScreen extends StatelessWidget {
           title: Text('Event Flats'),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: Color(0xff21B5E1),
+          backgroundColor: AppColors.primaryColor,
           onPressed: () {},
           label: Text(
             'Добавить',

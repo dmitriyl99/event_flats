@@ -21,6 +21,6 @@ class AppColors {
     return MaterialColor(color.value, swatch);
   }
 
-  static MaterialColor primaryColor = Colors.amber;
+  static MaterialColor primaryColor = createMaterialColor(Color(0xff21B5E1));
   static Color dividerColor = Color.fromRGBO(255, 255, 255, 0.359);
 }
