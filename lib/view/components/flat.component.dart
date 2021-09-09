@@ -1,6 +1,7 @@
 import 'package:event_flats/helpers/date_formatting.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/view/resources/colors.dart';
+import 'package:event_flats/view/screens/flats/show.screen.dart';
 import 'package:flutter/material.dart';
 
 class FlatComponent extends StatelessWidget {
@@ -20,7 +21,10 @@ class FlatComponent extends StatelessWidget {
             flat.isFavorite ? 'assets/house_favorite.png' : 'assets/house.png',
             height: 30,
           ),
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context)
+                .pushNamed(FlatShowScreen.route, arguments: flat);
+          },
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

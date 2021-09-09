@@ -38,7 +38,7 @@ class FlatsListScreen extends StatelessWidget {
           separatorBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Divider(
-                  color: AppColors.dividerColor,
+                  color: AppColors.listDividerColor,
                   height: 8,
                   thickness: 1,
                 ),

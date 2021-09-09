@@ -22,5 +22,6 @@ class AppColors {
   }
 
   static MaterialColor primaryColor = createMaterialColor(Color(0xff21B5E1));
-  static Color dividerColor = Color.fromRGBO(255, 255, 255, 0.359);
+  static Color listDividerColor = Color.fromRGBO(255, 255, 255, 0.359);
+  static Color descriptionDividerColor = Colors.white;
 }

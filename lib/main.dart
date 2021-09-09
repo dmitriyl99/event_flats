@@ -2,6 +2,7 @@ import 'package:event_flats/models/repositories/flats_fake_repository.dart';
 import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/screens/flats/list.screen.dart';
+import 'package:event_flats/view/screens/flats/show.screen.dart';
 import 'package:event_flats/view/screens/login.screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,8 @@ class MyApp extends StatelessWidget {
         LoginScreen.route: (context) =>
             new LoginScreen(FirebaseAuthenticationService()),
         FlatsListScreen.route: (context) =>
-            new FlatsListScreen(FakeFlatsRepository())
+            new FlatsListScreen(FakeFlatsRepository()),
+        FlatShowScreen.route: (context) => new FlatShowScreen()
       },
       initialRoute: initialRoute,
     );
