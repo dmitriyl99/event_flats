@@ -140,7 +140,6 @@ class FlatShowScreen extends StatelessWidget {
             ))),
         onPressed: () async {
           String url = 'tel:' + flat.ownerPhone;
-          print(url);
           if (await canLaunch(url)) {
             await launch(url);
           } else {
