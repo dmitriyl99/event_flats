@@ -1,6 +1,7 @@
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FlatShowScreen extends StatelessWidget {
   static String route = '/flats/show';
@@ -137,7 +138,16 @@ class FlatShowScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               side: BorderSide(color: Colors.white),
             ))),
-        onPressed: () {},
+        onPressed: () async {
+          String url = 'tel:' + flat.ownerPhone;
+          print(url);
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(new SnackBar(content: Text(flat.ownerPhone)));
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
