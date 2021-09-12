@@ -143,8 +143,19 @@ class FlatShowScreen extends StatelessWidget {
           if (await canLaunch(url)) {
             await launch(url);
           } else {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(new SnackBar(content: Text(flat.ownerPhone)));
+            ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(flat.ownerPhone),
+                IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.copy,
+                      color: AppColors.primaryColor,
+                    ))
+              ],
+            )));
           }
         },
         child: Padding(
