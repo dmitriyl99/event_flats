@@ -2,6 +2,7 @@ import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/view/components/flat.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
+import 'package:event_flats/view/screens/flats/add.screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -61,7 +62,9 @@ class FlatsListScreen extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton.extended(
           backgroundColor: AppColors.primaryColor,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pushNamed(AddFlatScreen.route);
+          },
           label: Text(
             'Добавить',
             style: TextStyle(color: Colors.white),
