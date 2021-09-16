@@ -1,13 +1,13 @@
 class Flat {
   late String id;
-  final String name;
+  final String address;
   final double price;
   final int floor;
   final int numberOfFloors;
   final int numberOfRooms;
   final String flatRepair;
   final double area;
-  final String address;
+  final String landmark;
   final String description;
   final String? ownerName;
   final String ownerPhone;
@@ -15,7 +15,7 @@ class Flat {
   final DateTime createdAt;
 
   Flat(
-      this.name,
+      this.address,
       this.price,
       this.floor,
       this.numberOfFloors,
@@ -25,7 +25,7 @@ class Flat {
       this.isFavorite,
       this.area,
       this.description,
-      this.address,
+      this.landmark,
       this.ownerPhone,
       {this.ownerName});
 }

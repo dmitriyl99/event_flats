@@ -29,7 +29,7 @@ class FlatComponent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                flat.name,
+                flat.address,
                 style: TextStyle(fontSize: 18),
               ),
               Container(

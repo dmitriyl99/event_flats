@@ -31,14 +31,14 @@ class FlatShowScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: Text(
-                flat.name,
+                flat.address,
                 style: TextStyle(fontSize: 23),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: Text(
-                flat.address,
+                flat.landmark,
                 style: TextStyle(fontSize: 23),
               ),
             ),
@@ -176,7 +176,7 @@ class FlatShowScreen extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(flat.name),
+          title: Text(flat.address),
         ),
         body: Container(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 10),
