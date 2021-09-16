@@ -21,7 +21,7 @@ class AppColors {
     return MaterialColor(color.value, swatch);
   }
 
-  static MaterialColor primaryColor = createMaterialColor(Color(0xff21B5E1));
+  static MaterialColor primaryColor = createMaterialColor(Color(0xff3a92d8));
   static Color listDividerColor = Color.fromRGBO(255, 255, 255, 0.359);
   static Color descriptionDividerColor = Colors.white;
 }
