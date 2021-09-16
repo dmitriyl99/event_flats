@@ -6,12 +6,17 @@ import 'package:event_flats/view/screens/flats/add.screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class FlatsListScreen extends StatelessWidget {
+class FlatsListScreen extends StatefulWidget {
   final FlatsRepository _flatsRepository;
 
   static const String route = '/flats';
   const FlatsListScreen(this._flatsRepository, {Key? key}) : super(key: key);
 
+  @override
+  State<FlatsListScreen> createState() => _FlatsListScreenState();
+}
+
+class _FlatsListScreenState extends State<FlatsListScreen> {
   Widget buildError(String message) {
     return Center(
       child: Text(
@@ -62,8 +67,12 @@ class FlatsListScreen extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton.extended(
           backgroundColor: AppColors.primaryColor,
-          onPressed: () {
-            Navigator.of(context).pushNamed(AddFlatScreen.route);
+          onPressed: () async {
+            var result =
+                await Navigator.of(context).pushNamed(AddFlatScreen.route);
+            if (result != null) {
+              setState(() {});
+            }
           },
           label: Text(
             'Добавить',
@@ -75,7 +84,7 @@ class FlatsListScreen extends StatelessWidget {
           ),
         ),
         body: FutureBuilder(
-          future: _flatsRepository.getFlats(),
+          future: widget._flatsRepository.getFlats(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return buildError(snapshot.error.toString());

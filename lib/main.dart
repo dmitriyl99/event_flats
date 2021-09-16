@@ -50,7 +50,8 @@ class MyApp extends StatelessWidget {
         FlatsListScreen.route: (context) =>
             new FlatsListScreen(FakeFlatsRepository()),
         FlatShowScreen.route: (context) => new FlatShowScreen(),
-        AddFlatScreen.route: (context) => new AddFlatScreen()
+        AddFlatScreen.route: (context) =>
+            new AddFlatScreen(FakeFlatsRepository())
       },
       initialRoute: initialRoute,
     );

@@ -1,3 +1,5 @@
+import 'package:event_flats/models/flat.dart';
+import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -5,7 +7,9 @@ import 'package:flutter/material.dart';
 class AddFlatScreen extends StatefulWidget {
   static String route = '/flats/add';
 
-  AddFlatScreen({Key? key}) : super(key: key);
+  final FlatsRepository _flatsRepository;
+
+  AddFlatScreen(this._flatsRepository, {Key? key}) : super(key: key);
 
   @override
   State<AddFlatScreen> createState() => _AddFlatScreenState();
@@ -13,6 +17,7 @@ class AddFlatScreen extends StatefulWidget {
 
 class _AddFlatScreenState extends State<AddFlatScreen> {
   GlobalKey<FormState> _formKey = new GlobalKey();
+  bool _isLoading = false;
 
   List<String> _districts = [
     "Алмазарский район",
@@ -46,6 +51,76 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
 
   String? _currentDistrict;
   String? _currentRepair;
+  TextEditingController _landmarkController = new TextEditingController();
+  TextEditingController _priceController = new TextEditingController();
+  TextEditingController _roomsController = new TextEditingController();
+  TextEditingController _floorController = new TextEditingController();
+  TextEditingController _numberOfFloorsController = new TextEditingController();
+  TextEditingController _areaController = new TextEditingController();
+  TextEditingController _descriptionController = new TextEditingController();
+  TextEditingController _ownerNameController = new TextEditingController();
+  TextEditingController _ownerPhoneController = new TextEditingController();
+
+  String? _validateLandmark(String? value) {
+    if (value == null || value.isEmpty) return 'Укажите ориентир';
+    return null;
+  }
+
+  String? _validatePrice(String? value) {
+    if (value == null || value.isEmpty) return 'Укажите цену';
+    return null;
+  }
+
+  String? _validateRooms(String? value) {
+    if (value == null || value.isEmpty) return 'Укажите кол-во комнат';
+    return null;
+  }
+
+  String? _validateFloors(String? value) {
+    if (value == null || value.isEmpty) return 'Укажите этаж';
+    return null;
+  }
+
+  String? _validateNumberOfFloors(String? value) {
+    if (value == null || value.isEmpty) return 'Укажите кол-во этажей';
+    return null;
+  }
+
+  String? _validateArea(String? value) {
+    if (value == null || value.isEmpty) return 'Укажите площадь';
+    return null;
+  }
+
+  String? _validateOwnerPhone(String? value) {
+    if (value == null || value.isEmpty) return 'Укажите номер владельца';
+    return null;
+  }
+
+  void _onSave() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      await widget._flatsRepository.createFlat(Flat(
+          _currentDistrict!,
+          double.parse(_priceController.text),
+          int.parse(_floorController.text),
+          int.parse(_numberOfFloorsController.text),
+          int.parse(_roomsController.text),
+          _currentRepair!,
+          DateTime.now(),
+          false,
+          double.parse(_areaController.text),
+          _descriptionController.text,
+          _landmarkController.text,
+          _ownerPhoneController.text,
+          ownerName: _ownerNameController.text));
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pop(true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,14 +129,27 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           title: Text('Добавить квартиру'),
           actions: [
             Padding(
-              padding: EdgeInsets.only(right: 15),
-              child: IconButton(
-                icon: Icon(
-                  Icons.check,
-                  size: 32,
-                ),
-                onPressed: () {},
-              ),
+              padding: const EdgeInsets.only(right: 15),
+              child: _isLoading
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 32.0,
+                          height: 32.0,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3.0,
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        ),
+                      ],
+                    )
+                  : IconButton(
+                      icon: Icon(
+                        Icons.check,
+                        size: 32,
+                      ),
+                      onPressed: _onSave),
             )
           ],
         ),
@@ -101,6 +189,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     );
                   }),
                   TextFormField(
+                    validator: _validateLandmark,
+                    controller: _landmarkController,
                     decoration: InputDecoration(labelText: 'Ориентир'),
                   ),
                   SizedBox(
@@ -112,6 +202,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                   ),
                   _divider(),
                   TextFormField(
+                    validator: _validatePrice,
+                    controller: _priceController,
                     keyboardType: TextInputType.number,
                     decoration:
                         InputDecoration(labelText: 'Цена', prefixText: '\$'),
@@ -121,6 +213,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     children: [
                       Expanded(
                         child: TextFormField(
+                          validator: _validateRooms,
+                          controller: _roomsController,
                           textAlign: TextAlign.center,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(labelText: 'Комнат'),
@@ -138,6 +232,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       ),
                       Expanded(
                         child: TextFormField(
+                          validator: _validateFloors,
+                          controller: _floorController,
                           textAlign: TextAlign.center,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(labelText: 'Этаж'),
@@ -155,6 +251,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       ),
                       Expanded(
                         child: TextFormField(
+                          validator: _validateNumberOfFloors,
+                          controller: _numberOfFloorsController,
                           textAlign: TextAlign.center,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(labelText: 'Этажность'),
@@ -184,8 +282,15 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     );
                   }),
                   TextFormField(
+                    validator: _validateArea,
+                    controller: _areaController,
                     decoration: InputDecoration(
                         labelText: 'Площадь', suffixText: 'кв.м'),
+                  ),
+                  TextFormField(
+                    controller: _descriptionController,
+                    maxLines: 4,
+                    decoration: InputDecoration(labelText: 'Описание'),
                   ),
                   SizedBox(
                     height: 30,
@@ -196,14 +301,16 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                   ),
                   _divider(),
                   TextFormField(
+                    controller: _ownerNameController,
                     decoration: InputDecoration(labelText: 'Имя владельца'),
                   ),
                   TextFormField(
+                    validator: _validateOwnerPhone,
+                    controller: _ownerPhoneController,
                     decoration: InputDecoration(labelText: 'Номер владельца'),
                   ),
-                  TextFormField(
-                    maxLines: 4,
-                    decoration: InputDecoration(labelText: 'Описание'),
+                  SizedBox(
+                    height: 30,
                   ),
                 ],
               ),
