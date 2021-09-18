@@ -8,7 +8,7 @@ class Flat {
   final String flatRepair;
   final double area;
   final String landmark;
-  final String description;
+  final String? description;
   final String? ownerName;
   final String ownerPhone;
   final bool isFavorite;
@@ -28,4 +28,35 @@ class Flat {
       this.landmark,
       this.ownerPhone,
       {this.ownerName});
+
+  Flat.fromJson(Map<String, dynamic> json)
+      : address = json['address'],
+        price = (json['price'] as int).toDouble(),
+        floor = json['floor'],
+        numberOfFloors = json['numberOfFloors'],
+        numberOfRooms = json['numberOfRooms'],
+        flatRepair = json['flatRepair'],
+        area = (json['area'] as int).toDouble(),
+        landmark = json['landmark'],
+        description = json['description'],
+        ownerName = json['ownerName'],
+        ownerPhone = json['ownerPhone'],
+        isFavorite = json['isFavorite'],
+        createdAt = DateTime.parse(json['createdAt']);
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'address': address,
+        'price': price,
+        'floor': floor,
+        'numberOfFloors': numberOfFloors,
+        'numberOfRooms': numberOfRooms,
+        'flatRepair': flatRepair,
+        'area': area,
+        'landmark': landmark,
+        'description': description,
+        'ownerName': ownerName,
+        'ownerPhone': ownerPhone,
+        'isFavorite': isFavorite,
+        'createdAt': createdAt.toString()
+      };
 }

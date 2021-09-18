@@ -122,7 +122,7 @@ class FlatShowScreen extends StatelessWidget {
               height: 5,
             ),
             Text(
-              flat.description,
+              flat.description!,
               style: TextStyle(fontSize: 16),
             )
           ],
@@ -192,7 +192,7 @@ class FlatShowScreen extends StatelessWidget {
                 _divider(),
                 _flatPrice(),
                 _divider(),
-                _flatDescription(),
+                if (flat.description != null) _flatDescription(),
                 _divider(),
                 _callButton(),
               ],
