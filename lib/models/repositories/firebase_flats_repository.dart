@@ -20,9 +20,20 @@ class FireabaseFlatsRepository extends FlatsRepository {
     List<Flat> flats = [];
 
     snapshot.value.forEach((id, flat) {
-      flats.add(Flat.fromJson(Map<String, dynamic>.from(flat)));
+      var flatModel = Flat.fromJson(Map<String, dynamic>.from(flat));
+      flatModel.id = id;
+      flats.add(flatModel);
     });
 
     return flats;
+  }
+
+  @override
+  Future<void> updateFlat(Flat flat) async {
+    await FirebaseDatabase.instance
+        .reference()
+        .child('flats')
+        .child(flat.id)
+        .set(flat.toJson());
   }
 }

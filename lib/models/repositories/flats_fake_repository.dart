@@ -37,4 +37,10 @@ class FakeFlatsRepository extends FlatsRepository {
     await Future.delayed(Duration(seconds: 1));
     _flats.add(flat);
   }
+
+  @override
+  Future<void> updateFlat(Flat flat) {
+    // TODO: implement updateFlat
+    throw UnimplementedError();
+  }
 }

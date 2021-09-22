@@ -1,12 +1,18 @@
 import 'package:event_flats/models/flat.dart';
+import 'package:event_flats/models/user.dart';
+import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/resources/colors.dart';
+import 'package:event_flats/view/screens/flats/edit.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FlatShowScreen extends StatelessWidget {
   static String route = '/flats/show';
 
-  const FlatShowScreen({Key? key}) : super(key: key);
+  final AuthenticationService authenticationService;
+
+  const FlatShowScreen(this.authenticationService, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -173,29 +179,78 @@ class FlatShowScreen extends StatelessWidget {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(flat.address),
-        ),
-        body: Container(
-          padding: EdgeInsets.fromLTRB(10, 15, 10, 10),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _nameAndAddressSection(),
-                _divider(),
-                _roomsAndFloors(),
-                _divider(),
-                _flatArea(),
-                _divider(),
-                _flatPrice(),
-                _divider(),
-                if (flat.description != null) _flatDescription(),
-                _divider(),
-                _callButton(),
-              ],
-            ),
+      appBar: AppBar(
+        title: Text(flat.address),
+        actions: [
+          FutureBuilder(
+            future: authenticationService.getUser(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var user = snapshot.data as User;
+                if (user.isAdmin) {
+                  return Row(
+                    children: [
+                      Container(
+                          padding: EdgeInsets.only(right: 15),
+                          child: IconButton(
+                              onPressed: () {}, icon: Icon(Icons.delete)))
+                    ],
+                  );
+                }
+              }
+              return Container();
+            },
           ),
-        ));
+        ],
+      ),
+      body: Container(
+        padding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _nameAndAddressSection(),
+              _divider(),
+              _roomsAndFloors(),
+              _divider(),
+              _flatArea(),
+              _divider(),
+              _flatPrice(),
+              _divider(),
+              if (flat.description != null) _flatDescription(),
+              _divider(),
+              _callButton(),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: FutureBuilder(
+        future: authenticationService.getUser(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var user = snapshot.data as User;
+            if (user.isAdmin) {
+              return FloatingActionButton.extended(
+                backgroundColor: AppColors.primaryColor,
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamed(EditFlatScreen.route, arguments: flat);
+                },
+                label: Text(
+                  'Редактировать',
+                  style: TextStyle(color: Colors.white),
+                ),
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                ),
+              );
+            }
+          }
+
+          return Container();
+        },
+      ),
+    );
   }
 }
