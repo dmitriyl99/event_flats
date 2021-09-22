@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
             new FlatsListScreen(FireabaseFlatsRepository()),
         FlatShowScreen.route: (context) => new FlatShowScreen(),
         AddFlatScreen.route: (context) =>
-            new AddFlatScreen(FakeFlatsRepository())
+            new AddFlatScreen(FireabaseFlatsRepository())
       },
       initialRoute: initialRoute,
     );
