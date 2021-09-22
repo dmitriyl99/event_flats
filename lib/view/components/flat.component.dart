@@ -28,9 +28,11 @@ class FlatComponent extends StatelessWidget {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                flat.address,
-                style: TextStyle(fontSize: 18),
+              Flexible(
+                child: Text(
+                  flat.address,
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
               Container(
                 decoration: BoxDecoration(
