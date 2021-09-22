@@ -34,12 +34,16 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     );
   }
 
+  void onFlatEdit() {
+    setState(() {});
+  }
+
   Widget buildList(BuildContext context, List<Flat> flats) {
     return Padding(
       padding: const EdgeInsets.only(top: 12.5),
       child: ListView.separated(
           itemBuilder: (context, index) {
-            return FlatComponent(flats[index]);
+            return FlatComponent(flats[index], onFlatEdit);
           },
           separatorBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

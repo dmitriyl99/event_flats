@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/edit.screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,10 +29,12 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     var result = await Navigator.of(context)
         .pushNamed(EditFlatScreen.route, arguments: flat);
     if (result != null && result == true) {
-      var editedFlat = (await widget.flatsRepository.getById(flat.id))!;
       setState(() {});
+      _edited = true;
     }
   }
+
+  bool _edited = false;
 
   @override
   Widget build(BuildContext context) {
@@ -198,6 +203,15 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Event Flats'),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop(_edited);
+          },
+          icon: Icon(
+            Platform.isIOS ? CupertinoIcons.back : Icons.arrow_back,
+            size: 28,
+          ),
+        ),
         actions: [
           FutureBuilder(
             future: widget.authenticationService.getUser(),

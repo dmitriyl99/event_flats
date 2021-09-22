@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 
 class FlatComponent extends StatelessWidget {
   final Flat flat;
+  final Function onEditCallback;
 
-  const FlatComponent(this.flat, {Key? key}) : super(key: key);
+  const FlatComponent(this.flat, this.onEditCallback, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,50 +19,46 @@ class FlatComponent extends StatelessWidget {
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: ListTile(
-          leading: Image.asset(
-            flat.isFavorite ? 'assets/house_favorite.png' : 'assets/house.png',
-            height: 30,
-          ),
-          onTap: () {
-            Navigator.of(context)
-                .pushNamed(FlatShowScreen.route, arguments: flat);
-          },
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  flat.address,
-                  style: TextStyle(fontSize: 18),
+            leading: Image.asset(
+              flat.isFavorite
+                  ? 'assets/house_favorite.png'
+                  : 'assets/house.png',
+              height: 30,
+            ),
+            onTap: () async {
+              var result = await Navigator.of(context)
+                  .pushNamed(FlatShowScreen.route, arguments: flat);
+              if (result != null && result == true) {
+                onEditCallback.call();
+              }
+            },
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    flat.address,
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(10)),
-                padding: EdgeInsets.all(5),
-                child: Text(
-                  flat.price.toString(),
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Container(
+                  decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(10)),
+                  padding: EdgeInsets.all(5),
+                  child: Text(
+                    flat.price.toString(),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          subtitle: Text(
-              '${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors}'),
-          trailing: Column(
-            children: [
-              Text(
-                flat.flatRepair,
-                style: TextStyle(fontSize: 16),
-              ),
-              Text(
-                DateFormattingHelper.formatDate(flat.createdAt),
-                style: TextStyle(fontSize: 16),
-              )
-            ],
-          ),
-        ),
+              ],
+            ),
+            subtitle: Text(
+                '${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors}'),
+            trailing: Text(
+              DateFormattingHelper.formatDate(flat.createdAt),
+              style: TextStyle(fontSize: 16),
+            )),
       ),
     );
   }
