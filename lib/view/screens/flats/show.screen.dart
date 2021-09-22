@@ -1,4 +1,5 @@
 import 'package:event_flats/models/flat.dart';
+import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/resources/colors.dart';
@@ -6,17 +7,33 @@ import 'package:event_flats/view/screens/flats/edit.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class FlatShowScreen extends StatelessWidget {
+class FlatShowScreen extends StatefulWidget {
   static String route = '/flats/show';
 
   final AuthenticationService authenticationService;
+  final FlatsRepository flatsRepository;
 
-  const FlatShowScreen(this.authenticationService, {Key? key})
+  const FlatShowScreen(this.authenticationService, this.flatsRepository,
+      {Key? key})
       : super(key: key);
 
   @override
+  State<FlatShowScreen> createState() => _FlatShowScreenState();
+}
+
+class _FlatShowScreenState extends State<FlatShowScreen> {
+  void _onEdit(BuildContext context, Flat flat) async {
+    var result = await Navigator.of(context)
+        .pushNamed(EditFlatScreen.route, arguments: flat);
+    if (result != null && result == true) {
+      var editedFlat = (await widget.flatsRepository.getById(flat.id))!;
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final flat = ModalRoute.of(context)!.settings.arguments as Flat;
+    late Flat flat = ModalRoute.of(context)!.settings.arguments as Flat;
 
     Widget _divider() {
       return Padding(
@@ -180,10 +197,10 @@ class FlatShowScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(flat.address),
+        title: Text('Event Flats'),
         actions: [
           FutureBuilder(
-            future: authenticationService.getUser(),
+            future: widget.authenticationService.getUser(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var user = snapshot.data as User;
@@ -203,29 +220,49 @@ class FlatShowScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(10, 15, 10, 10),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _nameAndAddressSection(),
-              _divider(),
-              _roomsAndFloors(),
-              _divider(),
-              _flatArea(),
-              _divider(),
-              _flatPrice(),
-              _divider(),
-              if (flat.description != null) _flatDescription(),
-              _divider(),
-              _callButton(),
-            ],
-          ),
-        ),
+      body: FutureBuilder(
+        future: widget.flatsRepository.getById(flat.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            flat = snapshot.data as Flat;
+            return Container(
+              padding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _nameAndAddressSection(),
+                    _divider(),
+                    _roomsAndFloors(),
+                    _divider(),
+                    _flatArea(),
+                    _divider(),
+                    _flatPrice(),
+                    _divider(),
+                    if (flat.description != null) _flatDescription(),
+                    _divider(),
+                    _callButton(),
+                  ],
+                ),
+              ),
+            );
+          }
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Center(
+                child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+            ));
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          return Container();
+        },
       ),
       floatingActionButton: FutureBuilder(
-        future: authenticationService.getUser(),
+        future: widget.authenticationService.getUser(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var user = snapshot.data as User;
@@ -233,8 +270,7 @@ class FlatShowScreen extends StatelessWidget {
               return FloatingActionButton.extended(
                 backgroundColor: AppColors.primaryColor,
                 onPressed: () {
-                  Navigator.of(context)
-                      .pushNamed(EditFlatScreen.route, arguments: flat);
+                  _onEdit(context, flat);
                 },
                 label: Text(
                   'Редактировать',
