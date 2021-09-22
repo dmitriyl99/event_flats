@@ -28,15 +28,13 @@ class FlatShowScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(5.0),
+            Flexible(
               child: Text(
                 flat.address,
                 style: TextStyle(fontSize: 23),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
+            Flexible(
               child: Text(
                 flat.landmark,
                 style: TextStyle(fontSize: 23),
