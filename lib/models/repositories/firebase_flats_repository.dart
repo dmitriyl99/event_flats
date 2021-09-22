@@ -36,4 +36,19 @@ class FireabaseFlatsRepository extends FlatsRepository {
         .child(flat.id)
         .set(flat.toJson());
   }
+
+  @override
+  Future<Flat?> getById(String id) async {
+    var result = await FirebaseDatabase.instance
+        .reference()
+        .child('flats')
+        .child(id)
+        .once();
+    if (result.exists) {
+      var flat = Flat.fromJson(Map<String, dynamic>.from(result.value));
+      flat.id = result.key!;
+      return flat;
+    }
+    return null;
+  }
 }

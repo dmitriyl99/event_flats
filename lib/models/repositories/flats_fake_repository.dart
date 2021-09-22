@@ -43,4 +43,10 @@ class FakeFlatsRepository extends FlatsRepository {
     // TODO: implement updateFlat
     throw UnimplementedError();
   }
+
+  @override
+  Future<Flat?> getById(String id) {
+    // TODO: implement getById
+    throw UnimplementedError();
+  }
 }
