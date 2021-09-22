@@ -4,9 +4,12 @@ import 'package:firebase_database/firebase_database.dart';
 
 class FireabaseFlatsRepository extends FlatsRepository {
   @override
-  Future<void> createFlat(Flat flat) {
-    // TODO: implement createFlat
-    throw UnimplementedError();
+  Future<void> createFlat(Flat flat) async {
+    await FirebaseDatabase.instance
+        .reference()
+        .child('flats')
+        .push()
+        .set(flat.toJson());
   }
 
   @override
