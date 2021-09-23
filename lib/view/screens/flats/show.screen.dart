@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/models/user.dart';
@@ -104,7 +105,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               width: 5,
             ),
             Text(
-              flat.area.toString() + ' кв.м',
+              flat.area.toStringAsFixed(0) + ' кв.м',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
             )
           ],
@@ -125,7 +126,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               width: 5,
             ),
             Text(
-              "\$" + flat.price.toString(),
+              NumberFormattingHelper.currency(flat.price),
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
             )
           ],
@@ -232,8 +233,12 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                     _divider(),
                     _flatPrice(),
                     _divider(),
-                    if (flat.description != null) _flatDescription(),
-                    _divider(),
+                    if (flat.description != null &&
+                        flat.description!.isNotEmpty)
+                      _flatDescription(),
+                    if (flat.description != null &&
+                        flat.description!.isNotEmpty)
+                      _divider(),
                     _callButton(),
                   ],
                 ),
