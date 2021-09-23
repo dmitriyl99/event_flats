@@ -18,12 +18,12 @@ class FireabaseFlatsRepository extends FlatsRepository {
         await FirebaseDatabase.instance.reference().child('flats').get();
 
     List<Flat> flats = [];
-
-    snapshot.value.forEach((id, flat) {
-      var flatModel = Flat.fromJson(Map<String, dynamic>.from(flat));
-      flatModel.id = id;
-      flats.add(flatModel);
-    });
+    if (snapshot.value != null)
+      snapshot.value.forEach((id, flat) {
+        var flatModel = Flat.fromJson(Map<String, dynamic>.from(flat));
+        flatModel.id = id;
+        flats.add(flatModel);
+      });
 
     return flats;
   }
