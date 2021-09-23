@@ -1,3 +1,4 @@
+import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/view/resources/colors.dart';
@@ -62,6 +63,25 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   TextEditingController _descriptionController = new TextEditingController();
   TextEditingController _ownerNameController = new TextEditingController();
   TextEditingController _ownerPhoneController = new TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _landmarkController.dispose();
+    _priceController.dispose();
+    _roomsController.dispose();
+    _floorController.dispose();
+    _numberOfFloorsController.dispose();
+    _areaController.dispose();
+    _descriptionController.dispose();
+    _ownerNameController.dispose();
+    _ownerPhoneController.dispose();
+    super.dispose();
+  }
 
   String? _validateLandmark(String? value) {
     if (value == null || value.isEmpty) return 'Укажите ориентир';
@@ -133,11 +153,11 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       _currentDistrict = flat.address;
       _currentRepair = flat.flatRepair;
       _landmarkController.text = flat.landmark;
-      _priceController.text = flat.price.toString();
+      _priceController.text = NumberFormattingHelper.format(flat.price);
       _roomsController.text = flat.numberOfRooms.toString();
       _floorController.text = flat.floor.toString();
       _numberOfFloorsController.text = flat.numberOfFloors.toString();
-      _areaController.text = flat.area.toString();
+      _areaController.text = flat.area.toStringAsFixed(0);
       _descriptionController.text = flat.description ?? '';
       _ownerNameController.text = flat.ownerName ?? '';
       _ownerPhoneController.text = flat.ownerPhone;
