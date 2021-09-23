@@ -61,6 +61,20 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   TextEditingController _ownerNameController = new TextEditingController();
   TextEditingController _ownerPhoneController = new TextEditingController();
 
+  @override
+  void dispose() {
+    _landmarkController.dispose();
+    _priceController.dispose();
+    _roomsController.dispose();
+    _floorController.dispose();
+    _numberOfFloorsController.dispose();
+    _areaController.dispose();
+    _descriptionController.dispose();
+    _ownerNameController.dispose();
+    _ownerPhoneController.dispose();
+    super.dispose();
+  }
+
   String? _validateLandmark(String? value) {
     if (value == null || value.isEmpty) return 'Укажите ориентир';
     return null;

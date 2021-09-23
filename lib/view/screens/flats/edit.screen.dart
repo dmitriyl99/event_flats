@@ -65,11 +65,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   TextEditingController _ownerPhoneController = new TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     _landmarkController.dispose();
     _priceController.dispose();
