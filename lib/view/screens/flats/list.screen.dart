@@ -51,40 +51,110 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
   }
 
   Widget buildList(BuildContext context, List<Flat> flats, User currentUser) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12.5),
-      child: ListView.separated(
-          itemBuilder: (context, index) {
-            var flat = flats[index];
-            if (currentUser.isAdmin) {
-              return Dismissible(
-                  key: Key(flat.id),
-                  onDismissed: (direction) async {
-                    if (direction == DismissDirection.endToStart) {
-                      await widget._flatsRepository.removeById(flat.id);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: AppColors.primaryColor,
-                          content: Text(
-                            'Квартира удалена',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white),
-                          )));
-                      setState(() {});
-                    }
-                  },
-                  child: FlatComponent(flat, onFlatEdit));
-            }
-            return FlatComponent(flat, onFlatEdit);
-          },
-          separatorBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Divider(
-                  color: AppColors.listDividerColor,
-                  height: 8,
-                  thickness: 1,
+    if (flats.isEmpty) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            CupertinoIcons.home,
+            size: 64,
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          Text(
+            'Квартиры ещё не добавлены. Нажмите кнопку в правом нижнем углу, чтобы добавить квартиру',
+            style: TextStyle(color: Colors.white, fontSize: 24),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      );
+    }
+    return RefreshIndicator(
+      strokeWidth: 3.0,
+      backgroundColor: AppColors.primaryColor,
+      color: Colors.white,
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 12.5),
+        child: ListView.separated(
+            itemBuilder: (context, index) {
+              var flat = flats[index];
+              if (currentUser.isAdmin) {
+                return Dismissible(
+                    background: Container(
+                      padding: EdgeInsets.only(right: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.delete, size: 32),
+                              Text('Удалить')
+                            ],
+                          )
+                        ],
+                      ),
+                      decoration: BoxDecoration(color: Colors.red),
+                    ),
+                    key: Key(flat.id),
+                    confirmDismiss: (direction) async {
+                      if (direction != DismissDirection.endToStart)
+                        return false;
+                      var result = await showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Вы уверены?'),
+                              content: Text(
+                                  'ВЫ уверены, что хотите удалить квартиру ${flat.address}?'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                    child: Text('Отмена')),
+                                TextButton(
+                                  child: Text('Уверен'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                      return result;
+                    },
+                    onDismissed: (direction) async {
+                      if (direction == DismissDirection.endToStart) {
+                        await widget._flatsRepository.removeById(flat.id);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: AppColors.primaryColor,
+                            content: Text(
+                              'Квартира удалена',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white),
+                            )));
+                        setState(() {});
+                      }
+                    },
+                    child: FlatComponent(flat, onFlatEdit));
+              }
+              return FlatComponent(flat, onFlatEdit);
+            },
+            separatorBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Divider(
+                    color: AppColors.listDividerColor,
+                    height: 8,
+                    thickness: 1,
+                  ),
                 ),
-              ),
-          itemCount: flats.length),
+            itemCount: flats.length),
+      ),
     );
   }
 
@@ -122,7 +192,8 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
           future: init(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return buildError(snapshot.error.toString());
+              return buildError(
+                  snapshot.error.toString() + '\n${snapshot.stackTrace}');
             } else if (snapshot.connectionState != ConnectionState.done) {
               return buildLoading();
             }
