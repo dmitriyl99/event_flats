@@ -2,6 +2,7 @@ import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 // ignore: must_be_immutable
 class AddFlatScreen extends StatefulWidget {
@@ -138,6 +139,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var maskFormatter = new MaskTextInputFormatter(
+        mask: '+### ## ###-##-##', filter: {"#": RegExp(r'[0-9]')});
     return Scaffold(
         appBar: AppBar(
           title: Text('Добавить квартиру'),
@@ -319,6 +322,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     decoration: InputDecoration(labelText: 'Имя владельца'),
                   ),
                   TextFormField(
+                    inputFormatters: [maskFormatter],
                     validator: _validateOwnerPhone,
                     controller: _ownerPhoneController,
                     decoration: InputDecoration(labelText: 'Номер владельца'),

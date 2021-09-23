@@ -3,6 +3,7 @@ import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 // ignore: must_be_immutable
 class EditFlatScreen extends StatefulWidget {
@@ -120,7 +121,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       });
       var flat = Flat(
           _currentDistrict!,
-          double.parse(_priceController.text),
+          double.parse(_priceController.text.replaceAll(',', '')),
           int.parse(_floorController.text),
           int.parse(_numberOfFloorsController.text),
           int.parse(_roomsController.text),
@@ -143,6 +144,8 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var maskFormatter = new MaskTextInputFormatter(
+        mask: '+### ## ###-##-##', filter: {"#": RegExp(r'[0-9]')});
     final flat = ModalRoute.of(context)!.settings.arguments as Flat;
     if (!_loaded) {
       _currentDistrict = flat.address;
@@ -342,6 +345,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     decoration: InputDecoration(labelText: 'Имя владельца'),
                   ),
                   TextFormField(
+                    inputFormatters: [maskFormatter],
                     validator: _validateOwnerPhone,
                     controller: _ownerPhoneController,
                     decoration: InputDecoration(labelText: 'Номер владельца'),
