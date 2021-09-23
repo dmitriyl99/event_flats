@@ -212,27 +212,6 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
             size: 28,
           ),
         ),
-        actions: [
-          FutureBuilder(
-            future: widget.authenticationService.getUser(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var user = snapshot.data as User;
-                if (user.isAdmin) {
-                  return Row(
-                    children: [
-                      Container(
-                          padding: EdgeInsets.only(right: 15),
-                          child: IconButton(
-                              onPressed: () {}, icon: Icon(Icons.delete)))
-                    ],
-                  );
-                }
-              }
-              return Container();
-            },
-          ),
-        ],
       ),
       body: FutureBuilder(
         future: widget.flatsRepository.getById(flat.id),

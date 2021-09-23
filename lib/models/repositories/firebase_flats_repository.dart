@@ -51,4 +51,13 @@ class FireabaseFlatsRepository extends FlatsRepository {
     }
     return null;
   }
+
+  @override
+  Future<void> removeById(String id) async {
+    await FirebaseDatabase.instance
+        .reference()
+        .child('flats')
+        .child(id)
+        .remove();
+  }
 }

@@ -5,4 +5,5 @@ abstract class FlatsRepository {
   Future<void> createFlat(Flat flat);
   Future<void> updateFlat(Flat flat);
   Future<Flat?> getById(String id);
+  Future<void> removeById(String id);
 }

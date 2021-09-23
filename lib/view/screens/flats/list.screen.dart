@@ -1,5 +1,7 @@
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
+import 'package:event_flats/models/user.dart';
+import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/components/flat.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/add.screen.dart';
@@ -8,9 +10,12 @@ import 'package:flutter/material.dart';
 
 class FlatsListScreen extends StatefulWidget {
   final FlatsRepository _flatsRepository;
+  final AuthenticationService _authenticationService;
 
   static const String route = '/flats';
-  const FlatsListScreen(this._flatsRepository, {Key? key}) : super(key: key);
+  const FlatsListScreen(this._flatsRepository, this._authenticationService,
+      {Key? key})
+      : super(key: key);
 
   @override
   State<FlatsListScreen> createState() => _FlatsListScreenState();
@@ -38,12 +43,38 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     setState(() {});
   }
 
-  Widget buildList(BuildContext context, List<Flat> flats) {
+  Future<Map<String, dynamic>> init() async {
+    var flats = await widget._flatsRepository.getFlats();
+    var user = await widget._authenticationService.getUser();
+
+    return {'flats': flats, 'user': user};
+  }
+
+  Widget buildList(BuildContext context, List<Flat> flats, User currentUser) {
     return Padding(
       padding: const EdgeInsets.only(top: 12.5),
       child: ListView.separated(
           itemBuilder: (context, index) {
-            return FlatComponent(flats[index], onFlatEdit);
+            var flat = flats[index];
+            if (currentUser.isAdmin) {
+              return Dismissible(
+                  key: Key(flat.id),
+                  onDismissed: (direction) async {
+                    if (direction == DismissDirection.endToStart) {
+                      await widget._flatsRepository.removeById(flat.id);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: AppColors.primaryColor,
+                          content: Text(
+                            'Квартира удалена',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white),
+                          )));
+                      setState(() {});
+                    }
+                  },
+                  child: FlatComponent(flat, onFlatEdit));
+            }
+            return FlatComponent(flat, onFlatEdit);
           },
           separatorBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -88,14 +119,16 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
           ),
         ),
         body: FutureBuilder(
-          future: widget._flatsRepository.getFlats(),
+          future: init(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return buildError(snapshot.error.toString());
             } else if (snapshot.connectionState != ConnectionState.done) {
               return buildLoading();
             }
-            return buildList(context, snapshot.data as List<Flat>);
+            var data = snapshot.data as Map<String, dynamic>;
+            return buildList(
+                context, data['flats'] as List<Flat>, data['user'] as User);
           },
         ));
   }
