@@ -40,7 +40,7 @@ class FlatComponent extends StatelessWidget {
                       flat.isFavorite
                           ? 'assets/house_favorite.png'
                           : 'assets/house.png',
-                      height: 32,
+                      height: 36,
                     ),
                   ),
                   Column(
