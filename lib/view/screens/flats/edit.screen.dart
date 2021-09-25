@@ -25,16 +25,16 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   bool _loaded = false;
 
   List<String> _districts = [
-    "Алмазарский район",
-    "Бектемирский район",
-    'Мирабадский район',
-    'Мирзо-Улугбекский район',
-    'Сергелийский район',
-    'Шайхантаурский район',
-    'Юнусабадский район',
-    'Яккасарайский район',
-    'Чиланзарский район',
-    'Яшнабадский район'
+    "Алмазар",
+    "Бектемир",
+    'Мирабад',
+    'Мирзо-Улугбек',
+    'Сергели',
+    'Чиланзар',
+    'Шайхантаур',
+    'Юнусабад',
+    'Яккасарай',
+    'Яшнабад',
   ];
 
   List<String> _repairs = [
@@ -43,16 +43,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
     "Требует ремонта",
     "Черновая отделка"
   ];
-
-  Widget _divider() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Divider(
-        color: AppColors.descriptionDividerColor,
-        thickness: 2,
-      ),
-    );
-  }
 
   String? _currentDistrict;
   String? _currentRepair;
@@ -203,7 +193,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     'Адрес',
                     style: TextStyle(fontSize: 24),
                   ),
-                  _divider(),
                   FormField<String>(builder: (FormFieldState<String> state) {
                     return InputDecorator(
                       decoration: InputDecoration(labelText: "Район"),
@@ -237,7 +226,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     'Информация о квартире',
                     style: TextStyle(fontSize: 24),
                   ),
-                  _divider(),
                   TextFormField(
                     validator: _validatePrice,
                     controller: _priceController,
@@ -336,7 +324,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     'Владелец',
                     style: TextStyle(fontSize: 24),
                   ),
-                  _divider(),
                   TextFormField(
                     controller: _ownerNameController,
                     decoration: InputDecoration(labelText: 'Имя владельца'),

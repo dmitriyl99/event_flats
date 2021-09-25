@@ -23,16 +23,16 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   bool _isAdditionalInfo = false;
 
   List<String> _districts = [
-    "Алмазарский район",
-    "Бектемирский район",
-    'Мирабадский район',
-    'Мирзо-Улугбекский район',
-    'Сергелийский район',
-    'Шайхантаурский район',
-    'Юнусабадский район',
-    'Яккасарайский район',
-    'Чиланзарский район',
-    'Яшнабадский район'
+    "Алмазар",
+    "Бектемир",
+    'Мирабад',
+    'Мирзо-Улугбек',
+    'Сергели',
+    'Чиланзар',
+    'Шайхантаур',
+    'Юнусабад',
+    'Яккасарай',
+    'Яшнабад',
   ];
 
   List<String> _repairs = [
@@ -41,16 +41,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
     "Требует ремонта",
     "Черновая отделка"
   ];
-
-  Widget _divider() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Divider(
-        color: AppColors.descriptionDividerColor,
-        thickness: 2,
-      ),
-    );
-  }
 
   late String _currentDistrict = _districts.first;
   late String _currentRepair = _repairs.first;
@@ -181,7 +171,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     'Адрес',
                     style: TextStyle(fontSize: 24),
                   ),
-                  _divider(),
                   FormField<String>(builder: (FormFieldState<String> state) {
                     return InputDecorator(
                       decoration: InputDecoration(labelText: "Район"),
@@ -217,7 +206,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     'Информация о квартире',
                     style: TextStyle(fontSize: 24),
                   ),
-                  _divider(),
                   TextFormField(
                     validator: _validatePrice,
                     controller: _priceController,
@@ -322,7 +310,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     'Владелец',
                     style: TextStyle(fontSize: 24),
                   ),
-                  _divider(),
                   Visibility(
                     visible: _isAdditionalInfo,
                     child: TextFormField(
