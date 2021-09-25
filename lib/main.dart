@@ -3,6 +3,7 @@ import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/screens/flats/add.screen.dart';
 import 'package:event_flats/view/screens/flats/edit.screen.dart';
+import 'package:event_flats/view/screens/flats/filter.screen.dart';
 import 'package:event_flats/view/screens/flats/list.screen.dart';
 import 'package:event_flats/view/screens/flats/show.screen.dart';
 import 'package:event_flats/view/screens/login.screen.dart';
@@ -55,7 +56,8 @@ class MyApp extends StatelessWidget {
         AddFlatScreen.route: (context) =>
             new AddFlatScreen(FireabaseFlatsRepository()),
         EditFlatScreen.route: (context) =>
-            new EditFlatScreen(FireabaseFlatsRepository())
+            new EditFlatScreen(FireabaseFlatsRepository()),
+        FilterScreen.route: (context) => new FilterScreen()
       },
       initialRoute: initialRoute,
     );

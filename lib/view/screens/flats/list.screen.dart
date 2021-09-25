@@ -5,6 +5,7 @@ import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/components/flat.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/add.screen.dart';
+import 'package:event_flats/view/screens/flats/filter.screen.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,31 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 15),
-              child: IconButton(onPressed: () {}, icon: Icon(Icons.sort)),
+              child: IconButton(
+                onPressed: () async {},
+                icon: Icon(Icons.favorite),
+                iconSize: 32,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: 15),
+              child: IconButton(
+                onPressed: () async {
+                  var flats = await widget._flatsRepository.getFlats();
+                  double maxPrice = 100000;
+                  if (flats.length > 0) {
+                    flats.sort((a, b) {
+                      return b.price.compareTo(a.price);
+                    });
+                    maxPrice = flats[0].price;
+                  }
+                  var filter = await Navigator.of(context).pushNamed(
+                      FilterScreen.route,
+                      arguments: {'maxPrice': maxPrice});
+                },
+                icon: Icon(Icons.settings),
+                iconSize: 32,
+              ),
             )
           ],
           title: Text('Event Flats'),
@@ -112,18 +137,30 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                           return AlertDialog(
                             title: Text('Вы уверены?'),
                             content: Text(
-                                'ВЫ уверены, что хотите удалить квартиру ${flat.address}?'),
+                                'Вы уверены, что хотите удалить квартиру ${flat.address}?'),
                             actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(false);
-                                  },
-                                  child: Text('Отмена')),
-                              TextButton(
-                                child: Text('Уверен'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      },
+                                      child: Text(
+                                        'Отмена',
+                                        style: TextStyle(fontSize: 18),
+                                      )),
+                                  TextButton(
+                                    child: Text(
+                                      'Да',
+                                      style: TextStyle(fontSize: 19),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           );
