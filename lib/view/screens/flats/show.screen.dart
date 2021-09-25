@@ -134,6 +134,23 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
       );
     }
 
+    Widget _flatRepair() {
+      return Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Row(
+          children: [
+            Text('Ремонт:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+            SizedBox(
+              width: 5,
+            ),
+            Text(flat.flatRepair,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
+          ],
+        ),
+      );
+    }
+
     Widget _flatDescription() {
       return Padding(
         padding: EdgeInsets.all(5.0),
@@ -230,6 +247,8 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                     _roomsAndFloors(),
                     _divider(),
                     _flatArea(),
+                    _divider(),
+                    _flatRepair(),
                     _divider(),
                     _flatPrice(),
                     _divider(),
