@@ -25,16 +25,16 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   bool _loaded = false;
 
   List<String> _districts = [
-    "Алмазар",
-    "Бектемир",
-    'Мирабад',
-    'Мирзо-Улугбек',
-    'Сергели',
-    'Чиланзар',
-    'Шайхантаур',
-    'Юнусабад',
-    'Яккасарай',
-    'Яшнабад',
+    "Алмазарский район",
+    "Бектемирский район",
+    'Мирабадский район',
+    'Мирзо-Улугбекский район',
+    'Сергелинский район',
+    'Чиланзарский район',
+    'Шайхантаурский район',
+    'Юнусабадский район',
+    'Яккасарайский район',
+    'Яшнабадский район',
   ];
 
   List<String> _repairs = [
@@ -91,7 +91,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   }
 
   String? _validateArea(String? value) {
-    if (value != null && !isNumeric(value)) return 'Укажите число';
+    if (value!.isNotEmpty && !isNumeric(value)) return 'Укажите число';
     return null;
   }
 
@@ -114,7 +114,9 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           _currentRepair!,
           createdAt,
           false,
-          double.parse(_areaController.text),
+          _areaController.text.isNotEmpty
+              ? double.parse(_areaController.text)
+              : null,
           _descriptionController.text,
           _landmarkController.text,
           _ownerPhoneController.text,

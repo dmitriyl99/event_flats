@@ -1,7 +1,6 @@
 import 'package:event_flats/helpers/string.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
-import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
@@ -23,16 +22,16 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   bool _isAdditionalInfo = false;
 
   List<String> _districts = [
-    "Алмазар",
-    "Бектемир",
-    'Мирабад',
-    'Мирзо-Улугбек',
-    'Сергели',
-    'Чиланзар',
-    'Шайхантаур',
-    'Юнусабад',
-    'Яккасарай',
-    'Яшнабад',
+    "Алмазарский район",
+    "Бектемирский район",
+    'Мирабадский район',
+    'Мирзо-Улугбекский район',
+    'Сергелинский район',
+    'Чиланзарский район',
+    'Шайхантаурский район',
+    'Юнусабадский район',
+    'Яккасарайский район',
+    'Яшнабадский район',
   ];
 
   List<String> _repairs = [
