@@ -55,9 +55,9 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            CupertinoIcons.home,
-            size: 64,
+          Text(
+            '🧐',
+            style: TextStyle(fontSize: 64),
           ),
           SizedBox(
             height: 24,
