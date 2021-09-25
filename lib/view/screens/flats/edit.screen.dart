@@ -1,4 +1,5 @@
 import 'package:event_flats/helpers/number_formatting.dart';
+import 'package:event_flats/helpers/string.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/view/resources/colors.dart';
@@ -79,11 +80,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
     super.dispose();
   }
 
-  String? _validateLandmark(String? value) {
-    if (value == null || value.isEmpty) return 'Укажите ориентир';
-    return null;
-  }
-
   String? _validatePrice(String? value) {
     if (value == null || value.isEmpty) return 'Укажите цену';
     return null;
@@ -105,7 +101,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   }
 
   String? _validateArea(String? value) {
-    if (value == null || value.isEmpty) return 'Укажите площадь';
+    if (value != null && !isNumeric(value)) return 'Укажите число';
     return null;
   }
 
@@ -229,7 +225,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     );
                   }),
                   TextFormField(
-                    validator: _validateLandmark,
                     controller: _landmarkController,
                     decoration: InputDecoration(labelText: 'Ориентир'),
                   ),

@@ -1,3 +1,4 @@
+import 'package:event_flats/helpers/string.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/view/resources/colors.dart';
@@ -19,6 +20,7 @@ class AddFlatScreen extends StatefulWidget {
 class _AddFlatScreenState extends State<AddFlatScreen> {
   GlobalKey<FormState> _formKey = new GlobalKey();
   bool _isLoading = false;
+  bool _isAdditionalInfo = false;
 
   List<String> _districts = [
     "Алмазарский район",
@@ -76,11 +78,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
     super.dispose();
   }
 
-  String? _validateLandmark(String? value) {
-    if (value == null || value.isEmpty) return 'Укажите ориентир';
-    return null;
-  }
-
   String? _validatePrice(String? value) {
     if (value == null || value.isEmpty) return 'Укажите цену';
     return null;
@@ -102,7 +99,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   }
 
   String? _validateArea(String? value) {
-    if (value == null || value.isEmpty) return 'Укажите площадь';
+    if (value != null && !isNumeric(value)) return 'Укажите число';
     return null;
   }
 
@@ -205,11 +202,12 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       ),
                     );
                   }),
-                  TextFormField(
-                    validator: _validateLandmark,
-                    controller: _landmarkController,
-                    decoration: InputDecoration(labelText: 'Ориентир'),
-                  ),
+                  Visibility(
+                      visible: _isAdditionalInfo,
+                      child: TextFormField(
+                        controller: _landmarkController,
+                        decoration: InputDecoration(labelText: 'Ориентир'),
+                      )),
                   SizedBox(
                     height: 30,
                   ),
@@ -298,16 +296,22 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       ),
                     );
                   }),
-                  TextFormField(
-                    validator: _validateArea,
-                    controller: _areaController,
-                    decoration: InputDecoration(
-                        labelText: 'Площадь', suffixText: 'кв.м'),
+                  Visibility(
+                    visible: _isAdditionalInfo,
+                    child: TextFormField(
+                      validator: _validateArea,
+                      controller: _areaController,
+                      decoration: InputDecoration(
+                          labelText: 'Площадь', suffixText: 'кв.м'),
+                    ),
                   ),
-                  TextFormField(
-                    controller: _descriptionController,
-                    maxLines: 4,
-                    decoration: InputDecoration(labelText: 'Описание'),
+                  Visibility(
+                    visible: _isAdditionalInfo,
+                    child: TextFormField(
+                      controller: _descriptionController,
+                      maxLines: 4,
+                      decoration: InputDecoration(labelText: 'Описание'),
+                    ),
                   ),
                   SizedBox(
                     height: 30,
@@ -317,15 +321,39 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     style: TextStyle(fontSize: 24),
                   ),
                   _divider(),
-                  TextFormField(
-                    controller: _ownerNameController,
-                    decoration: InputDecoration(labelText: 'Имя владельца'),
+                  Visibility(
+                    visible: _isAdditionalInfo,
+                    child: TextFormField(
+                      controller: _ownerNameController,
+                      decoration: InputDecoration(labelText: 'Имя владельца'),
+                    ),
                   ),
                   TextFormField(
                     inputFormatters: [maskFormatter],
                     validator: _validateOwnerPhone,
                     controller: _ownerPhoneController,
                     decoration: InputDecoration(labelText: 'Номер владельца'),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Visibility(
+                    visible: !_isAdditionalInfo,
+                    child: Center(
+                      child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isAdditionalInfo = true;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              'Дополнительно',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          )),
+                    ),
                   ),
                   SizedBox(
                     height: 30,
