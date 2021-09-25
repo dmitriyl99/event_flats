@@ -51,152 +51,6 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     return {'flats': flats, 'user': user};
   }
 
-  Widget buildList(BuildContext context, List<Flat> flats, User currentUser) {
-    if (flats.isEmpty) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '🧐',
-            style: TextStyle(fontSize: 64),
-          ),
-          SizedBox(
-            height: 24,
-          ),
-          Text(
-            'Квартиры ещё не добавлены. Нажмите кнопку в правом нижнем углу, чтобы добавить квартиру',
-            style: TextStyle(color: Colors.white, fontSize: 24),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      );
-    }
-    return RefreshIndicator(
-      strokeWidth: 3.0,
-      backgroundColor: AppColors.primaryColor,
-      color: Colors.white,
-      onRefresh: () async {
-        setState(() {});
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(top: 12.5),
-        child: ListView.separated(
-            itemBuilder: (context, index) {
-              var flat = flats[index];
-              if (currentUser.isAdmin) {
-                return Dismissible(
-                    background: !flat.isFavorite
-                        ? Container(
-                            padding: EdgeInsets.only(left: 16),
-                            decoration: BoxDecoration(color: Colors.green),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.favorite, size: 32),
-                                    Text('Избранное')
-                                  ],
-                                )
-                              ],
-                            ),
-                          )
-                        : Container(
-                            padding: EdgeInsets.only(left: 16),
-                            decoration: BoxDecoration(color: Colors.grey),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.favorite_border, size: 32),
-                                    Text('Из избранного')
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                    secondaryBackground: Container(
-                      padding: EdgeInsets.only(right: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.delete, size: 32),
-                              Text('Удалить')
-                            ],
-                          )
-                        ],
-                      ),
-                      decoration: BoxDecoration(color: Colors.red),
-                    ),
-                    key: Key(flat.id),
-                    confirmDismiss: (direction) async {
-                      if (direction == DismissDirection.startToEnd) return true;
-                      if (direction != DismissDirection.endToStart)
-                        return false;
-                      var result = await showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text('Вы уверены?'),
-                              content: Text(
-                                  'ВЫ уверены, что хотите удалить квартиру ${flat.address}?'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(false);
-                                    },
-                                    child: Text('Отмена')),
-                                TextButton(
-                                  child: Text('Уверен'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop(true);
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                      return result;
-                    },
-                    onDismissed: (direction) async {
-                      if (direction == DismissDirection.endToStart) {
-                        await widget._flatsRepository.removeById(flat.id);
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            backgroundColor: AppColors.primaryColor,
-                            content: Text(
-                              'Квартира удалена',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white),
-                            )));
-                        setState(() {});
-                      }
-                      if (direction == DismissDirection.startToEnd) {
-                        await widget._flatsRepository.toggleFavorite(flat.id);
-                        setState(() {});
-                      }
-                    },
-                    child: FlatComponent(flat, onFlatEdit));
-              }
-              return FlatComponent(flat, onFlatEdit);
-            },
-            separatorBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Divider(
-                    color: AppColors.listDividerColor,
-                    height: 8,
-                    thickness: 1,
-                  ),
-                ),
-            itemCount: flats.length),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -223,74 +77,78 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
             color: Colors.black,
           ),
         ),
-        body: FirebaseAnimatedList(
-          query: widget._flatsRepository.getFlatsQuery(),
-          itemBuilder: (context, snapshot, animation, index) {
-            final json = Map<String, dynamic>.from(snapshot.value);
-            final flat = Flat.fromJson(json);
-            flat.id = snapshot.key!;
-            return Dismissible(
-                background: Container(
-                  padding: EdgeInsets.only(right: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.delete, size: 32),
-                          Text('Удалить')
-                        ],
-                      )
-                    ],
-                  ),
-                  decoration: BoxDecoration(color: Colors.red),
-                ),
-                key: Key(flat.id),
-                confirmDismiss: (direction) async {
-                  if (direction != DismissDirection.endToStart) return false;
-                  var result = await showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text('Вы уверены?'),
-                          content: Text(
-                              'ВЫ уверены, что хотите удалить квартиру ${flat.address}?'),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(false);
-                                },
-                                child: Text('Отмена')),
-                            TextButton(
-                              child: Text('Уверен'),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
+        body: Padding(
+          padding: const EdgeInsets.only(top: 16.0),
+          child: FirebaseAnimatedList(
+            query: widget._flatsRepository.getFlatsQuery(),
+            itemBuilder: (context, snapshot, animation, index) {
+              final json = Map<String, dynamic>.from(snapshot.value);
+              final flat = Flat.fromJson(json);
+              flat.id = snapshot.key!;
+              return Dismissible(
+                  background: Container(
+                    padding: EdgeInsets.only(right: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.delete, size: 32),
+                            Text('Удалить')
                           ],
-                        );
-                      });
-                  if (result) {
-                    await widget._flatsRepository.removeById(flat.id);
-                  }
-                  return false;
-                },
-                onDismissed: (direction) async {
-                  if (direction == DismissDirection.endToStart) {
-                    await widget._flatsRepository.removeById(flat.id);
-                    setState(() {});
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        backgroundColor: AppColors.primaryColor,
-                        content: Text(
-                          'Квартира удалена',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white),
-                        )));
-                  }
-                },
-                child: FlatComponent(flat, onFlatEdit));
-          },
+                        )
+                      ],
+                    ),
+                    decoration: BoxDecoration(color: Colors.red),
+                  ),
+                  key: Key(flat.id),
+                  confirmDismiss: (direction) async {
+                    if (direction != DismissDirection.endToStart) return false;
+                    var result = await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('Вы уверены?'),
+                            content: Text(
+                                'ВЫ уверены, что хотите удалить квартиру ${flat.address}?'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: Text('Отмена')),
+                              TextButton(
+                                child: Text('Уверен'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                    if (result) {
+                      await widget._flatsRepository.removeById(flat.id);
+                    }
+                    return false;
+                  },
+                  onDismissed: (direction) async {
+                    if (direction == DismissDirection.endToStart) {
+                      await widget._flatsRepository.removeById(flat.id);
+                      setState(() {});
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: AppColors.primaryColor,
+                          content: Text(
+                            'Квартира удалена',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white),
+                          )));
+                    }
+                  },
+                  child:
+                      FlatComponent(flat, widget._flatsRepository, onFlatEdit));
+            },
+          ),
         ));
   }
 }
