@@ -18,105 +18,69 @@ class FlatComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: InkWell(
-          onTap: () {
-            Navigator.of(context)
-                .pushNamed(FlatShowScreen.route, arguments: flat);
-          },
-          child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Row(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        child: Card(
+          elevation: 4,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed(FlatShowScreen.route, arguments: flat);
+            },
+            child: ListTile(
+              leading: GestureDetector(
+                onTap: () async {
+                  await _flatsRepository.toggleFavorite(flat.id);
+                },
+                child: Image.asset(
+                  flat.isFavorite
+                      ? 'assets/house_favorite.png'
+                      : 'assets/house.png',
+                  height: 36,
+                ),
+              ),
+              onTap: () async {
+                var result = await Navigator.of(context)
+                    .pushNamed(FlatShowScreen.route, arguments: flat);
+                if (result != null && result == true) {
+                  onEditCallback.call();
+                }
+              },
+              title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () async {
-                      await _flatsRepository.toggleFavorite(flat.id);
-                    },
-                    child: Image.asset(
-                      flat.isFavorite
-                          ? 'assets/house_favorite.png'
-                          : 'assets/house.png',
-                      height: 36,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        flat.address,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      Text(
-                          '${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors}'),
-                      Text(flat.flatRepair)
-                    ],
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: BorderRadius.circular(10)),
-                    padding: EdgeInsets.all(5),
+                  Flexible(
                     child: Text(
-                      NumberFormattingHelper.currency(flat.price),
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                      flat.address,
+                      style: TextStyle(fontSize: 18),
                     ),
                   ),
                 ],
-              )),
-        ),
-        // child: ListTile(
-        //   leading: Image.asset(
-        //     flat.isFavorite ? 'assets/house_favorite.png' : 'assets/house.png',
-        //     height: 30,
-        //   ),
-        //   onTap: () async {
-        //     var result = await Navigator.of(context)
-        //         .pushNamed(FlatShowScreen.route, arguments: flat);
-        //     if (result != null && result == true) {
-        //       onEditCallback.call();
-        //     }
-        //   },
-        //   title: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Flexible(
-        //         child: Text(
-        //           flat.address,
-        //           style: TextStyle(fontSize: 18),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        //   subtitle: Column(
-        //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     children: [
-        //       Text(
-        //           '${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors}'),
-        //       Text(flat.flatRepair)
-        //     ],
-        //   ),
-        //   trailing: Container(
-        //     decoration: BoxDecoration(
-        //         color: AppColors.primaryColor,
-        //         borderRadius: BorderRadius.circular(10)),
-        //     padding: EdgeInsets.all(5),
-        //     child: Text(
-        //       NumberFormattingHelper.currency(flat.price),
-        //       style: TextStyle(
-        //           fontSize: 20,
-        //           fontWeight: FontWeight.bold,
-        //           color: Colors.black),
-        //     ),
-        //   ),
-        // ),
-      ),
-    );
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                      '${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors}'),
+                  Text(flat.flatRepair)
+                ],
+              ),
+              trailing: Container(
+                decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    borderRadius: BorderRadius.circular(10)),
+                padding: EdgeInsets.all(5),
+                child: Text(
+                  NumberFormattingHelper.currency(flat.price),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+              ),
+            ),
+          ),
+        ));
   }
 }
