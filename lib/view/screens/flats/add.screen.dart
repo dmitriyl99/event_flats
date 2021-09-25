@@ -52,8 +52,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
     );
   }
 
-  String? _currentDistrict;
-  String? _currentRepair;
+  late String _currentDistrict = _districts.first;
+  late String _currentRepair = _repairs.first;
   TextEditingController _landmarkController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
   TextEditingController _roomsController = new TextEditingController();
@@ -114,12 +114,12 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
         _isLoading = true;
       });
       await widget._flatsRepository.createFlat(Flat(
-          _currentDistrict!,
+          _currentDistrict,
           double.parse(_priceController.text),
           int.parse(_floorController.text),
           int.parse(_numberOfFloorsController.text),
           int.parse(_roomsController.text),
-          _currentRepair!,
+          _currentRepair,
           DateTime.now(),
           false,
           _areaController.text.isNotEmpty
@@ -187,11 +187,11 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       decoration: InputDecoration(labelText: "Район"),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                            value: _currentDistrict ?? _districts.first,
+                            value: _currentDistrict,
                             isDense: true,
                             onChanged: (value) {
                               setState(() {
-                                _currentDistrict = value;
+                                _currentDistrict = value!;
                               });
                             },
                             items: _districts
@@ -282,10 +282,10 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       decoration: InputDecoration(labelText: "Ремонт"),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                            value: _currentRepair ?? _repairs.first,
+                            value: _currentRepair,
                             onChanged: (value) {
                               setState(() {
-                                _currentRepair = value;
+                                _currentRepair = value!;
                               });
                             },
                             items: _repairs

@@ -31,7 +31,9 @@ class Flat {
 
   Flat.fromJson(Map<String, dynamic> json)
       : address = json['address'],
-        price = (json['price'] as int).toDouble(),
+        price = json['price'] is int
+            ? (json['price'] as int).toDouble()
+            : json['price'],
         floor = json['floor'],
         numberOfFloors = json['numberOfFloors'],
         numberOfRooms = json['numberOfRooms'],

@@ -31,6 +31,10 @@ class FireabaseFlatsRepository extends FlatsRepository {
     return flats;
   }
 
+  Query getFlatsQuery() {
+    return FirebaseDatabase.instance.reference().child('flats');
+  }
+
   @override
   Future<void> updateFlat(Flat flat) async {
     await FirebaseDatabase.instance
