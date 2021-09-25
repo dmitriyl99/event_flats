@@ -1,6 +1,8 @@
 import 'package:event_flats/helpers/string.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
+import 'package:event_flats/services/districts.dart';
+import 'package:event_flats/services/repairs.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
@@ -21,25 +23,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   bool _isLoading = false;
   bool _isAdditionalInfo = false;
 
-  List<String> _districts = [
-    "Алмазарский район",
-    "Бектемирский район",
-    'Мирабадский район',
-    'Мирзо-Улугбекский район',
-    'Сергелинский район',
-    'Чиланзарский район',
-    'Шайхантаурский район',
-    'Юнусабадский район',
-    'Яккасарайский район',
-    'Яшнабадский район',
-  ];
-
-  List<String> _repairs = [
-    "Евро-ремонт",
-    "Средний",
-    "Требует ремонта",
-    "Черновая отделка"
-  ];
+  List<String> _districts = getDistricts();
+  List<String> _repairs = getRepairs();
 
   late String _currentDistrict = _districts.first;
   late String _currentRepair = _repairs.first;
