@@ -38,7 +38,11 @@ class Flat {
         numberOfFloors = json['numberOfFloors'],
         numberOfRooms = json['numberOfRooms'],
         flatRepair = json['flatRepair'],
-        area = json['area'] != null ? (json['area'] as int).toDouble() : null,
+        area = json['area'] != null
+            ? json['area'] is int
+                ? (json['area'] as int).toDouble()
+                : json['area']
+            : null,
         landmark = json['landmark'],
         description = json['description'],
         ownerName = json['ownerName'],
