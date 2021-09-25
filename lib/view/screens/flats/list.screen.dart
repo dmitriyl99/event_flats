@@ -86,6 +86,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
               final flat = Flat.fromJson(json);
               flat.id = snapshot.key!;
               return Dismissible(
+                  direction: DismissDirection.endToStart,
                   background: Container(
                     padding: EdgeInsets.only(right: 16),
                     child: Row(
