@@ -6,7 +6,7 @@ class Flat {
   final int numberOfFloors;
   final int numberOfRooms;
   final String flatRepair;
-  final double area;
+  final double? area;
   final String landmark;
   final String? description;
   final String? ownerName;
@@ -36,7 +36,7 @@ class Flat {
         numberOfFloors = json['numberOfFloors'],
         numberOfRooms = json['numberOfRooms'],
         flatRepair = json['flatRepair'],
-        area = (json['area'] as int).toDouble(),
+        area = json['area'] != null ? (json['area'] as int).toDouble() : null,
         landmark = json['landmark'],
         description = json['description'],
         ownerName = json['ownerName'],

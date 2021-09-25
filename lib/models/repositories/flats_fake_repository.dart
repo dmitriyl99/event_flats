@@ -55,4 +55,10 @@ class FakeFlatsRepository extends FlatsRepository {
     // TODO: implement removeById
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> toggleFavorite(String id) {
+    // TODO: implement makeFavorite
+    throw UnimplementedError();
+  }
 }

@@ -84,7 +84,40 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
               var flat = flats[index];
               if (currentUser.isAdmin) {
                 return Dismissible(
-                    background: Container(
+                    background: !flat.isFavorite
+                        ? Container(
+                            padding: EdgeInsets.only(left: 16),
+                            decoration: BoxDecoration(color: Colors.green),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.favorite, size: 32),
+                                    Text('Избранное')
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.only(left: 16),
+                            decoration: BoxDecoration(color: Colors.grey),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.favorite_border, size: 32),
+                                    Text('Из избранного')
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                    secondaryBackground: Container(
                       padding: EdgeInsets.only(right: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -102,6 +135,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                     ),
                     key: Key(flat.id),
                     confirmDismiss: (direction) async {
+                      if (direction == DismissDirection.startToEnd) return true;
                       if (direction != DismissDirection.endToStart)
                         return false;
                       var result = await showDialog(
@@ -138,6 +172,10 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.white),
                             )));
+                        setState(() {});
+                      }
+                      if (direction == DismissDirection.startToEnd) {
+                        await widget._flatsRepository.toggleFavorite(flat.id);
                         setState(() {});
                       }
                     },
@@ -181,11 +219,11 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
           },
           label: Text(
             'Добавить',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black),
           ),
           icon: Icon(
             Icons.add,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         body: FutureBuilder(

@@ -14,8 +14,11 @@ class FireabaseFlatsRepository extends FlatsRepository {
 
   @override
   Future<List<Flat>> getFlats() async {
-    var snapshot =
-        await FirebaseDatabase.instance.reference().child('flats').get();
+    var snapshot = await FirebaseDatabase.instance
+        .reference()
+        .child('flats')
+        .orderByChild('isFavorite')
+        .get();
 
     List<Flat> flats = [];
     if (snapshot.value != null)
@@ -59,5 +62,16 @@ class FireabaseFlatsRepository extends FlatsRepository {
         .child('flats')
         .child(id)
         .remove();
+  }
+
+  @override
+  Future<void> toggleFavorite(String id) async {
+    var flat = await getById(id);
+    if (flat == null) return;
+    await FirebaseDatabase.instance
+        .reference()
+        .child('flats')
+        .child(id)
+        .update({'isFavorite': !flat.isFavorite});
   }
 }

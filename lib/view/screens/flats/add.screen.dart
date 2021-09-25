@@ -99,7 +99,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   }
 
   String? _validateArea(String? value) {
-    if (value != null && !isNumeric(value)) return 'Укажите число';
+    if (value!.isNotEmpty && !isNumeric(value)) return 'Укажите число';
     return null;
   }
 
@@ -122,7 +122,9 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           _currentRepair!,
           DateTime.now(),
           false,
-          double.parse(_areaController.text),
+          _areaController.text.isNotEmpty
+              ? double.parse(_areaController.text)
+              : null,
           _descriptionController.text,
           _landmarkController.text,
           _ownerPhoneController.text,

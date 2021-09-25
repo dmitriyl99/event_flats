@@ -151,7 +151,9 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       _roomsController.text = flat.numberOfRooms.toString();
       _floorController.text = flat.floor.toString();
       _numberOfFloorsController.text = flat.numberOfFloors.toString();
-      _areaController.text = flat.area.toStringAsFixed(0);
+      if (flat.area != null) {
+        _areaController.text = flat.area!.toStringAsFixed(0);
+      }
       _descriptionController.text = flat.description ?? '';
       _ownerNameController.text = flat.ownerName ?? '';
       _ownerPhoneController.text = flat.ownerPhone;

@@ -105,7 +105,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               width: 5,
             ),
             Text(
-              flat.area.toStringAsFixed(0) + ' кв.м',
+              flat.area!.toStringAsFixed(0) + ' кв.м',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
             )
           ],
@@ -246,7 +246,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                     _divider(),
                     _roomsAndFloors(),
                     _divider(),
-                    _flatArea(),
+                    if (flat.area != null) _flatArea(),
                     _divider(),
                     _flatRepair(),
                     _divider(),

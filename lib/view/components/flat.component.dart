@@ -1,4 +1,3 @@
-import 'package:event_flats/helpers/date_formatting.dart';
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/view/resources/colors.dart';
@@ -57,7 +56,10 @@ class FlatComponent extends StatelessWidget {
             padding: EdgeInsets.all(5),
             child: Text(
               NumberFormattingHelper.currency(flat.price),
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
             ),
           ),
         ),

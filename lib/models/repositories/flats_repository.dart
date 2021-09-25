@@ -6,4 +6,5 @@ abstract class FlatsRepository {
   Future<void> updateFlat(Flat flat);
   Future<Flat?> getById(String id);
   Future<void> removeById(String id);
+  Future<void> toggleFavorite(String id);
 }
