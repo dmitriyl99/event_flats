@@ -14,10 +14,9 @@ import 'package:flutter/material.dart';
 
 class FlatsListScreen extends StatefulWidget {
   final FireabaseFlatsRepository _flatsRepository;
-  final AuthenticationService _authenticationService;
 
   static const String route = '/flats';
-  const FlatsListScreen(this._flatsRepository, this._authenticationService,
+  const FlatsListScreen(this._flatsRepository,
       {Key? key})
       : super(key: key);
 
@@ -99,6 +98,8 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
             key: Key(flat.id),
             confirmDismiss: (direction) async {
               if (direction != DismissDirection.endToStart) return false;
+              if (!(await FirebaseAuthenticationService().getUser())!.isAdmin)
+                return false;
               var result = await showDialog(
                   context: context,
                   builder: (context) {
@@ -159,14 +160,6 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
             Padding(
               padding: EdgeInsets.only(right: 15),
               child: IconButton(
-                onPressed: () async {},
-                icon: Icon(Icons.favorite),
-                iconSize: 32,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 15),
-              child: IconButton(
                 onPressed: () async {
                   var flats = await widget._flatsRepository.getFlats();
                   double maxPrice = 100000;
@@ -186,7 +179,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                     this._filter = filter as FilterViewModel;
                   });
                 },
-                icon: Icon(Icons.settings),
+                icon: Image.asset('assets/filter_white.png'),
                 iconSize: 32,
               ),
             )

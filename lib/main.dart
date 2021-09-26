@@ -49,8 +49,8 @@ class MyApp extends StatelessWidget {
       routes: {
         LoginScreen.route: (context) =>
             new LoginScreen(FirebaseAuthenticationService()),
-        FlatsListScreen.route: (context) => new FlatsListScreen(
-            FireabaseFlatsRepository(), FirebaseAuthenticationService()),
+        FlatsListScreen.route: (context) =>
+            new FlatsListScreen(FireabaseFlatsRepository()),
         FlatShowScreen.route: (context) => new FlatShowScreen(
             FirebaseAuthenticationService(), FireabaseFlatsRepository()),
         AddFlatScreen.route: (context) =>
