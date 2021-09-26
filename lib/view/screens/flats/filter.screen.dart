@@ -134,8 +134,8 @@ class _FilterScreenState extends State<FilterScreen> {
                 _priceValues = values;
                 _priceFrom = values.start;
                 _priceTo = values.end;
-                _fromPriceController.text = values.start.toString();
-                _toPriceController.text = values.end.toString();
+                _fromPriceController.text = values.start.toStringAsFixed(0);
+                _toPriceController.text = values.end.toStringAsFixed(0);
               });
             })
       ],
@@ -259,6 +259,12 @@ class _FilterScreenState extends State<FilterScreen> {
         _dateSort = currentFilter.sortDate;
         _priceUpSort = currentFilter.sortPriceUp;
         _priceDownSort = currentFilter.sortPriceDown;
+        _toPriceController.text = currentFilter.priceTo != null
+            ? currentFilter.priceTo!.toStringAsFixed(0)
+            : '0';
+        _fromPriceController.text = currentFilter.priceFrom != null
+            ? currentFilter.priceFrom!.toStringAsFixed(0)
+            : maxPrice.toStringAsFixed(0);
         _nameSort = currentFilter.sortDistrict;
       }
       _firstLoaded = true;
