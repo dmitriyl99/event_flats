@@ -1,3 +1,4 @@
+import 'package:event_flats/helpers/date_formatting.dart';
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
@@ -27,6 +28,7 @@ class FlatComponent extends StatelessWidget {
                   .pushNamed(FlatShowScreen.route, arguments: flat);
             },
             child: ListTile(
+              isThreeLine: true,
               leading: GestureDetector(
                 onTap: () async {
                   await _flatsRepository.toggleFavorite(flat.id);
@@ -61,18 +63,26 @@ class FlatComponent extends StatelessWidget {
                   Text(flat.flatRepair)
                 ],
               ),
-              trailing: Container(
-                decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(10)),
-                padding: EdgeInsets.all(5),
-                child: Text(
-                  NumberFormattingHelper.currency(flat.price),
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
-                ),
+              trailing: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(10)),
+                    padding: EdgeInsets.all(5),
+                    child: Text(
+                      NumberFormattingHelper.currency(flat.price),
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(DateFormattingHelper.formatDate(flat.createdAt))
+                ],
               ),
             ),
           ),
