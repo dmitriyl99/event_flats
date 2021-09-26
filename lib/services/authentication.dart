@@ -16,17 +16,6 @@ class FirebaseAuthenticationService implements AuthenticationService {
     var usersBox = await Hive.openBox<UserModel.User>('users');
     if (usersBox.containsKey('authenticated'))
       return usersBox.get('authenticated') as UserModel.User;
-    var currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      var data = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .get();
-      var value = data.data()!;
-      UserModel.User user = UserModel.User.fromJson(value);
-      usersBox.put('authenticated', user);
-      return user;
-    }
     return null;
   }
 
