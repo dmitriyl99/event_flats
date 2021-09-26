@@ -21,9 +21,14 @@ class FireabaseFlatsRepository extends FlatsRepository {
     return flats;
   }
 
-  Stream<QuerySnapshot> getFlatsStream({FilterViewModel? filter}) {
-    if (filter == null)
-      return FirebaseFirestore.instance.collection('flats').snapshots();
+  Stream<QuerySnapshot> getFlatsStream(
+      {FilterViewModel? filter, bool isFavorite: false}) {
+    if (filter == null) {
+      var reference = FirebaseFirestore.instance.collection('flats');
+      if (isFavorite)
+        return reference.where('isFavorite', isEqualTo: true).snapshots();
+      return reference.snapshots();
+    }
     var query = FirebaseFirestore.instance
         .collection('flats')
         .where('price', isGreaterThanOrEqualTo: filter.priceFrom)
@@ -48,6 +53,9 @@ class FireabaseFlatsRepository extends FlatsRepository {
     }
     if (filter.sortDate) {
       query = query.orderBy('createdAt', descending: true);
+    }
+    if (isFavorite) {
+      query = query.where('isFavorite', isEqualTo: true);
     }
     return query.snapshots();
   }

@@ -25,6 +25,8 @@ class FlatsListScreen extends StatefulWidget {
 class _FlatsListScreenState extends State<FlatsListScreen> {
   FilterViewModel? _filter;
 
+  bool _isFavoritePage = false;
+
   Widget buildError() {
     return Center(
       child: Column(
@@ -216,6 +218,17 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: _isFavoritePage
+                ? Icon(Icons.favorite, color: AppColors.primaryColor)
+                : Icon(Icons.favorite_outline),
+            iconSize: 38,
+            onPressed: () {
+              setState(() {
+                _isFavoritePage = !_isFavoritePage;
+              });
+            },
+          ),
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 15),
@@ -264,7 +277,8 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
         body: Padding(
           padding: const EdgeInsets.only(top: 16.0),
           child: StreamBuilder<QuerySnapshot>(
-            stream: widget._flatsRepository.getFlatsStream(filter: _filter),
+            stream: widget._flatsRepository
+                .getFlatsStream(filter: _filter, isFavorite: _isFavoritePage),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return buildLoading();
