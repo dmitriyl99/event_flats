@@ -66,6 +66,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
               ),
               Text(
                 'Квартиры ещё не добавлены. Нажмите на кнопку в правом нижнем углу, чтобы добавить квартиру',
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 21),
               ),
             ],
