@@ -234,14 +234,9 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
               padding: EdgeInsets.only(right: 15),
               child: IconButton(
                 onPressed: () async {
-                  var flats = await widget._flatsRepository.getFlats();
-                  double maxPrice = 100000;
-                  if (flats.length > 0) {
-                    flats.sort((a, b) {
-                      return b.price.compareTo(a.price);
-                    });
-                    maxPrice = flats[0].price;
-                  }
+                  double maxPrice =
+                      (await widget._flatsRepository.getMaxFlatPrice()) ??
+                          100000;
                   var filter = await Navigator.of(context)
                       .pushNamed(FilterScreen.route, arguments: {
                     'maxPrice': maxPrice,

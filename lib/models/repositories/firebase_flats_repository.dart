@@ -21,6 +21,16 @@ class FireabaseFlatsRepository extends FlatsRepository {
     return flats;
   }
 
+  Future<double?> getMaxFlatPrice() async {
+    var expansiveFlatSnapshot = await FirebaseFirestore.instance
+        .collection('flats')
+        .orderBy('price', descending: true)
+        .limit(1)
+        .get();
+    if (expansiveFlatSnapshot.docs.isEmpty) return null;
+    return expansiveFlatSnapshot.docs.first.data()['price'];
+  }
+
   Stream<QuerySnapshot> getFlatsStream(
       {FilterViewModel? filter, bool isFavorite: false}) {
     if (filter == null) {
