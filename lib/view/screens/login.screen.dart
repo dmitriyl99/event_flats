@@ -1,7 +1,7 @@
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/ui/bezier_container.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -84,10 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: controller,
               validator: validator,
               obscureText: isPassword,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
-                  filled: true))
+              decoration:
+                  InputDecoration(border: InputBorder.none, filled: true))
         ],
       ),
     );
@@ -102,20 +100,10 @@ class _LoginScreenState extends State<LoginScreen> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.grey.shade200,
-                    offset: Offset(2, 4),
-                    blurRadius: 5,
-                    spreadRadius: 2)
-              ],
-              gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Color(0xfffbb448), Color(0xfff7892b)])),
+              color: AppColors.primaryColor),
           child: !_isLoading
               ? Text('Вход',
-                  style: TextStyle(fontSize: 20, color: Colors.white))
+                  style: TextStyle(fontSize: 21, color: Colors.black))
               : SizedBox(
                   height: 24,
                   width: 24,
@@ -134,16 +122,16 @@ class _LoginScreenState extends State<LoginScreen> {
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.w700,
-            color: Color(0xffe46b10),
+            color: AppColors.primaryColor,
           ),
           children: [
             TextSpan(
               text: 'nt F',
-              style: TextStyle(color: Colors.black, fontSize: 30),
+              style: TextStyle(color: Colors.white, fontSize: 30),
             ),
             TextSpan(
               text: 'lats',
-              style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
+              style: TextStyle(color: AppColors.primaryColor, fontSize: 30),
             ),
           ]),
     );
