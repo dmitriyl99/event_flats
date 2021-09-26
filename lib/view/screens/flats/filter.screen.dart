@@ -1,6 +1,7 @@
 import 'package:event_flats/services/districts.dart';
 import 'package:event_flats/services/repairs.dart';
 import 'package:event_flats/view/resources/colors.dart';
+import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:flutter/material.dart';
 
 class FilterScreen extends StatefulWidget {
@@ -268,7 +269,20 @@ class _FilterScreenState extends State<FilterScreen> {
             child: IconButton(
               icon: Icon(Icons.check),
               iconSize: 32,
-              onPressed: () {},
+              onPressed: () {
+                var viewModel = FilterViewModel(
+                    _currentDistrict == _districts[0] ? null : _currentDistrict,
+                    _roomStart == _fromRooms[0] ? null : int.parse(_roomStart),
+                    _roomEnd == _toRooms[0] ? null : int.parse(_roomEnd),
+                    _priceValues.start,
+                    _priceValues.end,
+                    _currentRepair == _repairs[0] ? null : _currentRepair,
+                    sortPriceDown: _priceDownSort,
+                    sortPriceUp: _priceUpSort,
+                    sortDistrict: _nameSort,
+                    sortDate: _dateSort);
+                Navigator.of(context).pop(viewModel);
+              },
             ),
           )
         ],

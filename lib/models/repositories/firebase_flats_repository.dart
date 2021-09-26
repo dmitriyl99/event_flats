@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -5,55 +6,40 @@ import 'package:firebase_database/firebase_database.dart';
 class FireabaseFlatsRepository extends FlatsRepository {
   @override
   Future<void> createFlat(Flat flat) async {
-    await FirebaseDatabase.instance
-        .reference()
-        .child('flats')
-        .push()
-        .set(flat.toJson());
+    await FirebaseFirestore.instance.collection('flats').add(flat.toJson());
   }
 
   @override
   Future<List<Flat>> getFlats() async {
-    var snapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('flats')
-        .orderByChild('isFavorite')
-        .get();
+    var snapshot = await FirebaseFirestore.instance.collection('flats').get();
 
     List<Flat> flats = [];
-    if (snapshot.value != null)
-      snapshot.value.forEach((id, flat) {
-        var flatModel = Flat.fromJson(Map<String, dynamic>.from(flat));
-        flatModel.id = id;
-        flats.add(flatModel);
-      });
+    snapshot.docs.forEach((element) {
+      flats.add(Flat.fromJson(element.data()));
+    });
 
     return flats;
   }
 
-  Query getFlatsQuery() {
-    return FirebaseDatabase.instance.reference().child('flats');
+  Stream<QuerySnapshot> getFlatsStream() {
+    return FirebaseFirestore.instance.collection('flats').snapshots();
   }
 
   @override
   Future<void> updateFlat(Flat flat) async {
-    await FirebaseDatabase.instance
-        .reference()
-        .child('flats')
-        .child(flat.id)
-        .set(flat.toJson());
+    await FirebaseFirestore.instance
+        .collection('flats')
+        .doc(flat.id)
+        .update(flat.toJson());
   }
 
   @override
   Future<Flat?> getById(String id) async {
-    var result = await FirebaseDatabase.instance
-        .reference()
-        .child('flats')
-        .child(id)
-        .once();
+    var result =
+        await FirebaseFirestore.instance.collection('flats').doc(id).get();
     if (result.exists) {
-      var flat = Flat.fromJson(Map<String, dynamic>.from(result.value));
-      flat.id = result.key!;
+      var flat = Flat.fromJson(result.data()!);
+      flat.id = result.id;
       return flat;
     }
     return null;
@@ -61,21 +47,16 @@ class FireabaseFlatsRepository extends FlatsRepository {
 
   @override
   Future<void> removeById(String id) async {
-    await FirebaseDatabase.instance
-        .reference()
-        .child('flats')
-        .child(id)
-        .remove();
+    await FirebaseFirestore.instance.collection('flats').doc(id).delete();
   }
 
   @override
   Future<void> toggleFavorite(String id) async {
     var flat = await getById(id);
     if (flat == null) return;
-    await FirebaseDatabase.instance
-        .reference()
-        .child('flats')
-        .child(id)
+    await FirebaseFirestore.instance
+        .collection('flats')
+        .doc(id)
         .update({'isFavorite': !flat.isFavorite});
   }
 }

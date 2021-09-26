@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_flats/models/user.dart' as UserModel;
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,13 +19,11 @@ class FirebaseAuthenticationService implements AuthenticationService {
       return usersBox.get('authenticated') as UserModel.User;
     var currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
-      var data = await FirebaseDatabase.instance
-          .reference()
-          .child('users')
-          .orderByKey()
-          .equalTo(currentUser.uid)
-          .once();
-      var value = data.value[currentUser.uid];
+      var data = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+      var value = data.data()!;
       UserModel.User user = UserModel.User.fromJson(value);
       usersBox.put('authenticated', user);
       return user;
@@ -42,13 +41,9 @@ class FirebaseAuthenticationService implements AuthenticationService {
       throw new AuthenticationFailed();
     }
     String userUid = userCredential.user!.uid;
-    var data = await FirebaseDatabase.instance
-        .reference()
-        .child('users')
-        .orderByKey()
-        .equalTo(userUid)
-        .once();
-    var value = data.value[userUid];
+    var data =
+        await FirebaseFirestore.instance.collection('users').doc(userUid).get();
+    var value = data.data()!;
     UserModel.User user = UserModel.User.fromJson(value);
     var usersBox = await Hive.openBox<UserModel.User>('users');
     usersBox.put('authenticated', user);

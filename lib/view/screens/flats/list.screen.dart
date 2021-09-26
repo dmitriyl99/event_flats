@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/firebase_flats_repository.dart';
 import 'package:event_flats/models/user.dart';
@@ -6,6 +7,7 @@ import 'package:event_flats/view/components/flat.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/add.screen.dart';
 import 'package:event_flats/view/screens/flats/filter.screen.dart';
+import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -45,13 +47,6 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     setState(() {});
   }
 
-  Future<Map<String, dynamic>> init() async {
-    var flats = await widget._flatsRepository.getFlats();
-    var user = await widget._authenticationService.getUser();
-
-    return {'flats': flats, 'user': user};
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,6 +75,9 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                   var filter = await Navigator.of(context).pushNamed(
                       FilterScreen.route,
                       arguments: {'maxPrice': maxPrice});
+                  if (filter == null) return;
+                  filter = filter as FilterViewModel;
+                  print(filter);
                 },
                 icon: Icon(Icons.settings),
                 iconSize: 32,
@@ -104,87 +102,95 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 16.0),
-          child: FirebaseAnimatedList(
-            query: widget._flatsRepository.getFlatsQuery(),
-            itemBuilder: (context, snapshot, animation, index) {
-              final json = Map<String, dynamic>.from(snapshot.value);
-              final flat = Flat.fromJson(json);
-              flat.id = snapshot.key!;
-              return Dismissible(
-                  direction: DismissDirection.endToStart,
-                  background: Container(
-                    padding: EdgeInsets.only(right: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+          child: StreamBuilder<QuerySnapshot>(
+            stream: widget._flatsRepository.getFlatsStream(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return buildLoading();
+              }
+              if (snapshot.hasError) {
+                return Text(
+                    snapshot.error.toString() + '\n${snapshot.stackTrace}');
+              }
+              return ListView(
+                children: snapshot.data!.docs
+                    .map<Widget>((DocumentSnapshot document) {
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  var flat = Flat.fromJson(data);
+                  flat.id = document.id;
+                  return Dismissible(
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        padding: EdgeInsets.only(right: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Icon(Icons.delete, size: 32),
-                            Text('Удалить')
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.delete, size: 32),
+                                Text('Удалить')
+                              ],
+                            )
                           ],
-                        )
-                      ],
-                    ),
-                    decoration: BoxDecoration(color: Colors.red),
-                  ),
-                  key: Key(flat.id),
-                  confirmDismiss: (direction) async {
-                    if (direction != DismissDirection.endToStart) return false;
-                    var result = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text('Вы уверены?'),
-                            content: Text(
-                                'Вы уверены, что хотите удалить квартиру ${flat.address}?'),
-                            actions: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(false);
-                                      },
-                                      child: Text(
-                                        'Отмена',
-                                        style: TextStyle(fontSize: 18),
-                                      )),
-                                  TextButton(
-                                    child: Text(
-                                      'Да',
-                                      style: TextStyle(fontSize: 19),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
+                        ),
+                        decoration: BoxDecoration(color: Colors.red),
+                      ),
+                      key: Key(flat.id),
+                      confirmDismiss: (direction) async {
+                        if (direction != DismissDirection.endToStart)
+                          return false;
+                        var result = await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('Вы уверены?'),
+                                content: Text(
+                                    'Вы уверены, что хотите удалить квартиру ${flat.address}?'),
+                                actions: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(false);
+                                          },
+                                          child: Text(
+                                            'Отмена',
+                                            style: TextStyle(fontSize: 18),
+                                          )),
+                                      TextButton(
+                                        child: Text(
+                                          'Да',
+                                          style: TextStyle(fontSize: 19),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true);
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ],
-                              ),
-                            ],
-                          );
-                        });
-                    if (result) {
-                      await widget._flatsRepository.removeById(flat.id);
-                    }
-                    return false;
-                  },
-                  onDismissed: (direction) async {
-                    if (direction == DismissDirection.endToStart) {
-                      await widget._flatsRepository.removeById(flat.id);
-                      setState(() {});
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: AppColors.primaryColor,
-                          content: Text(
-                            'Квартира удалена',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white),
-                          )));
-                    }
-                  },
-                  child:
-                      FlatComponent(flat, widget._flatsRepository, onFlatEdit));
+                              );
+                            });
+                        if (result) {
+                          await widget._flatsRepository.removeById(flat.id);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: AppColors.primaryColor,
+                              content: Text(
+                                'Квартира удалена',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white),
+                              )));
+                        }
+                        return false;
+                      },
+                      child: FlatComponent(
+                          flat, widget._flatsRepository, onFlatEdit));
+                }).toList(),
+              );
             },
           ),
         ));

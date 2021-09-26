@@ -50,7 +50,7 @@ class Flat {
         isFavorite = json['isFavorite'],
         createdAt = DateTime.parse(json['createdAt']);
 
-  Map<dynamic, dynamic> toJson() => <dynamic, dynamic>{
+  Map<String, dynamic> toJson() => <String, dynamic>{
         'address': address,
         'price': price,
         'floor': floor,
