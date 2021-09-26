@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 
 class FireabaseFlatsRepository extends FlatsRepository {
   @override
@@ -21,8 +21,35 @@ class FireabaseFlatsRepository extends FlatsRepository {
     return flats;
   }
 
-  Stream<QuerySnapshot> getFlatsStream() {
-    return FirebaseFirestore.instance.collection('flats').snapshots();
+  Stream<QuerySnapshot> getFlatsStream({FilterViewModel? filter}) {
+    if (filter == null)
+      return FirebaseFirestore.instance.collection('flats').snapshots();
+    var query = FirebaseFirestore.instance
+        .collection('flats')
+        .where('price', isGreaterThanOrEqualTo: filter.priceFrom)
+        .where('price', isLessThanOrEqualTo: filter.priceTo);
+    if (filter.district != null) {
+      query = query.where('address', isEqualTo: filter.district);
+    }
+    if (filter.repair != null) {
+      query = query.where('flatRepair', isEqualTo: filter.repair);
+    }
+    if (filter.rooms != null) {
+      query = query.where('numberOfRooms', isEqualTo: filter.rooms);
+    }
+    if (filter.sortPriceDown) {
+      query = query.orderBy('price', descending: true);
+    }
+    if (filter.sortPriceUp) {
+      query = query.orderBy('price');
+    }
+    if (filter.sortDistrict) {
+      query = query.orderBy('address');
+    }
+    if (filter.sortDate) {
+      query = query.orderBy('createdAt', descending: true);
+    }
+    return query.snapshots();
   }
 
   @override

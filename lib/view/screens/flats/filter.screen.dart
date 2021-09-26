@@ -18,12 +18,14 @@ class _FilterScreenState extends State<FilterScreen> {
   late String _currentRepair = _repairs[0];
   List<String> _districts = ['Все районы', ...getDistricts()];
   List<String> _repairs = ['Все ремонты', ...getRepairs()];
-  List<String> _fromRooms = ['От', '1', '2', '3', '4', '5', '6', '7'];
-  List<String> _toRooms = ['До', '1', '2', '3', '4', '5', '6', '7'];
-  late String _roomStart = _fromRooms[0];
-  late String _roomEnd = _toRooms[0];
+  List<String> _roomsList = ['Все', '1', '2', '3', '4', '5', '6', '7'];
+  late String _rooms = _roomsList[0];
   bool _firstLoaded = false;
   RangeValues _priceValues = RangeValues(0, 100000);
+
+  double? _priceFrom;
+  double? _priceTo;
+
   bool _nameSort = false;
   bool _priceUpSort = false;
   bool _priceDownSort = false;
@@ -65,64 +67,28 @@ class _FilterScreenState extends State<FilterScreen> {
           width: 50,
         ),
         Expanded(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child:
-                    FormField<String>(builder: (FormFieldState<String> state) {
-                  return InputDecorator(
-                    decoration: InputDecoration(),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                          value: _roomStart,
-                          isDense: true,
-                          onChanged: (value) {
-                            setState(() {
-                              _roomStart = value!;
-                            });
-                          },
-                          items: _fromRooms
-                              .map<DropdownMenuItem<String>>(
-                                  (value) => DropdownMenuItem(
-                                        value: value,
-                                        child: Text(value),
-                                      ))
-                              .toList()),
-                    ),
-                  );
-                }),
+          child: FormField<String>(builder: (FormFieldState<String> state) {
+            return InputDecorator(
+              decoration: InputDecoration(),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                    value: _rooms,
+                    isDense: true,
+                    onChanged: (value) {
+                      setState(() {
+                        _rooms = value!;
+                      });
+                    },
+                    items: _roomsList
+                        .map<DropdownMenuItem<String>>(
+                            (value) => DropdownMenuItem(
+                                  value: value,
+                                  child: Text(value),
+                                ))
+                        .toList()),
               ),
-              SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child:
-                    FormField<String>(builder: (FormFieldState<String> state) {
-                  return InputDecorator(
-                    decoration: InputDecoration(),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                          value: _roomEnd,
-                          isDense: true,
-                          onChanged: (value) {
-                            setState(() {
-                              _roomEnd = value!;
-                            });
-                          },
-                          items: _toRooms
-                              .map<DropdownMenuItem<String>>(
-                                  (value) => DropdownMenuItem(
-                                        value: value,
-                                        child: Text(value),
-                                      ))
-                              .toList()),
-                    ),
-                  );
-                }),
-              )
-            ],
-          ),
+            );
+          }),
         )
       ],
     );
@@ -148,6 +114,8 @@ class _FilterScreenState extends State<FilterScreen> {
             onChanged: (values) {
               setState(() {
                 _priceValues = values;
+                _priceFrom = values.start;
+                _priceTo = values.end;
               });
             })
       ],
@@ -256,8 +224,23 @@ class _FilterScreenState extends State<FilterScreen> {
     var args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     double maxPrice = args['maxPrice'];
+    FilterViewModel? currentFilter = args['currentFilter'];
+
     if (!_firstLoaded) {
       _priceValues = RangeValues(0, maxPrice);
+      if (currentFilter != null) {
+        _currentDistrict = currentFilter.district ?? _districts[0];
+        _currentRepair = currentFilter.repair ?? _repairs[0];
+        _priceValues = RangeValues(
+            currentFilter.priceFrom ?? 0, currentFilter.priceTo ?? maxPrice);
+        _rooms = currentFilter.rooms != null
+            ? currentFilter.rooms.toString()
+            : _roomsList[0];
+        _dateSort = currentFilter.sortDate;
+        _priceUpSort = currentFilter.sortPriceUp;
+        _priceDownSort = currentFilter.sortPriceDown;
+        _nameSort = currentFilter.sortDistrict;
+      }
       _firstLoaded = true;
     }
     return Scaffold(
@@ -272,10 +255,9 @@ class _FilterScreenState extends State<FilterScreen> {
               onPressed: () {
                 var viewModel = FilterViewModel(
                     _currentDistrict == _districts[0] ? null : _currentDistrict,
-                    _roomStart == _fromRooms[0] ? null : int.parse(_roomStart),
-                    _roomEnd == _toRooms[0] ? null : int.parse(_roomEnd),
-                    _priceValues.start,
-                    _priceValues.end,
+                    _rooms == _roomsList[0] ? null : int.parse(_rooms),
+                    _priceFrom,
+                    _priceTo,
                     _currentRepair == _repairs[0] ? null : _currentRepair,
                     sortPriceDown: _priceDownSort,
                     sortPriceUp: _priceUpSort,
