@@ -51,28 +51,56 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     );
   }
 
+  Widget _buildNotFound() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '🔍',
+              style: TextStyle(fontSize: 42),
+            ),
+            Text(
+              'По вашему запросу ничего не найдено',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 21),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyList() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '🏠',
+              style: TextStyle(fontSize: 42),
+            ),
+            Text(
+              'Квартиры ещё не добавлены. Нажмите на кнопку в правом нижнем углу, чтобы добавить квартиру',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 21),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget buildList(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
     var docs = snapshot.data!.docs;
-    if (docs.length == 0) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                '🙂',
-                style: TextStyle(fontSize: 42),
-              ),
-              Text(
-                'Квартиры ещё не добавлены. Нажмите на кнопку в правом нижнем углу, чтобы добавить квартиру',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 21),
-              ),
-            ],
-          ),
-        ),
-      );
+    if (docs.length == 0 && _filter != null) {
+      return _buildNotFound();
+    } else if (docs.length == 0) {
+      return _buildEmptyList();
     }
     return ListView(
       children: snapshot.data!.docs.map<Widget>((DocumentSnapshot document) {
