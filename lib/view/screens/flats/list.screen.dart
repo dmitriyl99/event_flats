@@ -16,9 +16,7 @@ class FlatsListScreen extends StatefulWidget {
   final FireabaseFlatsRepository _flatsRepository;
 
   static const String route = '/flats';
-  const FlatsListScreen(this._flatsRepository,
-      {Key? key})
-      : super(key: key);
+  const FlatsListScreen(this._flatsRepository, {Key? key}) : super(key: key);
 
   @override
   State<FlatsListScreen> createState() => _FlatsListScreenState();
@@ -98,8 +96,41 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
             key: Key(flat.id),
             confirmDismiss: (direction) async {
               if (direction != DismissDirection.endToStart) return false;
-              if (!(await FirebaseAuthenticationService().getUser())!.isAdmin)
+              if (!(await FirebaseAuthenticationService().getUser())!.isAdmin) {
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          title: Text('Ограничение'),
+                          content: Container(
+                              height: 100,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.warning,
+                                    color: Colors.yellow,
+                                    size: 42,
+                                  ),
+                                  Text(
+                                    'У вас нет прав на удаление квартир',
+                                    style: TextStyle(fontSize: 21),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              )),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(
+                                  'Ок',
+                                  style: TextStyle(fontSize: 19),
+                                ))
+                          ],
+                        ));
                 return false;
+              }
               var result = await showDialog(
                   context: context,
                   builder: (context) {
