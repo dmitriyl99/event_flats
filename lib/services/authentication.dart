@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_flats/models/user.dart' as UserModel;
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class AuthenticationService {

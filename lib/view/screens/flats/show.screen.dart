@@ -31,7 +31,6 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
         .pushNamed(EditFlatScreen.route, arguments: flat);
     if (result != null && result == true) {
       setState(() {});
-      _edited = true;
     }
   }
 

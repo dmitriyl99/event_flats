@@ -7,10 +7,8 @@ import 'package:flutter/material.dart';
 
 class FlatComponent extends StatelessWidget {
   final Flat flat;
-  final Function onEditCallback;
 
-  const FlatComponent(this.flat, this._flatsRepository, this.onEditCallback,
-      {Key? key})
+  const FlatComponent(this.flat, this._flatsRepository, {Key? key})
       : super(key: key);
 
   final FlatsRepository _flatsRepository;
@@ -40,12 +38,9 @@ class FlatComponent extends StatelessWidget {
                   height: 36,
                 ),
               ),
-              onTap: () async {
-                var result = await Navigator.of(context)
+              onTap: () {
+                Navigator.of(context)
                     .pushNamed(FlatShowScreen.route, arguments: flat);
-                if (result != null && result == true) {
-                  onEditCallback.call();
-                }
               },
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
