@@ -140,6 +140,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
 
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text('Редактировать квартиру'),
           actions: [
             Padding(

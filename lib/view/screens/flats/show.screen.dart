@@ -219,6 +219,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Event Flats'),
         leading: IconButton(
           onPressed: () {

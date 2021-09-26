@@ -116,6 +116,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
         mask: '+### ## ###-##-##', filter: {"#": RegExp(r'[0-9]')});
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text('Добавить квартиру'),
           actions: [
             Padding(

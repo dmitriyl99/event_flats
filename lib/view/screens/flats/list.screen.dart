@@ -216,6 +216,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
             )
           ],
           title: Text('Event Flats'),
+          centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton.extended(
           backgroundColor: AppColors.primaryColor,
@@ -240,7 +241,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                 return buildLoading();
               }
               if (snapshot.hasError) {
-                log(snapshot.error.toString() + '\n${snapshot.stackTrace}');
+                print(snapshot.error.toString() + '\n${snapshot.stackTrace}');
                 return buildError();
               }
               return buildList(snapshot);

@@ -31,6 +31,9 @@ class _FilterScreenState extends State<FilterScreen> {
   bool _priceDownSort = false;
   bool _dateSort = false;
 
+  TextEditingController _fromPriceController = new TextEditingController();
+  TextEditingController _toPriceController = new TextEditingController();
+
   Widget _districtFilter() {
     return FormField<String>(builder: (FormFieldState<String> state) {
       return InputDecorator(
@@ -98,9 +101,24 @@ class _FilterScreenState extends State<FilterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Цена за квартиру у.е: ${_priceValues.start.toStringAsFixed(0)} - ${_priceValues.end.toStringAsFixed(0)}',
-          style: TextStyle(fontSize: 21),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Цена за квартиру у.е:',
+              style: TextStyle(fontSize: 21),
+            ),
+            Expanded(
+                child: TextField(
+                    controller: _fromPriceController,
+                    textAlign: TextAlign.center)),
+            Text('-', style: TextStyle(fontSize: 21)),
+            Expanded(
+                child: TextField(
+                    controller: _toPriceController,
+                    textAlign: TextAlign.center))
+          ],
         ),
         SizedBox(
           height: 16,
@@ -116,6 +134,8 @@ class _FilterScreenState extends State<FilterScreen> {
                 _priceValues = values;
                 _priceFrom = values.start;
                 _priceTo = values.end;
+                _fromPriceController.text = values.start.toString();
+                _toPriceController.text = values.end.toString();
               });
             })
       ],
@@ -246,6 +266,7 @@ class _FilterScreenState extends State<FilterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Фильтр'),
+        centerTitle: true,
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 16),
