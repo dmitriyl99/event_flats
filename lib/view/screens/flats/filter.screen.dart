@@ -34,6 +34,27 @@ class _FilterScreenState extends State<FilterScreen> {
   TextEditingController _fromPriceController = new TextEditingController();
   TextEditingController _toPriceController = new TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    _fromPriceController.addListener(() {
+      setState(() {
+        _priceFrom = _fromPriceController.text.isEmpty
+            ? _priceFrom
+            : double.tryParse(_fromPriceController.text);
+        _priceValues = RangeValues(_priceFrom!, _priceValues.end);
+      });
+    });
+    _toPriceController.addListener(() {
+      setState(() {
+        _priceTo = _toPriceController.text.isEmpty
+            ? _priceTo
+            : double.tryParse(_toPriceController.text);
+        _priceValues = RangeValues(_priceValues.start, _priceTo!);
+      });
+    });
+  }
+
   Widget _districtFilter() {
     return FormField<String>(builder: (FormFieldState<String> state) {
       return InputDecorator(
@@ -112,10 +133,12 @@ class _FilterScreenState extends State<FilterScreen> {
             Expanded(
                 child: TextField(
                     controller: _fromPriceController,
+                    keyboardType: TextInputType.number,
                     textAlign: TextAlign.center)),
             Text('-', style: TextStyle(fontSize: 21)),
             Expanded(
                 child: TextField(
+                    keyboardType: TextInputType.number,
                     controller: _toPriceController,
                     textAlign: TextAlign.center))
           ],
@@ -259,16 +282,12 @@ class _FilterScreenState extends State<FilterScreen> {
         _dateSort = currentFilter.sortDate;
         _priceUpSort = currentFilter.sortPriceUp;
         _priceDownSort = currentFilter.sortPriceDown;
-        _toPriceController.text = currentFilter.priceTo != null
-            ? currentFilter.priceTo!.toStringAsFixed(0)
-            : '0';
-        _fromPriceController.text = currentFilter.priceFrom != null
-            ? currentFilter.priceFrom!.toStringAsFixed(0)
-            : maxPrice.toStringAsFixed(0);
         _nameSort = currentFilter.sortDistrict;
       }
       _firstLoaded = true;
     }
+    _toPriceController.text = _priceValues.end.toStringAsFixed(0);
+    _fromPriceController.text = _priceValues.start.toStringAsFixed(0);
     return Scaffold(
       appBar: AppBar(
         title: Text('Фильтр'),
