@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:event_flats/helpers/number_formatting.dart';
@@ -10,6 +11,7 @@ import 'package:event_flats/view/screens/flats/edit.screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class FlatShowScreen extends StatefulWidget {
   static String route = '/flats/show';
@@ -35,6 +37,21 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
   }
 
   bool _edited = false;
+
+  Widget _buildImage(Flat flat) {
+    return FutureBuilder(
+      future: flat.photo,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Container();
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container();
+        }
+        return Image.network(snapshot.data as String);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -242,6 +259,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _buildImage(flat),
                     _nameAndAddressSection(),
                     _divider(),
                     _roomsAndFloors(),
@@ -291,11 +309,11 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                 },
                 label: Text(
                   'Редактировать',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.black),
                 ),
                 icon: Icon(
                   Icons.edit,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               );
             }

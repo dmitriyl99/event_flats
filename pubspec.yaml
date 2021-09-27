@@ -37,6 +37,9 @@ dependencies:
   url_launcher: ^6.0.10
   mask_text_input_formatter: ^2.0.0
   flutter_native_splash: ^1.2.4
+  firebase_storage: ^10.0.3
+  image_picker: ^0.8.4+2
+  flutter_image_compress: ^1.1.0
 
 dev_dependencies:
   flutter_test:

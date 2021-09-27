@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
+
 class Flat {
   late String id;
   final String address;
@@ -13,6 +17,7 @@ class Flat {
   final String ownerPhone;
   final bool isFavorite;
   final DateTime createdAt;
+  File? image;
 
   Flat(
       this.address,
@@ -27,7 +32,8 @@ class Flat {
       this.description,
       this.landmark,
       this.ownerPhone,
-      {this.ownerName});
+      {this.ownerName,
+      this.image});
 
   Flat.fromJson(Map<String, dynamic> json)
       : address = json['address'],
@@ -48,7 +54,9 @@ class Flat {
         ownerName = json['ownerName'],
         ownerPhone = json['ownerPhone'],
         isFavorite = json['isFavorite'],
-        createdAt = DateTime.parse(json['createdAt']);
+        createdAt = DateTime.parse(
+          json['createdAt'],
+        );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'address': address,
@@ -63,6 +71,15 @@ class Flat {
         'ownerName': ownerName,
         'ownerPhone': ownerPhone,
         'isFavorite': isFavorite,
-        'createdAt': createdAt.toString()
+        'createdAt': createdAt.toString(),
       };
+
+  Future<String> get photo async {
+    var downloadUrl = await FirebaseStorage.instance
+        .ref()
+        .child('flats')
+        .child(this.id)
+        .getDownloadURL();
+    return downloadUrl;
+  }
 }

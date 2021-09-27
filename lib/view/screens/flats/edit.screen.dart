@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/helpers/string.dart';
 import 'package:event_flats/models/flat.dart';
@@ -6,6 +8,7 @@ import 'package:event_flats/services/districts.dart';
 import 'package:event_flats/services/repairs.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 // ignore: must_be_immutable
@@ -41,6 +44,9 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   TextEditingController _descriptionController = new TextEditingController();
   TextEditingController _ownerNameController = new TextEditingController();
   TextEditingController _ownerPhoneController = new TextEditingController();
+
+  final ImagePicker _picker = ImagePicker();
+  File? _currentImage;
 
   @override
   void dispose() {
@@ -106,7 +112,8 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           _descriptionController.text,
           _landmarkController.text,
           _ownerPhoneController.text,
-          ownerName: _ownerNameController.text);
+          ownerName: _ownerNameController.text,
+          image: _currentImage);
       flat.id = id;
       await widget._flatsRepository.updateFlat(flat);
       setState(() {
@@ -305,6 +312,87 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     controller: _descriptionController,
                     maxLines: 4,
                     decoration: InputDecoration(labelText: 'Описание'),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    'Изображение',
+                    style: TextStyle(fontSize: 21),
+                  ),
+                  if (_currentImage == null)
+                    FutureBuilder(
+                      future: flat.photo,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Container();
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container();
+                        }
+                        return Image.network(snapshot.data as String);
+                      },
+                    ),
+                  if (_currentImage != null)
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Image.file(_currentImage!)
+                      ],
+                    ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  AppColors.primaryColor)),
+                          onPressed: () async {
+                            final XFile? image = await _picker.pickImage(
+                                source: ImageSource.camera);
+                            if (image != null) {
+                              print(image.path);
+                              setState(() {
+                                _currentImage = File(image.path);
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text('С камеры',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black)),
+                          )),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  AppColors.primaryColor)),
+                          onPressed: () async {
+                            final XFile? image = await _picker.pickImage(
+                                source: ImageSource.gallery);
+                            if (image != null) {
+                              print(image.path);
+                              setState(() {
+                                _currentImage = File(image.path);
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text('С устройства',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black)),
+                          ))
+                    ],
                   ),
                   SizedBox(
                     height: 30,

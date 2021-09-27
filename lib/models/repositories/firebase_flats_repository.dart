@@ -1,12 +1,28 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class FireabaseFlatsRepository extends FlatsRepository {
   @override
   Future<void> createFlat(Flat flat) async {
-    await FirebaseFirestore.instance.collection('flats').add(flat.toJson());
+    var flatDoc =
+        await FirebaseFirestore.instance.collection('flats').add(flat.toJson());
+    if (flat.image != null) {
+      File file = flat.image!;
+      var compressedFile =
+          await FlutterImageCompress.compressWithFile(file.absolute.path);
+      if (compressedFile != null)
+        await FirebaseStorage.instance
+            .ref()
+            .child('flats')
+            .child('/${flatDoc.id}')
+            .putData(compressedFile);
+    }
   }
 
   @override
@@ -76,6 +92,17 @@ class FireabaseFlatsRepository extends FlatsRepository {
         .collection('flats')
         .doc(flat.id)
         .update(flat.toJson());
+    if (flat.image != null) {
+      File file = flat.image!;
+      var compressedFile =
+          await FlutterImageCompress.compressWithFile(file.absolute.path);
+      if (compressedFile != null)
+        await FirebaseStorage.instance
+            .ref()
+            .child('flats')
+            .child('/${flat.id}')
+            .putData(compressedFile);
+    }
   }
 
   @override
@@ -93,6 +120,7 @@ class FireabaseFlatsRepository extends FlatsRepository {
   @override
   Future<void> removeById(String id) async {
     await FirebaseFirestore.instance.collection('flats').doc(id).delete();
+    await FirebaseStorage.instance.ref().child('flats').child(id).delete();
   }
 
   @override
