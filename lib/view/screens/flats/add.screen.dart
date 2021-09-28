@@ -87,6 +87,12 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
 
   String? _validateFloors(String? value) {
     if (value == null || value.isEmpty) return 'Укажите этаж';
+    if (int.tryParse(value) == null) return 'Укажите число';
+    if (_numberOfFloorsController.text.isNotEmpty) {
+      var numberOfFloors = int.tryParse(_numberOfFloorsController.text);
+      if (numberOfFloors == null) return null;
+      if (int.tryParse(value)! > numberOfFloors) return 'Этаж больше этажности';
+    }
     return null;
   }
 
