@@ -22,6 +22,7 @@ class _FilterScreenState extends State<FilterScreen> {
   late String _rooms = _roomsList[0];
   bool _firstLoaded = false;
   RangeValues _priceValues = RangeValues(0, 100000);
+  RangeValues _defaultPriceValues = RangeValues(0, 100000);
 
   double? _priceFrom;
   double? _priceTo;
@@ -43,6 +44,10 @@ class _FilterScreenState extends State<FilterScreen> {
             ? _priceFrom
             : double.tryParse(_fromPriceController.text);
         _priceValues = RangeValues(_priceFrom!, _priceValues.end);
+        if (_priceValues != _defaultPriceValues) {
+          _nameSort = false;
+          _dateSort = false;
+        }
       });
     });
     _toPriceController.addListener(() {
@@ -51,6 +56,10 @@ class _FilterScreenState extends State<FilterScreen> {
             ? _priceTo
             : double.tryParse(_toPriceController.text);
         _priceValues = RangeValues(_priceValues.start, _priceTo!);
+        if (_priceValues != _defaultPriceValues) {
+          _nameSort = false;
+          _dateSort = false;
+        }
       });
     });
   }
@@ -159,6 +168,10 @@ class _FilterScreenState extends State<FilterScreen> {
                 _priceTo = values.end;
                 _fromPriceController.text = values.start.toStringAsFixed(0);
                 _toPriceController.text = values.end.toStringAsFixed(0);
+                if (_priceValues != _defaultPriceValues) {
+                  _nameSort = false;
+                  _dateSort = false;
+                }
               });
             })
       ],
@@ -221,6 +234,7 @@ class _FilterScreenState extends State<FilterScreen> {
                     onSelected: (bool value) {
                       setState(() {
                         _nameSort = value;
+                        _priceValues = _defaultPriceValues;
                       });
                     }),
               ],
@@ -248,6 +262,7 @@ class _FilterScreenState extends State<FilterScreen> {
                     onSelected: (bool value) {
                       setState(() {
                         _dateSort = value;
+                        _priceValues = _defaultPriceValues;
                       });
                     }),
               ],
@@ -271,6 +286,7 @@ class _FilterScreenState extends State<FilterScreen> {
 
     if (!_firstLoaded) {
       _priceValues = RangeValues(0, maxPrice);
+      _defaultPriceValues = RangeValues(0, maxPrice);
       if (currentFilter != null) {
         _currentDistrict = currentFilter.district ?? _districts[0];
         _currentRepair = currentFilter.repair ?? _repairs[0];
@@ -302,8 +318,8 @@ class _FilterScreenState extends State<FilterScreen> {
                 var viewModel = FilterViewModel(
                     _currentDistrict == _districts[0] ? null : _currentDistrict,
                     _rooms == _roomsList[0] ? null : int.parse(_rooms),
-                    _priceFrom,
-                    _priceTo,
+                    _priceFrom == 0 ? null : _priceFrom,
+                    _priceTo == maxPrice ? null : _priceTo,
                     _currentRepair == _repairs[0] ? null : _currentRepair,
                     sortPriceDown: _priceDownSort,
                     sortPriceUp: _priceUpSort,
