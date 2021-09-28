@@ -47,6 +47,20 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
 
   final ImagePicker _picker = ImagePicker();
   File? _currentImage;
+  late FocusNode _floorFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _floorFocusNode = new FocusNode();
+
+    _roomsController.addListener(() {
+      if (_roomsController.text.isNotEmpty) {
+        _floorFocusNode.requestFocus();
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -253,6 +267,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                       ),
                       Expanded(
                         child: TextFormField(
+                          focusNode: _floorFocusNode,
                           validator: _validateFloors,
                           controller: _floorController,
                           textAlign: TextAlign.center,

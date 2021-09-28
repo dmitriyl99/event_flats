@@ -45,6 +45,21 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   final ImagePicker _picker = ImagePicker();
   File? _currentImage;
 
+  late FocusNode _floorFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _floorFocusNode = new FocusNode();
+
+    _roomsController.addListener(() {
+      if (_roomsController.text.isNotEmpty) {
+        _floorFocusNode.requestFocus();
+      }
+    });
+  }
+
   @override
   void dispose() {
     _landmarkController.dispose();
@@ -56,6 +71,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
     _descriptionController.dispose();
     _ownerNameController.dispose();
     _ownerPhoneController.dispose();
+    _floorFocusNode.dispose();
     super.dispose();
   }
 
@@ -230,6 +246,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       ),
                       Expanded(
                         child: TextFormField(
+                          focusNode: _floorFocusNode,
                           validator: _validateFloors,
                           controller: _floorController,
                           textAlign: TextAlign.center,
