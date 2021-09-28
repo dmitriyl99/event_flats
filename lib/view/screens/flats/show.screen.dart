@@ -265,7 +265,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                     _roomsAndFloors(),
                     _divider(),
                     if (flat.area != null) _flatArea(),
-                    _divider(),
+                    if (flat.area != null) _divider(),
                     _flatRepair(),
                     _divider(),
                     _flatPrice(),
