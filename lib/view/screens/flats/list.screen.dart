@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/firebase_flats_repository.dart';
@@ -234,14 +232,9 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
               padding: EdgeInsets.only(right: 15),
               child: IconButton(
                 onPressed: () async {
-                  double maxPrice =
-                      (await widget._flatsRepository.getMaxFlatPrice()) ??
-                          100000;
-                  var filter = await Navigator.of(context)
-                      .pushNamed(FilterScreen.route, arguments: {
-                    'maxPrice': maxPrice,
-                    'currentFilter': _filter
-                  });
+                  var filter = await Navigator.of(context).pushNamed(
+                      FilterScreen.route,
+                      arguments: {'currentFilter': _filter});
                   if (filter == null) return;
                   setState(() {
                     this._filter = filter as FilterViewModel;

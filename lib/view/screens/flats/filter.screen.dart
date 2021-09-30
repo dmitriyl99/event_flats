@@ -21,8 +21,6 @@ class _FilterScreenState extends State<FilterScreen> {
   List<String> _roomsList = ['Все', '1', '2', '3', '4', '5', '6', '7'];
   late String _rooms = _roomsList[0];
   bool _firstLoaded = false;
-  RangeValues _priceValues = RangeValues(0, 100000);
-  RangeValues _defaultPriceValues = RangeValues(0, 100000);
 
   double? _priceFrom;
   double? _priceTo;
@@ -39,29 +37,28 @@ class _FilterScreenState extends State<FilterScreen> {
   void initState() {
     super.initState();
     _fromPriceController.addListener(() {
+      _priceFrom = double.tryParse(_fromPriceController.text);
+      if (_fromPriceController.text.isEmpty) return;
       setState(() {
-        _priceFrom = _fromPriceController.text.isEmpty
-            ? _priceFrom
-            : double.tryParse(_fromPriceController.text);
-        _priceValues = RangeValues(_priceFrom!, _priceValues.end);
-        if (_priceValues != _defaultPriceValues) {
-          _nameSort = false;
-          _dateSort = false;
-        }
+        _nameSort = false;
+        _dateSort = false;
       });
     });
     _toPriceController.addListener(() {
+      _priceTo = double.tryParse(_toPriceController.text);
+      if (_toPriceController.text.isEmpty) return;
       setState(() {
-        _priceTo = _toPriceController.text.isEmpty
-            ? _priceTo
-            : double.tryParse(_toPriceController.text);
-        _priceValues = RangeValues(_priceValues.start, _priceTo!);
-        if (_priceValues != _defaultPriceValues) {
-          _nameSort = false;
-          _dateSort = false;
-        }
+        _nameSort = false;
+        _dateSort = false;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _fromPriceController.dispose();
+    _toPriceController.dispose();
+    super.dispose();
   }
 
   Widget _districtFilter() {
@@ -127,53 +124,48 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 
-  Widget _priceFilter(double flatMaxPrice) {
+  Widget _priceFilter() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+          'Цена за квартиру у.е:',
+          style: TextStyle(fontSize: 21),
+        ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
+            Expanded(
+              child: TextFormField(
+                controller: _fromPriceController,
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'От'),
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
             Text(
-              'Цена за квартиру у.е:',
-              style: TextStyle(fontSize: 21),
+              '-',
+              style: TextStyle(fontSize: 30),
+            ),
+            SizedBox(
+              width: 10,
             ),
             Expanded(
-                child: TextField(
-                    controller: _fromPriceController,
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center)),
-            Text('-', style: TextStyle(fontSize: 21)),
-            Expanded(
-                child: TextField(
-                    keyboardType: TextInputType.number,
-                    controller: _toPriceController,
-                    textAlign: TextAlign.center))
+              child: TextFormField(
+                controller: _toPriceController,
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'До'),
+              ),
+            ),
           ],
         ),
         SizedBox(
           height: 16,
         ),
-        RangeSlider(
-            activeColor: AppColors.primaryColor,
-            divisions: flatMaxPrice ~/ 100,
-            min: 0,
-            max: flatMaxPrice,
-            values: _priceValues,
-            onChanged: (values) {
-              setState(() {
-                _priceValues = values;
-                _priceFrom = values.start;
-                _priceTo = values.end;
-                _fromPriceController.text = values.start.toStringAsFixed(0);
-                _toPriceController.text = values.end.toStringAsFixed(0);
-                if (_priceValues != _defaultPriceValues) {
-                  _nameSort = false;
-                  _dateSort = false;
-                }
-              });
-            })
       ],
     );
   }
@@ -234,7 +226,8 @@ class _FilterScreenState extends State<FilterScreen> {
                     onSelected: (bool value) {
                       setState(() {
                         _nameSort = value;
-                        _priceValues = _defaultPriceValues;
+                        _fromPriceController.text = '';
+                        _toPriceController.text = '';
                       });
                     }),
               ],
@@ -262,7 +255,8 @@ class _FilterScreenState extends State<FilterScreen> {
                     onSelected: (bool value) {
                       setState(() {
                         _dateSort = value;
-                        _priceValues = _defaultPriceValues;
+                        _fromPriceController.text = '';
+                        _toPriceController.text = '';
                       });
                     }),
               ],
@@ -281,17 +275,18 @@ class _FilterScreenState extends State<FilterScreen> {
   Widget build(BuildContext context) {
     var args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    double maxPrice = args['maxPrice'];
     FilterViewModel? currentFilter = args['currentFilter'];
 
     if (!_firstLoaded) {
-      _priceValues = RangeValues(0, maxPrice);
-      _defaultPriceValues = RangeValues(0, maxPrice);
       if (currentFilter != null) {
         _currentDistrict = currentFilter.district ?? _districts[0];
         _currentRepair = currentFilter.repair ?? _repairs[0];
-        _priceValues = RangeValues(
-            currentFilter.priceFrom ?? 0, currentFilter.priceTo ?? maxPrice);
+        _fromPriceController.text = currentFilter.priceFrom != null
+            ? currentFilter.priceFrom!.toStringAsFixed(0)
+            : '';
+        _toPriceController.text = currentFilter.priceTo != null
+            ? currentFilter.priceTo!.toStringAsFixed(0)
+            : '';
         _rooms = currentFilter.rooms != null
             ? currentFilter.rooms.toString()
             : _roomsList[0];
@@ -302,8 +297,6 @@ class _FilterScreenState extends State<FilterScreen> {
       }
       _firstLoaded = true;
     }
-    _toPriceController.text = _priceValues.end.toStringAsFixed(0);
-    _fromPriceController.text = _priceValues.start.toStringAsFixed(0);
     return Scaffold(
       appBar: AppBar(
         title: Text('Фильтр'),
@@ -318,8 +311,8 @@ class _FilterScreenState extends State<FilterScreen> {
                 var viewModel = FilterViewModel(
                     _currentDistrict == _districts[0] ? null : _currentDistrict,
                     _rooms == _roomsList[0] ? null : int.parse(_rooms),
-                    _priceFrom == 0 ? null : _priceFrom,
-                    _priceTo == maxPrice ? null : _priceTo,
+                    _priceFrom,
+                    _priceTo,
                     _currentRepair == _repairs[0] ? null : _currentRepair,
                     sortPriceDown: _priceDownSort,
                     sortPriceUp: _priceUpSort,
@@ -345,7 +338,7 @@ class _FilterScreenState extends State<FilterScreen> {
               SizedBox(
                 height: 32,
               ),
-              _priceFilter(maxPrice),
+              _priceFilter(),
               _repairFilter(),
               SizedBox(
                 height: 32,
