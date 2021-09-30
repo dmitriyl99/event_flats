@@ -190,6 +190,45 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
       );
     }
 
+    Widget _ownerInfo() {
+      return Column(
+        children: [
+          if (flat.ownerName != null && flat.ownerName!.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Row(
+                children: [
+                  Text('Имя владельца:',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(flat.ownerName!,
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
+                ],
+              ),
+            ),
+          Padding(
+            padding: EdgeInsets.all(5.0),
+            child: Row(
+              children: [
+                Text('Номер владельца:',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(flat.ownerPhone,
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
     Widget _callButton() {
       return ElevatedButton(
         style: ButtonStyle(
@@ -208,12 +247,6 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(flat.ownerPhone),
-                IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.copy,
-                      color: AppColors.primaryColor,
-                    ))
               ],
             )));
           }
@@ -226,6 +259,9 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               Text(
                 'Позвонить',
                 style: TextStyle(fontSize: 20),
+              ),
+              SizedBox(
+                width: 10,
               ),
               Icon(Icons.call_outlined)
             ],
@@ -276,6 +312,10 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                     if (flat.description != null &&
                         flat.description!.isNotEmpty)
                       _divider(),
+                    _ownerInfo(),
+                    SizedBox(
+                      height: 30,
+                    ),
                     _callButton(),
                   ],
                 ),
