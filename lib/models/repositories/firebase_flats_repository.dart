@@ -69,6 +69,9 @@ class FireabaseFlatsRepository extends FlatsRepository {
     if (filter.rooms != null) {
       query = query.where('numberOfRooms', isEqualTo: filter.rooms);
     }
+    if (filter.floor != null) {
+      query = query.where('floor', isEqualTo: filter.floor);
+    }
     if (filter.sortPriceDown) {
       query = query.orderBy('price', descending: true);
     }

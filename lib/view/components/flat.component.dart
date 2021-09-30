@@ -61,7 +61,14 @@ class FlatComponent extends StatelessWidget {
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [Text(flat.flatRepair)],
+                children: [
+                  if (flat.landmark.isNotEmpty)
+                    Text(flat.landmark,
+                        style: TextStyle(color: Colors.white, fontSize: 18)),
+                  Text(
+                    flat.flatRepair,
+                  ),
+                ],
               ),
               trailing: Column(
                 children: [

@@ -32,6 +32,7 @@ class _FilterScreenState extends State<FilterScreen> {
 
   TextEditingController _fromPriceController = new TextEditingController();
   TextEditingController _toPriceController = new TextEditingController();
+  TextEditingController _floorController = new TextEditingController();
 
   @override
   void initState() {
@@ -58,6 +59,7 @@ class _FilterScreenState extends State<FilterScreen> {
   void dispose() {
     _fromPriceController.dispose();
     _toPriceController.dispose();
+    _floorController.dispose();
     super.dispose();
   }
 
@@ -85,43 +87,60 @@ class _FilterScreenState extends State<FilterScreen> {
     });
   }
 
-  Widget _roomsFilter() {
+  Widget _roomsFloorFilter() {
     return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'Комнат:',
-          style: TextStyle(fontSize: 21),
-        ),
-        SizedBox(
-          width: 50,
-        ),
-        Expanded(
-          child: FormField<String>(builder: (FormFieldState<String> state) {
-            return InputDecorator(
-              decoration: InputDecoration(),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                    value: _rooms,
-                    isDense: true,
-                    onChanged: (value) {
-                      setState(() {
-                        _rooms = value!;
-                      });
-                    },
-                    items: _roomsList
-                        .map<DropdownMenuItem<String>>(
-                            (value) => DropdownMenuItem(
-                                  value: value,
-                                  child: Text(value),
-                                ))
-                        .toList()),
-              ),
-            );
-          }),
-        )
-      ],
-    );
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Комнат:',
+            style: TextStyle(fontSize: 21),
+          ),
+          SizedBox(
+            width: 24,
+          ),
+          Expanded(
+            child: FormField<String>(builder: (FormFieldState<String> state) {
+              return InputDecorator(
+                decoration: InputDecoration(),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                      value: _rooms,
+                      isDense: true,
+                      onChanged: (value) {
+                        setState(() {
+                          _rooms = value!;
+                        });
+                      },
+                      items: _roomsList
+                          .map<DropdownMenuItem<String>>(
+                              (value) => DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value),
+                                  ))
+                          .toList()),
+                ),
+              );
+            }),
+          ),
+          SizedBox(
+            width: 24,
+          ),
+          Text(
+            'Этаж:',
+            style: TextStyle(fontSize: 21),
+          ),
+          SizedBox(
+            width: 24,
+          ),
+          Expanded(
+            child: TextField(
+              controller: _floorController,
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+            ),
+          )
+        ]);
   }
 
   Widget _priceFilter() {
@@ -192,45 +211,6 @@ class _FilterScreenState extends State<FilterScreen> {
         ),
       );
     });
-  }
-
-  Widget _areaFilter() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'Площадь:',
-          style: TextStyle(fontSize: 21),
-        ),
-        SizedBox(
-          width: 50,
-        ),
-        Expanded(
-          child: FormField<String>(builder: (FormFieldState<String> state) {
-            return InputDecorator(
-              decoration: InputDecoration(),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                    value: _rooms,
-                    isDense: true,
-                    onChanged: (value) {
-                      setState(() {
-                        _rooms = value!;
-                      });
-                    },
-                    items: _roomsList
-                        .map<DropdownMenuItem<String>>(
-                            (value) => DropdownMenuItem(
-                                  value: value,
-                                  child: Text(value),
-                                ))
-                        .toList()),
-              ),
-            );
-          }),
-        )
-      ],
-    );
   }
 
   Widget _sortFilter() {
@@ -333,6 +313,8 @@ class _FilterScreenState extends State<FilterScreen> {
         _priceUpSort = currentFilter.sortPriceUp;
         _priceDownSort = currentFilter.sortPriceDown;
         _nameSort = currentFilter.sortDistrict;
+        _floorController.text =
+            currentFilter.floor != null ? currentFilter.floor.toString() : '';
       }
       _firstLoaded = true;
     }
@@ -356,6 +338,7 @@ class _FilterScreenState extends State<FilterScreen> {
                     priceTo: _priceTo,
                     repair:
                         _currentRepair == _repairs[0] ? null : _currentRepair,
+                    floor: int.tryParse(_floorController.text),
                     sortPriceDown: _priceDownSort,
                     sortPriceUp: _priceUpSort,
                     sortDistrict: _nameSort,
@@ -376,7 +359,7 @@ class _FilterScreenState extends State<FilterScreen> {
               SizedBox(
                 height: 32,
               ),
-              _roomsFilter(),
+              _roomsFloorFilter(),
               SizedBox(
                 height: 32,
               ),

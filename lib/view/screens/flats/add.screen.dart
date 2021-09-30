@@ -102,6 +102,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   }
 
   String? _validateArea(String? value) {
+    if (value == null || value.isEmpty) return 'Укажите площадь';
     if (value!.isNotEmpty && !isNumeric(value)) return 'Укажите число';
     return null;
   }
@@ -302,6 +303,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                   }),
                   TextFormField(
                     validator: _validateArea,
+                    keyboardType: TextInputType.number,
                     controller: _areaController,
                     decoration: InputDecoration(
                         labelText: 'Площадь', suffixText: 'кв.м'),
@@ -400,6 +402,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     decoration: InputDecoration(labelText: 'Имя владельца'),
                   ),
                   TextFormField(
+                    keyboardType: TextInputType.phone,
                     validator: _validateOwnerPhone,
                     controller: _ownerPhoneController,
                     decoration: InputDecoration(labelText: 'Номер владельца'),

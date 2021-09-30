@@ -5,6 +5,7 @@ class FilterViewModel {
   final double? priceTo;
   final String? repair;
   final double? area;
+  final int? floor;
   final bool sortPriceDown;
   final bool sortPriceUp;
   final bool sortDistrict;
@@ -15,6 +16,7 @@ class FilterViewModel {
       this.rooms,
       this.priceFrom,
       this.priceTo,
+      this.floor,
       this.repair,
       this.area,
       this.sortPriceDown = false,

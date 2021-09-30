@@ -103,7 +103,8 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   }
 
   String? _validateArea(String? value) {
-    if (value!.isNotEmpty && !isNumeric(value)) return 'Укажите число';
+    if (value == null || value.isEmpty) return 'Укажите площадь';
+    if (value.isNotEmpty && !isNumeric(value)) return 'Укажите число';
     return null;
   }
 
