@@ -74,6 +74,7 @@ class _FilterScreenState extends State<FilterScreen> {
               onChanged: (value) {
                 setState(() {
                   _currentDistrict = value!;
+                  _nameSort = false;
                 });
               },
               items: _districts
@@ -247,6 +248,7 @@ class _FilterScreenState extends State<FilterScreen> {
                         _nameSort = value;
                         _fromPriceController.text = '';
                         _toPriceController.text = '';
+                        _currentDistrict = _districts[0];
                       });
                     }),
               ],
