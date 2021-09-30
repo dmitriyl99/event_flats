@@ -142,8 +142,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var maskFormatter = new MaskTextInputFormatter(
-        mask: '+### ## ###-##-##', filter: {"#": RegExp(r'[0-9]')});
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -400,15 +398,11 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     'Владелец',
                     style: TextStyle(fontSize: 24),
                   ),
-                  Visibility(
-                    visible: _isAdditionalInfo,
-                    child: TextFormField(
-                      controller: _ownerNameController,
-                      decoration: InputDecoration(labelText: 'Имя владельца'),
-                    ),
+                  TextFormField(
+                    controller: _ownerNameController,
+                    decoration: InputDecoration(labelText: 'Имя владельца'),
                   ),
                   TextFormField(
-                    inputFormatters: [maskFormatter],
                     validator: _validateOwnerPhone,
                     controller: _ownerPhoneController,
                     decoration: InputDecoration(labelText: 'Номер владельца'),

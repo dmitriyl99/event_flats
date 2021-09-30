@@ -145,8 +145,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var maskFormatter = new MaskTextInputFormatter(
-        mask: '+### ## ###-##-##', filter: {"#": RegExp(r'[0-9]')});
     final flat = ModalRoute.of(context)!.settings.arguments as Flat;
     if (!_loaded) {
       _currentDistrict = flat.address;
@@ -427,7 +425,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     decoration: InputDecoration(labelText: 'Имя владельца'),
                   ),
                   TextFormField(
-                    inputFormatters: [maskFormatter],
                     validator: _validateOwnerPhone,
                     controller: _ownerPhoneController,
                     decoration: InputDecoration(labelText: 'Номер владельца'),
