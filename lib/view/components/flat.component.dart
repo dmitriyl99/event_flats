@@ -29,39 +29,39 @@ class FlatComponent extends StatelessWidget {
             },
             child: ListTile(
               isThreeLine: true,
-              leading: GestureDetector(
-                onTap: () async {
-                  await _flatsRepository.toggleFavorite(flat.id);
-                },
-                child: Image.asset(
-                  flat.isFavorite
-                      ? 'assets/house_favorite.png'
-                      : 'assets/house.png',
-                  height: 36,
-                ),
+              leading: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      await _flatsRepository.toggleFavorite(flat.id);
+                    },
+                    child: Image.asset(
+                      flat.isFavorite
+                          ? 'assets/house_favorite.png'
+                          : 'assets/house.png',
+                      height: 36,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 3,
+                  ),
+                  Text(
+                    '${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors}',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
               ),
               onTap: () {
                 Navigator.of(context)
                     .pushNamed(FlatShowScreen.route, arguments: flat);
               },
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      flat.address,
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-                ],
+              title: Text(
+                flat.address,
+                style: TextStyle(fontSize: 18),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                      '${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors}'),
-                  Text(flat.flatRepair)
-                ],
+                children: [Text(flat.flatRepair)],
               ),
               trailing: Column(
                 children: [
@@ -69,11 +69,11 @@ class FlatComponent extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: AppColors.primaryColor,
                         borderRadius: BorderRadius.circular(10)),
-                    padding: EdgeInsets.all(5),
+                    padding: EdgeInsets.all(7),
                     child: Text(
                       NumberFormattingHelper.currency(flat.price),
                       style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),

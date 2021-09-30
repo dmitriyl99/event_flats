@@ -300,14 +300,11 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       ),
                     );
                   }),
-                  Visibility(
-                    visible: _isAdditionalInfo,
-                    child: TextFormField(
-                      validator: _validateArea,
-                      controller: _areaController,
-                      decoration: InputDecoration(
-                          labelText: 'Площадь', suffixText: 'кв.м'),
-                    ),
+                  TextFormField(
+                    validator: _validateArea,
+                    controller: _areaController,
+                    decoration: InputDecoration(
+                        labelText: 'Площадь', suffixText: 'кв.м'),
                   ),
                   Visibility(
                     visible: _isAdditionalInfo,

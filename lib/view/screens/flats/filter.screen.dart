@@ -194,6 +194,45 @@ class _FilterScreenState extends State<FilterScreen> {
     });
   }
 
+  Widget _areaFilter() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Площадь:',
+          style: TextStyle(fontSize: 21),
+        ),
+        SizedBox(
+          width: 50,
+        ),
+        Expanded(
+          child: FormField<String>(builder: (FormFieldState<String> state) {
+            return InputDecorator(
+              decoration: InputDecoration(),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                    value: _rooms,
+                    isDense: true,
+                    onChanged: (value) {
+                      setState(() {
+                        _rooms = value!;
+                      });
+                    },
+                    items: _roomsList
+                        .map<DropdownMenuItem<String>>(
+                            (value) => DropdownMenuItem(
+                                  value: value,
+                                  child: Text(value),
+                                ))
+                        .toList()),
+              ),
+            );
+          }),
+        )
+      ],
+    );
+  }
+
   Widget _sortFilter() {
     var textStyle = TextStyle(fontSize: 18);
     return Column(
@@ -309,11 +348,14 @@ class _FilterScreenState extends State<FilterScreen> {
               iconSize: 32,
               onPressed: () {
                 var viewModel = FilterViewModel(
-                    _currentDistrict == _districts[0] ? null : _currentDistrict,
-                    _rooms == _roomsList[0] ? null : int.parse(_rooms),
-                    _priceFrom,
-                    _priceTo,
-                    _currentRepair == _repairs[0] ? null : _currentRepair,
+                    district: _currentDistrict == _districts[0]
+                        ? null
+                        : _currentDistrict,
+                    rooms: _rooms == _roomsList[0] ? null : int.parse(_rooms),
+                    priceFrom: _priceFrom,
+                    priceTo: _priceTo,
+                    repair:
+                        _currentRepair == _repairs[0] ? null : _currentRepair,
                     sortPriceDown: _priceDownSort,
                     sortPriceUp: _priceUpSort,
                     sortDistrict: _nameSort,
