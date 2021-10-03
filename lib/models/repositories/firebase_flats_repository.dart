@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,7 +26,7 @@ class FireabaseFlatsRepository extends FlatsRepository {
   }
 
   @override
-  Future<List<Flat>> getFlats() async {
+  Future<List<Flat>> getFlats({FilterViewModel? filter}) async {
     var snapshot = await FirebaseFirestore.instance.collection('flats').get();
 
     List<Flat> flats = [];

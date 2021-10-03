@@ -1,11 +1,12 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class Flat {
   late String id;
   final String address;
+  final int districtId;
+  final int? landmarkId;
   final double price;
   final int floor;
   final int numberOfFloors;
@@ -15,13 +16,18 @@ class Flat {
   final String landmark;
   final String? description;
   final String? ownerName;
-  final String ownerPhone;
+  final List<String>? phones;
   final bool isFavorite;
+  final String creatorName;
+  final int creatorId;
   final DateTime createdAt;
   File? image;
 
   Flat(
+      this.id,
       this.address,
+      this.districtId,
+      this.landmarkId,
       this.price,
       this.floor,
       this.numberOfFloors,
@@ -32,47 +38,52 @@ class Flat {
       this.area,
       this.description,
       this.landmark,
-      this.ownerPhone,
+      this.phones,
+      this.creatorId,
+      this.creatorName,
       {this.ownerName,
       this.image});
 
   Flat.fromJson(Map<String, dynamic> json)
-      : address = json['address'],
+      : id = json['id'],
+        address = json['address'],
+        districtId = json['district_id'],
+        landmarkId = json['landmark_id'],
         price = json['price'] is int
             ? (json['price'] as int).toDouble()
             : json['price'],
         floor = json['floor'],
-        numberOfFloors = json['numberOfFloors'],
-        numberOfRooms = json['numberOfRooms'],
-        flatRepair = json['flatRepair'],
+        numberOfFloors = json['floors_number'],
+        numberOfRooms = json['rooms_number'],
+        flatRepair = json['repair'],
         area = json['area'] != null
             ? json['area'] is int
                 ? (json['area'] as int).toDouble()
                 : json['area']
             : null,
         landmark = json['landmark'],
-        description = json['description'],
-        ownerName = json['ownerName'],
-        ownerPhone = json['ownerPhone'],
-        isFavorite = json['isFavorite'],
+        description = json['note'],
+        ownerName = json['owner_name'],
+        phones = json['phones'], // TODO: as array
+        isFavorite = json['is_favorite'],
+        creatorId = json['creator_id'],
+        creatorName = json['creator_name'],
         createdAt = DateTime.parse(
           json['createdAt'],
         );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'address': address,
-        'price': price,
-        'floor': floor,
-        'numberOfFloors': numberOfFloors,
-        'numberOfRooms': numberOfRooms,
-        'flatRepair': flatRepair,
+        'district_id': districtId,
+        'landmark': landmarkId ?? landmark,
         'area': area,
-        'landmark': landmark,
-        'description': description,
-        'ownerName': ownerName,
-        'ownerPhone': ownerPhone,
-        'isFavorite': isFavorite,
-        'createdAt': createdAt.toString(),
+        'note': description,
+        'repair': flatRepair,
+        'floor': floor,
+        'floor_number': numberOfFloors,
+        'rooms_number': numberOfRooms,
+        'owner_name': ownerName,
+        'phones': phones,
+        'price': price
       };
 
   Future<String> get photo async {

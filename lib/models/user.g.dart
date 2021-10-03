@@ -16,11 +16,8 @@ class UserAdapter extends TypeAdapter<User> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return User(
-      fields[0] as String,
-      fields[1] as String,
-      fields[2] as bool,
-    );
+    return User(fields[0] as String, fields[1] as String, fields[2] as bool,
+        fields[3] as String);
   }
 
   @override
@@ -32,7 +29,9 @@ class UserAdapter extends TypeAdapter<User> {
       ..writeByte(1)
       ..write(obj.email)
       ..writeByte(2)
-      ..write(obj.isAdmin);
+      ..write(obj.isAdmin)
+      ..writeByte(3)
+      ..write(obj.accessToken);
   }
 
   @override
