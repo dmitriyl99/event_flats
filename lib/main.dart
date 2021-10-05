@@ -6,6 +6,7 @@ import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/screens/flats/add.screen.dart';
 import 'package:event_flats/view/screens/flats/edit.screen.dart';
 import 'package:event_flats/view/screens/flats/filter.screen.dart';
+import 'package:event_flats/view/screens/flats/home.screen.dart';
 import 'package:event_flats/view/screens/flats/list.screen.dart';
 import 'package:event_flats/view/screens/flats/show.screen.dart';
 import 'package:event_flats/view/screens/login.screen.dart';
@@ -28,7 +29,7 @@ void main() async {
   var currentUser = await authenticationService.getUser();
   String initialRoute = LoginScreen.route;
   if (currentUser != null) {
-    initialRoute = FlatsListScreen.route;
+    initialRoute = HomeScreen.route;
   }
   runApp(MyApp(
     initialRoute: initialRoute,
@@ -53,8 +54,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       routes: {
         LoginScreen.route: (context) => new LoginScreen(authenticationService),
-        FlatsListScreen.route: (context) =>
-            new FlatsListScreen(flatsRepository),
+        HomeScreen.route: (context) => new HomeScreen(flatsRepository),
         FlatShowScreen.route: (context) =>
             new FlatShowScreen(authenticationService, flatsRepository),
         AddFlatScreen.route: (context) => new AddFlatScreen(flatsRepository),

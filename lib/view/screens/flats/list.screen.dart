@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/components/flat.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
-import 'package:event_flats/view/screens/flats/add.screen.dart';
-import 'package:event_flats/view/screens/flats/filter.screen.dart';
 import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +10,6 @@ import 'package:flutter/material.dart';
 class FlatsListScreen extends StatefulWidget {
   final FlatsRepository _flatsRepository;
 
-  static const String route = '/flats';
   const FlatsListScreen(this._flatsRepository, {Key? key}) : super(key: key);
 
   @override
@@ -22,8 +18,6 @@ class FlatsListScreen extends StatefulWidget {
 
 class _FlatsListScreenState extends State<FlatsListScreen> {
   FilterViewModel? _filter;
-
-  bool _isFavoritePage = false;
 
   Widget buildError() {
     return Center(
@@ -219,69 +213,21 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: _isFavoritePage
-                ? Icon(Icons.favorite, color: AppColors.primaryColor)
-                : Icon(Icons.favorite_outline),
-            iconSize: 38,
-            onPressed: () {
-              setState(() {
-                _isFavoritePage = !_isFavoritePage;
-              });
-            },
-          ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: 15),
-              child: IconButton(
-                onPressed: () async {
-                  var filter = await Navigator.of(context).pushNamed(
-                      FilterScreen.route,
-                      arguments: {'currentFilter': _filter});
-                  if (filter == null) return;
-                  setState(() {
-                    this._filter = filter as FilterViewModel;
-                  });
-                },
-                icon: Image.asset('assets/filter_white.png'),
-                iconSize: 32,
-              ),
-            )
-          ],
-          title: Text('Event Flats'),
-          centerTitle: true,
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: AppColors.primaryColor,
-          onPressed: () {
-            Navigator.of(context).pushNamed(AddFlatScreen.route);
-          },
-          label: Text(
-            'Добавить',
-            style: TextStyle(color: Colors.black),
-          ),
-          icon: Icon(
-            Icons.add,
-            color: Colors.black,
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: FutureBuilder<List<Flat>>(
-            future: widget._flatsRepository.getFlats(filter: _filter),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return buildLoading();
-              }
-              if (snapshot.hasError) {
-                print(snapshot.error.toString() + '\n${snapshot.stackTrace}');
-                return buildError();
-              }
-              return buildList(snapshot);
-            },
-          ),
-        ));
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: FutureBuilder<List<Flat>>(
+        future: widget._flatsRepository.getFlats(filter: _filter),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return buildLoading();
+          }
+          if (snapshot.hasError) {
+            print(snapshot.error.toString() + '\n${snapshot.stackTrace}');
+            return buildError();
+          }
+          return buildList(snapshot);
+        },
+      ),
+    );
   }
 }
