@@ -27,5 +27,5 @@ Future<User> _getUser() async {
 
 Future<Options> _authorizationOptions() async {
   var user = await _getUser();
-  return Options(headers: {'Authorization': user.accessToken});
+  return Options(headers: {'Authorization': 'Bearer ${user.accessToken}'});
 }

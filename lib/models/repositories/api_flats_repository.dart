@@ -1,6 +1,6 @@
-import 'dart:io';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:event_flats/models/dto/flat.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/models/user.dart';
@@ -23,29 +23,38 @@ class ApiFlatsRepository extends FlatsRepository {
   ApiFlatsRepository(this._authenticationService);
 
   @override
-  Future<void> createFlat(Flat flat) async {
+  Future<void> createFlat(FlatDto flat) async {
     var payload = flat.toJson();
-    var response = await _httpClient.post('/',
-        data: payload, options: await _authorizationOptions());
-    if (response.statusCode == 422)
-      throw new ValidationException(Map<String, dynamic>.from(response.data));
-    if (response.statusCode == 500) throw new ServerErrorException();
+    Response<dynamic> response;
+    try {
+      response = await _httpClient.post('/',
+          data: payload, options: await _authorizationOptions());
+    } on DioError catch (err) {
+      if (err.response!.statusCode == 422)
+        throw new ValidationException(
+            Map<String, dynamic>.from(err.response!.data));
+      if (err.response!.statusCode == 500) throw new ServerErrorException();
+      throw err;
+    }
     var data = response.data['data'] as Map<String, dynamic>;
-    if (flat.image != null) {
-      File file = flat.image!;
+    if (flat.images != null) return;
+    flat.images!.forEach((file) async {
       var compressedFile =
           await FlutterImageCompress.compressWithFile(file.absolute.path);
+      var fileExtension = file.path.split('.').last;
+      var timestamp = DateTime.now().millisecondsSinceEpoch;
+      var fileName = "$timestamp.$fileExtension";
       if (compressedFile != null)
         await FirebaseStorage.instance
             .ref()
             .child('flats')
-            .child('/${data['id']}')
+            .child('/${data['id']}/$fileName')
             .putData(compressedFile);
-    }
+    });
   }
 
   @override
-  Future<Flat?> getById(String id) async {
+  Future<Flat?> getById(int id) async {
     var response =
         await _httpClient.get('/$id', options: await _authorizationOptions());
     return Flat.fromJson(response.data as Map<String, dynamic>);
@@ -57,12 +66,12 @@ class ApiFlatsRepository extends FlatsRepository {
     var response = await _httpClient.get('/',
         queryParameters: parameters, options: await _authorizationOptions());
     if (response.statusCode == 500) throw new ServerErrorException();
-    var data = response.data['data'] as List<Map<String, dynamic>>;
+    var data = response.data['data'];
     return data.map<Flat>((e) => Flat.fromJson(e)).toList();
   }
 
   @override
-  Future<void> removeById(String id) async {
+  Future<void> removeById(int id) async {
     var response = await _httpClient.delete('/$id',
         options: await _authorizationOptions());
     if (response.statusCode == 500) throw new ServerErrorException();
@@ -71,14 +80,14 @@ class ApiFlatsRepository extends FlatsRepository {
   }
 
   @override
-  Future<void> toggleFavorite(String id) async {
+  Future<void> toggleFavorite(int id) async {
     var response = await _httpClient.patch('/$id/favorite',
         options: await _authorizationOptions());
     if (response.statusCode == 500) throw new ServerErrorException();
   }
 
   @override
-  Future<void> updateFlat(Flat flat) async {
+  Future<void> updateFlat(FlatDto flat) async {
     var payload = flat.toJson();
     var response = await _httpClient.post('/',
         data: payload, options: await _authorizationOptions());
@@ -97,6 +106,6 @@ class ApiFlatsRepository extends FlatsRepository {
 
   Future<Options> _authorizationOptions() async {
     var user = await _getUser();
-    return Options(headers: {'Authorization': user.accessToken});
+    return Options(headers: {'Authorization': 'Bearer ${user.accessToken}'});
   }
 }

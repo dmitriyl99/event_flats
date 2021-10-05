@@ -1,14 +1,15 @@
 import 'dart:io';
 
 import 'package:event_flats/helpers/string.dart';
-import 'package:event_flats/models/flat.dart';
+import 'package:event_flats/models/dto/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/districts.dart';
+import 'package:event_flats/services/exceptions/validation_exception.dart';
 import 'package:event_flats/services/repairs.dart';
+import 'package:event_flats/view/components/flat_number.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 // ignore: must_be_immutable
 class AddFlatScreen extends StatefulWidget {
@@ -25,12 +26,13 @@ class AddFlatScreen extends StatefulWidget {
 class _AddFlatScreenState extends State<AddFlatScreen> {
   GlobalKey<FormState> _formKey = new GlobalKey();
   bool _isLoading = false;
-  bool _isAdditionalInfo = false;
 
-  List<String> _districts = getDistricts();
+  List<Map<String, dynamic>> _districts = [];
   List<String> _repairs = getRepairs();
+  List<File> _images = [];
 
-  late String _currentDistrict = _districts.first;
+  late int _currentDistrict = 1;
+  int? _currentLandmark;
   late String _currentRepair = _repairs.first;
   TextEditingController _landmarkController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
@@ -43,20 +45,45 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   TextEditingController _ownerPhoneController = new TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
-  File? _currentImage;
+
+  List<FlatPhoneNumberComponent> _phoneFields = [];
+  int _phonesIndex = 0;
 
   late FocusNode _floorFocusNode;
+  late FocusNode _landmarkFocusNode;
+  late FocusNode _priceFocusNode;
+  late FocusNode _floorsNumberFocusNode;
+  late FocusNode _areaFocusNode;
+  final ScrollController _scrollController = new ScrollController();
 
   @override
   void initState() {
     super.initState();
-
     _floorFocusNode = new FocusNode();
+    _landmarkFocusNode = new FocusNode();
+    _priceFocusNode = new FocusNode();
+    _floorsNumberFocusNode = new FocusNode();
+    _areaFocusNode = new FocusNode();
 
     _roomsController.addListener(() {
       if (_roomsController.text.isNotEmpty) {
         _floorFocusNode.requestFocus();
       }
+    });
+    _floorController.addListener(() {
+      if (_floorController.text.isNotEmpty)
+        _floorsNumberFocusNode.requestFocus();
+    });
+
+    getDistricts().then((value) {
+      Future.delayed(Duration.zero, () {
+        setState(() {
+          _districts = value;
+          if (value.isNotEmpty) {
+            _currentDistrict = value.first['id'];
+          }
+        });
+      });
     });
   }
 
@@ -72,6 +99,10 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
     _ownerNameController.dispose();
     _ownerPhoneController.dispose();
     _floorFocusNode.dispose();
+    _landmarkFocusNode.dispose();
+    _priceFocusNode.dispose();
+    _floorsNumberFocusNode.dispose();
+    _areaFocusNode.dispose();
     super.dispose();
   }
 
@@ -108,7 +139,15 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   }
 
   String? _validateOwnerPhone(String? value) {
-    if (value == null || value.isEmpty) return 'Укажите номер владельца';
+    var phones = _phoneFields
+        .map<String>((e) => e.getPhone())
+        .toList()
+        .where((element) => element.isNotEmpty);
+    if (value == null && phones.isNotEmpty) return null;
+    if (value != null && value.isEmpty && phones.isNotEmpty) return null;
+    if (value == null && phones.isEmpty) return 'Укажите номер владельца';
+    if (value != null && value.isEmpty && phones.isEmpty)
+      return 'Укажите номер владельца';
     return null;
   }
 
@@ -117,23 +156,32 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
       setState(() {
         _isLoading = true;
       });
-      await widget._flatsRepository.createFlat(Flat(
-          _currentDistrict,
-          double.parse(_priceController.text),
-          int.parse(_floorController.text),
-          int.parse(_numberOfFloorsController.text),
-          int.parse(_roomsController.text),
-          _currentRepair,
-          DateTime.now(),
-          false,
-          _areaController.text.isNotEmpty
-              ? double.parse(_areaController.text)
-              : null,
-          _descriptionController.text,
-          _landmarkController.text,
-          _ownerPhoneController.text,
-          ownerName: _ownerNameController.text,
-          image: _currentImage));
+      List<String> phones = [];
+      if (_ownerPhoneController.text.isNotEmpty)
+        phones.add(_ownerPhoneController.text);
+      phones.addAll(_phoneFields
+          .map<String>((e) => e.getPhone())
+          .toList()
+          .where((element) => element.isNotEmpty)
+          .toList());
+      try {
+        await widget._flatsRepository.createFlat(FlatDto(
+            _currentDistrict,
+            _currentLandmark,
+            _landmarkController.text,
+            double.parse(_priceController.text),
+            int.parse(_roomsController.text),
+            int.parse(_floorController.text),
+            int.parse(_numberOfFloorsController.text),
+            _currentRepair,
+            double.parse(_areaController.text),
+            _descriptionController.text,
+            phones,
+            _images,
+            _ownerNameController.text));
+      } on ValidationException catch (error) {
+        print(error.getErrors());
+      }
       setState(() {
         _isLoading = false;
       });
@@ -141,8 +189,20 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
     }
   }
 
+  void _deletePhone(int index) {
+    setState(() {
+      _phoneFields
+          .removeWhere((element) => element.key == Key(index.toString()));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    var landmarks = [];
+    if (_districts.isNotEmpty)
+      landmarks = _districts
+          .where((element) => element['id'] == _currentDistrict)
+          .first['landmarks'];
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -178,6 +238,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
+              controller: _scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -185,34 +246,61 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     'Адрес',
                     style: TextStyle(fontSize: 24),
                   ),
-                  FormField<String>(builder: (FormFieldState<String> state) {
-                    return InputDecorator(
-                      decoration: InputDecoration(labelText: "Район"),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                            value: _currentDistrict,
-                            isDense: true,
-                            onChanged: (value) {
-                              setState(() {
-                                _currentDistrict = value!;
-                              });
-                            },
-                            items: _districts
-                                .map<DropdownMenuItem<String>>(
-                                    (value) => DropdownMenuItem(
-                                          value: value,
-                                          child: Text(value),
-                                        ))
-                                .toList()),
-                      ),
-                    );
-                  }),
-                  Visibility(
-                      visible: _isAdditionalInfo,
+                  FormField<int>(
+                      enabled: _districts.isNotEmpty,
+                      builder: (FormFieldState<int> state) {
+                        return InputDecorator(
+                          decoration: InputDecoration(labelText: "Район"),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<int>(
+                                value: _currentDistrict,
+                                isDense: true,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _currentDistrict = value!;
+                                  });
+                                  _landmarkController.text = '';
+                                  _currentLandmark = null;
+                                  _landmarkFocusNode.requestFocus();
+                                },
+                                items: _districts
+                                    .map<DropdownMenuItem<int>>(
+                                        (value) => DropdownMenuItem(
+                                              value: value['id'],
+                                              child: Text(value['title']),
+                                            ))
+                                    .toList()),
+                          ),
+                        );
+                      }),
+                  Row(children: [
+                    Expanded(
                       child: TextFormField(
+                        focusNode: _landmarkFocusNode,
                         controller: _landmarkController,
                         decoration: InputDecoration(labelText: 'Ориентир'),
-                      )),
+                      ),
+                    ),
+                    if (landmarks.length > 0)
+                      PopupMenuButton(
+                        icon: Icon(Icons.arrow_drop_down),
+                        onSelected: (value) {
+                          _landmarkController.text = landmarks
+                              .where((l) => l['id'] == value)
+                              .first['title'];
+                          setState(() {
+                            _currentLandmark = value! as int;
+                          });
+                          _priceFocusNode.requestFocus();
+                        },
+                        itemBuilder: (context) {
+                          return landmarks
+                              .map<PopupMenuItem>((l) => PopupMenuItem(
+                                  child: Text(l['title']), value: l['id']))
+                              .toList();
+                        },
+                      )
+                  ]),
                   SizedBox(
                     height: 30,
                   ),
@@ -221,6 +309,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     style: TextStyle(fontSize: 24),
                   ),
                   TextFormField(
+                    focusNode: _priceFocusNode,
                     validator: _validatePrice,
                     controller: _priceController,
                     keyboardType: TextInputType.number,
@@ -271,6 +360,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       ),
                       Expanded(
                         child: TextFormField(
+                          focusNode: _floorsNumberFocusNode,
                           validator: _validateNumberOfFloors,
                           controller: _numberOfFloorsController,
                           textAlign: TextAlign.center,
@@ -289,6 +379,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                             onChanged: (value) {
                               setState(() {
                                 _currentRepair = value!;
+                                _areaFocusNode.requestFocus();
                               });
                             },
                             items: _repairs
@@ -303,92 +394,96 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                   }),
                   TextFormField(
                     validator: _validateArea,
+                    focusNode: _areaFocusNode,
                     keyboardType: TextInputType.number,
                     controller: _areaController,
                     decoration: InputDecoration(
                         labelText: 'Площадь', suffixText: 'кв.м'),
                   ),
-                  Visibility(
-                    visible: _isAdditionalInfo,
-                    child: TextFormField(
-                      controller: _descriptionController,
-                      maxLines: 4,
-                      decoration: InputDecoration(labelText: 'Описание'),
-                    ),
+                  TextFormField(
+                    controller: _descriptionController,
+                    maxLines: 4,
+                    decoration: InputDecoration(labelText: 'Описание'),
                   ),
                   SizedBox(
                     height: 30,
                   ),
-                  Visibility(
-                    visible: _isAdditionalInfo,
-                    child: Column(
-                      children: [
-                        Text(
-                          'Изображение',
-                          style: TextStyle(fontSize: 21),
-                        ),
-                        if (_currentImage != null)
-                          Column(
-                            children: [
-                              SizedBox(
-                                height: 30,
-                              ),
-                              Image.file(_currentImage!)
-                            ],
-                          ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
+                    children: [
+                      Text(
+                        'Изображение',
+                        style: TextStyle(fontSize: 21),
+                      ),
+                      if (_images.isNotEmpty)
+                        Column(
                           children: [
-                            ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        AppColors.primaryColor)),
-                                onPressed: () async {
-                                  final XFile? image = await _picker.pickImage(
-                                      source: ImageSource.camera);
-                                  if (image != null) {
-                                    print(image.path);
-                                    setState(() {
-                                      _currentImage = File(image.path);
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(12),
-                                  child: Text('С камеры',
-                                      style: TextStyle(
-                                          fontSize: 18, color: Colors.black)),
-                                )),
                             SizedBox(
-                              width: 20,
+                              height: 30,
                             ),
-                            ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        AppColors.primaryColor)),
-                                onPressed: () async {
-                                  final XFile? image = await _picker.pickImage(
-                                      source: ImageSource.gallery);
-                                  if (image != null) {
-                                    print(image.path);
-                                    setState(() {
-                                      _currentImage = File(image.path);
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(12),
-                                  child: Text('С устройства',
-                                      style: TextStyle(
-                                          fontSize: 18, color: Colors.black)),
+                            Container(
+                                height: 100,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: _images
+                                      .map<Image>((e) => Image.file(e))
+                                      .toList(),
                                 ))
                           ],
-                        )
-                      ],
-                    ),
+                        ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.primaryColor)),
+                              onPressed: () async {
+                                final XFile? image = await _picker.pickImage(
+                                    source: ImageSource.camera);
+                                if (image != null) {
+                                  print(image.path);
+                                  setState(() {
+                                    _images.clear();
+                                    _images.add(File(image.path));
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                child: Text('С камеры',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.black)),
+                              )),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.primaryColor)),
+                              onPressed: () async {
+                                final List<XFile>? images = await _picker
+                                    .pickMultiImage(imageQuality: 60);
+                                if (images != null) {
+                                  setState(() {
+                                    _images = images
+                                        .map<File>((e) => File(e.path))
+                                        .toList();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                child: Text('С устройства',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.black)),
+                              ))
+                        ],
+                      )
+                    ],
                   ),
                   SizedBox(
                     height: 30,
@@ -407,33 +502,40 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     controller: _ownerPhoneController,
                     decoration: InputDecoration(labelText: 'Номер владельца'),
                   ),
+                  ..._phoneFields,
                   SizedBox(
-                    height: 30,
+                    height: 10,
                   ),
-                  Visibility(
-                    visible: !_isAdditionalInfo,
-                    child: Center(
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  AppColors.primaryColor)),
-                          onPressed: () {
-                            setState(() {
-                              _isAdditionalInfo = true;
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton.icon(
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                AppColors.primaryColor)),
+                        onPressed: () {
+                          var currentIndex = _phonesIndex;
+                          setState(() {
+                            FlatPhoneNumberComponent element =
+                                FlatPhoneNumberComponent(
+                                    Key(currentIndex.toString()), () {
+                              _deletePhone(currentIndex);
                             });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(12),
-                            child: Text(
-                              'Дополнительно',
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.black),
-                            ),
-                          )),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
+                            _phoneFields.add(element);
+                          });
+                          _phonesIndex++;
+                          _scrollController.animateTo(
+                              _scrollController.position.maxScrollExtent + 30,
+                              duration: Duration(seconds: 1),
+                              curve: Curves.fastOutSlowIn);
+                        },
+                        icon: Icon(Icons.add, color: Colors.black),
+                        label: Text(
+                          'Добавить номер',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 30,

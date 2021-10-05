@@ -16,7 +16,7 @@ class FilterScreen extends StatefulWidget {
 class _FilterScreenState extends State<FilterScreen> {
   late String _currentDistrict = _districts[0];
   late String _currentRepair = _repairs[0];
-  List<String> _districts = ['Все районы', ...getDistricts()];
+  List<String> _districts = ['Все районы'];
   List<String> _repairs = ['Все ремонты', ...getRepairs()];
   List<String> _roomsList = ['Все', '1', '2', '3', '4', '5', '6', '7'];
   late String _rooms = _roomsList[0];

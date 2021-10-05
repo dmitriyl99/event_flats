@@ -18,7 +18,7 @@ class User {
   factory User.fromJson(dynamic json) => User(
       json['name'] as String,
       json['email'] as String,
-      json['is_admin'] as bool,
+      json['is_admin'] == 1,
       json['access_token'] as String);
 
   Map<String, dynamic> toJson() =>

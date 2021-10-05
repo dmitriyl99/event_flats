@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/helpers/string.dart';
+import 'package:event_flats/models/dto/flat.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/districts.dart';
@@ -9,7 +10,6 @@ import 'package:event_flats/services/repairs.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 // ignore: must_be_immutable
 class EditFlatScreen extends StatefulWidget {
@@ -29,12 +29,15 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
 
   bool _loaded = false;
 
-  List<String> _districts = getDistricts();
-
+  List<Map<String, dynamic>> _districts = [];
   List<String> _repairs = getRepairs();
 
-  String? _currentDistrict;
-  String? _currentRepair;
+  List<String> _phones = [];
+  List<File> _images = [];
+
+  late int _currentDistrict = 1;
+  int? _currentLandmark;
+  late String _currentRepair = _repairs.first;
   TextEditingController _landmarkController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
   TextEditingController _roomsController = new TextEditingController();
@@ -59,6 +62,17 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       if (_roomsController.text.isNotEmpty) {
         _floorFocusNode.requestFocus();
       }
+    });
+
+    getDistricts().then((value) {
+      Future.delayed(Duration.zero, () {
+        setState(() {
+          _districts = value;
+          if (value.isNotEmpty) {
+            _currentDistrict = value.first['id'];
+          }
+        });
+      });
     });
   }
 
@@ -113,29 +127,25 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
     return null;
   }
 
-  void _onSave(String id, DateTime createdAt) async {
+  void _onSave(int id, DateTime createdAt) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
-      var flat = Flat(
-          _currentDistrict!,
-          double.parse(_priceController.text.replaceAll(',', '')),
+      var flat = FlatDto(
+          _currentDistrict,
+          _currentLandmark,
+          _landmarkController.text,
+          double.parse(_priceController.text),
+          int.parse(_roomsController.text),
           int.parse(_floorController.text),
           int.parse(_numberOfFloorsController.text),
-          int.parse(_roomsController.text),
-          _currentRepair!,
-          createdAt,
-          false,
-          _areaController.text.isNotEmpty
-              ? double.parse(_areaController.text)
-              : null,
+          _currentRepair,
+          double.parse(_areaController.text),
           _descriptionController.text,
-          _landmarkController.text,
-          _ownerPhoneController.text,
-          ownerName: _ownerNameController.text,
-          image: _currentImage);
-      flat.id = id;
+          _phones,
+          _images,
+          _ownerNameController.text);
       await widget._flatsRepository.updateFlat(flat);
       setState(() {
         _isLoading = false;
@@ -144,11 +154,17 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
     }
   }
 
+  bool _currentDistrictHasLandmarks() {
+    if (_districts.isEmpty) return false;
+    return _districts[_currentDistrict]['landmarks'].length > 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final flat = ModalRoute.of(context)!.settings.arguments as Flat;
     if (!_loaded) {
-      _currentDistrict = flat.address;
+      _currentDistrict = flat.districtId;
+      _currentLandmark = flat.landmarkId;
       _currentRepair = flat.flatRepair;
       _landmarkController.text = flat.landmark;
       _priceController.text = NumberFormattingHelper.format(flat.price);
@@ -160,7 +176,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       }
       _descriptionController.text = flat.description ?? '';
       _ownerNameController.text = flat.ownerName ?? '';
-      _ownerPhoneController.text = flat.ownerPhone;
       _loaded = true;
     }
 
@@ -208,31 +223,61 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     'Адрес',
                     style: TextStyle(fontSize: 24),
                   ),
-                  FormField<String>(builder: (FormFieldState<String> state) {
-                    return InputDecorator(
-                      decoration: InputDecoration(labelText: "Район"),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                            value: _currentDistrict ?? _districts.first,
-                            isDense: true,
-                            onChanged: (value) {
-                              setState(() {
-                                _currentDistrict = value;
-                              });
-                            },
-                            items: _districts
-                                .map<DropdownMenuItem<String>>(
-                                    (value) => DropdownMenuItem(
-                                          value: value,
-                                          child: Text(value),
-                                        ))
-                                .toList()),
-                      ),
-                    );
-                  }),
-                  TextFormField(
-                    controller: _landmarkController,
-                    decoration: InputDecoration(labelText: 'Ориентир'),
+                  FormField<int>(
+                      enabled: _districts.isNotEmpty,
+                      builder: (FormFieldState<int> state) {
+                        return InputDecorator(
+                          decoration: InputDecoration(labelText: "Район"),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<int>(
+                                value: _currentDistrict,
+                                isDense: true,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _currentDistrict = value!;
+                                  });
+                                },
+                                items: _districts
+                                    .map<DropdownMenuItem<int>>(
+                                        (value) => DropdownMenuItem(
+                                              value: value['id'],
+                                              child: Text(value['title']),
+                                            ))
+                                    .toList()),
+                          ),
+                        );
+                      }),
+                  Visibility(
+                    visible: _currentDistrictHasLandmarks(),
+                    child: FormField<int>(builder: (FormFieldState<int> state) {
+                      return InputDecorator(
+                        decoration: InputDecoration(labelText: "Ориентир"),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<int>(
+                              value: _currentLandmark,
+                              isDense: true,
+                              onChanged: (value) {
+                                setState(() {
+                                  _currentLandmark = value!;
+                                });
+                              },
+                              items: _districts[_currentDistrict]['lanndmarks']
+                                  .map<DropdownMenuItem<int>>(
+                                      (value) => DropdownMenuItem(
+                                            value: value['id'],
+                                            child: Text(value['title']),
+                                          ))
+                                  .toList()),
+                        ),
+                      );
+                    }),
+                  ),
+                  Visibility(
+                    visible: !_currentDistrictHasLandmarks(),
+                    child: TextFormField(
+                      controller: _landmarkController,
+                      decoration: InputDecoration(labelText: 'Ориентир'),
+                    ),
                   ),
                   SizedBox(
                     height: 30,
@@ -306,10 +351,10 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                       decoration: InputDecoration(labelText: "Ремонт"),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                            value: _currentRepair ?? _repairs.first,
+                            value: _currentRepair,
                             onChanged: (value) {
                               setState(() {
-                                _currentRepair = value;
+                                _currentRepair = value!;
                               });
                             },
                             items: _repairs

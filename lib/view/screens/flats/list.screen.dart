@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_flats/models/flat.dart';
-import 'package:event_flats/models/repositories/firebase_flats_repository.dart';
+import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/components/flat.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class FlatsListScreen extends StatefulWidget {
-  final FireabaseFlatsRepository _flatsRepository;
+  final FlatsRepository _flatsRepository;
 
   static const String route = '/flats';
   const FlatsListScreen(this._flatsRepository, {Key? key}) : super(key: key);
@@ -95,18 +95,15 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     );
   }
 
-  Widget buildList(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
-    var docs = snapshot.data!.docs;
-    if (docs.length == 0 && _filter != null) {
+  Widget buildList(AsyncSnapshot<List<Flat>> snapshot) {
+    var flats = snapshot.data!;
+    if (flats.length == 0 && _filter != null) {
       return _buildNotFound();
-    } else if (docs.length == 0) {
+    } else if (flats.length == 0) {
       return _buildEmptyList();
     }
     return ListView(
-      children: snapshot.data!.docs.map<Widget>((DocumentSnapshot document) {
-        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        var flat = Flat.fromJson(data);
-        flat.id = document.id;
+      children: flats.map<Widget>((Flat flat) {
         return Dismissible(
             direction: DismissDirection.endToStart,
             background: Container(
@@ -122,7 +119,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
               ),
               decoration: BoxDecoration(color: Colors.red),
             ),
-            key: Key(flat.id),
+            key: Key(flat.id.toString()),
             confirmDismiss: (direction) async {
               if (direction != DismissDirection.endToStart) return false;
               if (!(await FirebaseAuthenticationService().getUser())!.isAdmin) {
@@ -264,9 +261,8 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 16.0),
-          child: StreamBuilder<QuerySnapshot>(
-            stream: widget._flatsRepository
-                .getFlatsStream(filter: _filter, isFavorite: _isFavoritePage),
+          child: FutureBuilder<List<Flat>>(
+            future: widget._flatsRepository.getFlats(filter: _filter),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return buildLoading();

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class Flat {
-  late String id;
+  late int id;
   final String address;
   final int districtId;
   final int? landmarkId;
@@ -69,7 +69,7 @@ class Flat {
         creatorId = json['creator_id'],
         creatorName = json['creator_name'],
         createdAt = DateTime.parse(
-          json['createdAt'],
+          json['created_at'],
         );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -90,7 +90,7 @@ class Flat {
     var downloadUrl = await FirebaseStorage.instance
         .ref()
         .child('flats')
-        .child(this.id)
+        .child(this.id.toString())
         .getDownloadURL();
     return downloadUrl;
   }

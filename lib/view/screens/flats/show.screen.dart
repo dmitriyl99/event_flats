@@ -211,65 +211,65 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                 ],
               ),
             ),
-          Padding(
-            padding: EdgeInsets.all(5.0),
-            child: Row(
-              children: [
-                Text('Номер владельца:',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
-                SizedBox(
-                  width: 5,
-                ),
-                Text(flat.ownerPhone,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.all(5.0),
+          //   child: Row(
+          //     children: [
+          //       Text('Номер владельца:',
+          //           style:
+          //               TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+          //       SizedBox(
+          //         width: 5,
+          //       ),
+          //       Text(flat.ownerPhone,
+          //           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
+          //     ],
+          //   ),
+          // ),
         ],
       );
     }
 
-    Widget _callButton() {
-      return ElevatedButton(
-        style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.green),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-              side: BorderSide(color: Colors.white),
-            ))),
-        onPressed: () async {
-          String url = 'tel:' + flat.ownerPhone;
-          if (await canLaunch(url)) {
-            await launch(url);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-                content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(flat.ownerPhone),
-              ],
-            )));
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Позвонить',
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Icon(Icons.call_outlined)
-            ],
-          ),
-        ),
-      );
-    }
+    // Widget _callButton() {
+    //   return ElevatedButton(
+    //     style: ButtonStyle(
+    //         backgroundColor: MaterialStateProperty.all(Colors.green),
+    //         shape: MaterialStateProperty.all(RoundedRectangleBorder(
+    //           borderRadius: BorderRadius.circular(15),
+    //           side: BorderSide(color: Colors.white),
+    //         ))),
+    //     onPressed: () async {
+    //       String url = 'tel:' + flat.ownerPhone;
+    //       if (await canLaunch(url)) {
+    //         await launch(url);
+    //       } else {
+    //         ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+    //             content: Row(
+    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //           children: [
+    //             Text(flat.ownerPhone),
+    //           ],
+    //         )));
+    //       }
+    //     },
+    //     child: Padding(
+    //       padding: const EdgeInsets.all(10.0),
+    //       child: Row(
+    //         mainAxisAlignment: MainAxisAlignment.center,
+    //         children: [
+    //           Text(
+    //             'Позвонить',
+    //             style: TextStyle(fontSize: 20),
+    //           ),
+    //           SizedBox(
+    //             width: 10,
+    //           ),
+    //           Icon(Icons.call_outlined)
+    //         ],
+    //       ),
+    //     ),
+    //   );
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -317,7 +317,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                     SizedBox(
                       height: 30,
                     ),
-                    _callButton(),
+                    // _callButton(),
                   ],
                 ),
               ),

@@ -50,8 +50,22 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         await _authenticationService.login(email, password);
       } on AuthenticationFailed catch (ex) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(new SnackBar(content: Text(ex.getMessage())));
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text('Ошибка авторизации'),
+                  content: Text(ex.getMessage()),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Закрыть',
+                          style: TextStyle(fontSize: 16),
+                        ))
+                  ],
+                ));
         setState(() {
           _isLoading = false;
         });
