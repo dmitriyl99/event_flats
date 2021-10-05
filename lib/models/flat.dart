@@ -13,7 +13,7 @@ class Flat {
   final int numberOfRooms;
   final String flatRepair;
   final double? area;
-  final String landmark;
+  final String? landmark;
   final String? description;
   final String? ownerName;
   final List<String>? phones;

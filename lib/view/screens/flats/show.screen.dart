@@ -110,10 +110,10 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                 style: TextStyle(fontSize: 23),
               ),
             ),
-            if (flat.landmark.isNotEmpty)
+            if (flat.landmark != null && flat.landmark!.isNotEmpty)
               Flexible(
                 child: Text(
-                  flat.landmark,
+                  flat.landmark!,
                   style: TextStyle(fontSize: 23),
                 ),
               ),

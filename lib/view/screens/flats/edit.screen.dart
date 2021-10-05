@@ -166,7 +166,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       _currentDistrict = flat.districtId;
       _currentLandmark = flat.landmarkId;
       _currentRepair = flat.flatRepair;
-      _landmarkController.text = flat.landmark;
+      _landmarkController.text = flat.landmark ?? '';
       _priceController.text = NumberFormattingHelper.format(flat.price);
       _roomsController.text = flat.numberOfRooms.toString();
       _floorController.text = flat.floor.toString();
