@@ -64,7 +64,7 @@ class Flat {
         landmark = json['landmark'],
         description = json['note'],
         ownerName = json['owner_name'],
-        phones = json['phones'], // TODO: as array
+        phones = List<String>.from(json['owner_phones']), // TODO: as array
         isFavorite = json['is_favorite'],
         creatorId = json['creator_id'],
         creatorName = json['creator_name'],
