@@ -57,7 +57,7 @@ class ApiFlatsRepository extends FlatsRepository {
   Future<Flat?> getById(int id) async {
     var response =
         await _httpClient.get('/$id', options: await _authorizationOptions());
-    return Flat.fromJson(response.data as Map<String, dynamic>);
+    return Flat.fromJson(response.data['data'] as Map<String, dynamic>);
   }
 
   @override
