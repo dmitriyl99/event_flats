@@ -1,3 +1,6 @@
+import 'package:event_flats/events/flat_created.dart';
+import 'package:event_flats/events/flat_favorited.dart';
+import 'package:event_flats/events/service.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/components/flats_list.component.dart';
@@ -20,7 +23,19 @@ class FlatsListScreen extends StatefulWidget {
 }
 
 class _FlatsListScreenState extends State<FlatsListScreen> {
-  FilterViewModel? _filter;
+  FilterViewModel? _filter = new FilterViewModel(sortDate: true);
+
+  @override
+  void initState() {
+    super.initState();
+
+    EventService.bus.on<FlatFavorited>().listen((event) {
+      setState(() {});
+    });
+    EventService.bus.on<FlatCreated>().listen((event) {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +65,9 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
       body: FlatsListComponent(
           widget._flatsRepository.getFlats(filter: _filter),
           widget._flatsRepository,
-          widget._authenticationService),
+          widget._authenticationService, onRefresh: () async {
+        setState(() {});
+      }),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:event_flats/events/flat_favorited.dart';
+import 'package:event_flats/events/service.dart';
 import 'package:event_flats/helpers/date_formatting.dart';
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/models/flat.dart';
@@ -34,12 +36,13 @@ class FlatComponent extends StatelessWidget {
                   GestureDetector(
                     onTap: () async {
                       await _flatsRepository.toggleFavorite(flat.id);
+                      EventService.bus.fire(FlatFavorited(flat));
                     },
                     child: Image.asset(
                       flat.isFavorite
                           ? 'assets/house_favorite.png'
                           : 'assets/house.png',
-                      height: 36,
+                      height: 24,
                     ),
                   ),
                   SizedBox(
@@ -47,7 +50,7 @@ class FlatComponent extends StatelessWidget {
                   ),
                   Text(
                     '${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors}',
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 18),
                   ),
                 ],
               ),
@@ -62,8 +65,8 @@ class FlatComponent extends StatelessWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (flat.landmark.isNotEmpty)
-                    Text(flat.landmark,
+                  if (flat.landmark != null && flat.landmark!.isNotEmpty)
+                    Text(flat.landmark!,
                         style: TextStyle(color: Colors.white, fontSize: 18)),
                   Text(
                     flat.flatRepair,

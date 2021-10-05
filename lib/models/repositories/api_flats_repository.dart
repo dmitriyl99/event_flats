@@ -1,5 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:event_flats/events/flat_created.dart';
+import 'package:event_flats/events/service.dart';
 import 'package:event_flats/models/dto/flat.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
@@ -37,6 +38,8 @@ class ApiFlatsRepository extends FlatsRepository {
       throw err;
     }
     var data = response.data['data'] as Map<String, dynamic>;
+    Flat createdFlat = Flat.fromJson(data);
+    EventService.bus.fire(FlatCreated(createdFlat));
     if (flat.images != null) return;
     flat.images!.forEach((file) async {
       var compressedFile =
@@ -48,7 +51,7 @@ class ApiFlatsRepository extends FlatsRepository {
         await FirebaseStorage.instance
             .ref()
             .child('flats')
-            .child('/${data['id']}/$fileName')
+            .child('/${createdFlat.id}/$fileName')
             .putData(compressedFile);
     });
   }
@@ -99,7 +102,7 @@ class ApiFlatsRepository extends FlatsRepository {
   }
 
   Future<User> _getUser() async {
-    var user = await _authenticationService.getUser();
+    var user = _authenticationService.getUser();
     if (user == null) throw new UnauthorizedUserException();
     return user;
   }
