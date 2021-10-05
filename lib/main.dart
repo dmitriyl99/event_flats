@@ -25,8 +25,9 @@ void main() async {
 
   await initializeDateFormatting('ru');
 
-  var authenticationService = FirebaseAuthenticationService();
-  var currentUser = await authenticationService.getUser();
+  await ApiAuthenticationService.init();
+  var authenticationService = ApiAuthenticationService();
+  var currentUser = authenticationService.getUser();
   String initialRoute = LoginScreen.route;
   if (currentUser != null) {
     initialRoute = HomeScreen.route;
@@ -54,7 +55,8 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       routes: {
         LoginScreen.route: (context) => new LoginScreen(authenticationService),
-        HomeScreen.route: (context) => new HomeScreen(flatsRepository),
+        HomeScreen.route: (context) =>
+            new HomeScreen(flatsRepository, authenticationService),
         FlatShowScreen.route: (context) =>
             new FlatShowScreen(authenticationService, flatsRepository),
         AddFlatScreen.route: (context) => new AddFlatScreen(flatsRepository),

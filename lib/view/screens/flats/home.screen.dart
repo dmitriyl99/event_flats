@@ -1,6 +1,5 @@
-import 'package:event_flats/models/repositories/api_flats_repository.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
-import 'package:event_flats/services/api_authentication.dart';
+import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/favorites.screen.dart';
 import 'package:event_flats/view/screens/flats/list.screen.dart';
@@ -9,16 +8,19 @@ import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:flutter/material.dart';
 
 import 'add.screen.dart';
-import 'filter.screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen(this._flatsRepository, {Key? key}) : super(key: key);
+  const HomeScreen(this._flatsRepository, this._authenticationService,
+      {Key? key})
+      : super(key: key);
 
   static const String route = '/home';
   final FlatsRepository _flatsRepository;
+  final AuthenticationService _authenticationService;
 
   @override
-  _HomeScreenState createState() => _HomeScreenState(_flatsRepository);
+  _HomeScreenState createState() =>
+      _HomeScreenState(_flatsRepository, _authenticationService);
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -26,9 +28,10 @@ class _HomeScreenState extends State<HomeScreen> {
   late List<Widget> _screens;
   FilterViewModel? _filter;
 
-  _HomeScreenState(FlatsRepository _flatsRepository) {
+  _HomeScreenState(FlatsRepository _flatsRepository,
+      AuthenticationService _authenticationService) {
     _screens = [
-      FlatsListScreen(_flatsRepository),
+      FlatsListScreen(_flatsRepository, _authenticationService),
       FlatsPersonalListScreen(),
       FlatsFavoritesListScreen()
     ];
@@ -43,29 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          actions: [
-            if (_currentScreenIndex == 0)
-              Padding(
-                padding: EdgeInsets.only(right: 15),
-                child: IconButton(
-                  onPressed: () async {
-                    var filter = await Navigator.of(context).pushNamed(
-                        FilterScreen.route,
-                        arguments: {'currentFilter': _filter});
-                    if (filter == null) return;
-                    setState(() {
-                      this._filter = filter as FilterViewModel;
-                    });
-                  },
-                  icon: Image.asset('assets/filter_white.png'),
-                  iconSize: 32,
-                ),
-              )
-          ],
-          title: Text('Event Flats'),
-          centerTitle: true,
-        ),
         floatingActionButton: _currentScreenIndex == 0
             ? FloatingActionButton.extended(
                 backgroundColor: AppColors.primaryColor,

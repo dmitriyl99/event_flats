@@ -304,100 +304,93 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
       );
     }
 
+    Widget? _editButton() {
+      var currentUser = widget.authenticationService.getUser();
+      if (currentUser == null) return null;
+      return FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryColor,
+        onPressed: () {
+          _onEdit(context, flat);
+        },
+        label: Text(
+          'Редактировать',
+          style: TextStyle(color: Colors.black),
+        ),
+        icon: Icon(
+          Icons.edit,
+          color: Colors.black,
+        ),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Event Flats'),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop(_edited);
-          },
-          icon: Icon(
-            Platform.isIOS ? CupertinoIcons.back : Icons.arrow_back,
-            size: 28,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('Event Flats'),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop(_edited);
+            },
+            icon: Icon(
+              Platform.isIOS ? CupertinoIcons.back : Icons.arrow_back,
+              size: 28,
+            ),
           ),
         ),
-      ),
-      body: FutureBuilder(
-        future: widget.flatsRepository.getById(flat.id),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            flat = snapshot.data as Flat;
-            return Container(
-              padding: EdgeInsets.fromLTRB(10, 15, 10, 10),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildImage(flat),
-                    _nameAndAddressSection(),
-                    _divider(),
-                    _roomsAndFloors(),
-                    _divider(),
-                    if (flat.area != null) _flatArea(),
-                    if (flat.area != null) _divider(),
-                    _flatRepair(),
-                    _divider(),
-                    _flatPrice(),
-                    _divider(),
-                    if (flat.description != null &&
-                        flat.description!.isNotEmpty)
-                      _flatDescription(),
-                    if (flat.description != null &&
-                        flat.description!.isNotEmpty)
+        body: FutureBuilder(
+          future: widget.flatsRepository.getById(flat.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              flat = snapshot.data as Flat;
+              return Container(
+                padding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildImage(flat),
+                      _nameAndAddressSection(),
                       _divider(),
-                    _ownerInfo(),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    if (flat.phones != null && flat.phones!.isNotEmpty)
-                      _callButton(),
-                  ],
-                ),
-              ),
-            );
-          }
-          if (snapshot.connectionState != ConnectionState.done) {
-            return Center(
-                child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(Colors.white),
-            ));
-          }
-          if (snapshot.hasError) {
-            log(snapshot.stackTrace.toString());
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-          return Container();
-        },
-      ),
-      floatingActionButton: FutureBuilder(
-        future: widget.authenticationService.getUser(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            var user = snapshot.data as User;
-            if (user.isAdmin) {
-              return FloatingActionButton.extended(
-                backgroundColor: AppColors.primaryColor,
-                onPressed: () {
-                  _onEdit(context, flat);
-                },
-                label: Text(
-                  'Редактировать',
-                  style: TextStyle(color: Colors.black),
-                ),
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.black,
+                      _roomsAndFloors(),
+                      _divider(),
+                      if (flat.area != null) _flatArea(),
+                      if (flat.area != null) _divider(),
+                      _flatRepair(),
+                      _divider(),
+                      _flatPrice(),
+                      _divider(),
+                      if (flat.description != null &&
+                          flat.description!.isNotEmpty)
+                        _flatDescription(),
+                      if (flat.description != null &&
+                          flat.description!.isNotEmpty)
+                        _divider(),
+                      _ownerInfo(),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      if (flat.phones != null && flat.phones!.isNotEmpty)
+                        _callButton(),
+                    ],
+                  ),
                 ),
               );
             }
-          }
-
-          return Container();
-        },
-      ),
-    );
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Center(
+                  child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+              ));
+            }
+            if (snapshot.hasError) {
+              log(snapshot.stackTrace.toString());
+              return Center(
+                child: Text(snapshot.error.toString()),
+              );
+            }
+            return Container();
+          },
+        ),
+        floatingActionButton: _editButton());
   }
 }

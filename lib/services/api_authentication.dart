@@ -9,12 +9,19 @@ class ApiAuthenticationService extends AuthenticationService {
       baseUrl: 'http://localhost:8000/api/v1/auth/',
       receiveDataWhenStatusError: true));
 
-  @override
-  Future<User?> getUser() async {
+  static User? _currentUser;
+
+  static Future<void> init() async {
+    User? user;
     var usersBox = await Hive.openBox<User>('users');
     if (usersBox.containsKey('authenticated'))
-      return usersBox.get('authenticated') as User;
-    return null;
+      user = usersBox.get('authenticated') as User;
+    _currentUser = user;
+  }
+
+  @override
+  User? getUser() {
+    return _currentUser;
   }
 
   @override
