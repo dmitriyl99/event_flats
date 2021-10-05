@@ -102,110 +102,118 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     } else if (flats.length == 0) {
       return _buildEmptyList();
     }
-    return ListView(
-      children: flats.map<Widget>((Flat flat) {
-        return Dismissible(
-            direction: DismissDirection.endToStart,
-            background: Container(
-              padding: EdgeInsets.only(right: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Icon(Icons.delete, size: 32), Text('Удалить')],
-                  )
-                ],
+    return RefreshIndicator(
+      backgroundColor: AppColors.primaryColor,
+      color: Colors.black,
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: ListView(
+        children: flats.map<Widget>((Flat flat) {
+          return Dismissible(
+              direction: DismissDirection.endToStart,
+              background: Container(
+                padding: EdgeInsets.only(right: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Icon(Icons.delete, size: 32), Text('Удалить')],
+                    )
+                  ],
+                ),
+                decoration: BoxDecoration(color: Colors.red),
               ),
-              decoration: BoxDecoration(color: Colors.red),
-            ),
-            key: Key(flat.id.toString()),
-            confirmDismiss: (direction) async {
-              if (direction != DismissDirection.endToStart) return false;
-              if (!(await FirebaseAuthenticationService().getUser())!.isAdmin) {
-                showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                          title: Text('Ограничение'),
-                          content: Container(
-                              height: 100,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.warning,
-                                    color: Colors.yellow,
-                                    size: 42,
-                                  ),
-                                  Text(
-                                    'У вас нет прав на удаление квартир',
-                                    style: TextStyle(fontSize: 21),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              )),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text(
-                                  'Ок',
-                                  style: TextStyle(fontSize: 19),
-                                ))
-                          ],
-                        ));
-                return false;
-              }
-              var result = await showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text('Вы уверены?'),
-                      content: Text(
-                          'Вы уверены, что хотите удалить квартиру ${flat.address}?'),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(false);
-                                },
-                                child: Text(
-                                  'Отмена',
-                                  style: TextStyle(fontSize: 18),
+              key: Key(flat.id.toString()),
+              confirmDismiss: (direction) async {
+                if (direction != DismissDirection.endToStart) return false;
+                if (!(await FirebaseAuthenticationService().getUser())!
+                    .isAdmin) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: Text('Ограничение'),
+                            content: Container(
+                                height: 100,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.warning,
+                                      color: Colors.yellow,
+                                      size: 42,
+                                    ),
+                                    Text(
+                                      'У вас нет прав на удаление квартир',
+                                      style: TextStyle(fontSize: 21),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 )),
-                            TextButton(
-                              child: Text(
-                                'Да',
-                                style: TextStyle(fontSize: 19),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text(
+                                    'Ок',
+                                    style: TextStyle(fontSize: 19),
+                                  ))
+                            ],
+                          ));
+                  return false;
+                }
+                var result = await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Вы уверены?'),
+                        content: Text(
+                            'Вы уверены, что хотите удалить квартиру ${flat.address}?'),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: Text(
+                                    'Отмена',
+                                    style: TextStyle(fontSize: 18),
+                                  )),
+                              TextButton(
+                                child: Text(
+                                  'Да',
+                                  style: TextStyle(fontSize: 19),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
                               ),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  });
-              return result;
-            },
-            onDismissed: (direction) async {
-              if (direction == DismissDirection.endToStart) {
-                await widget._flatsRepository.removeById(flat.id);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    backgroundColor: AppColors.primaryColor,
-                    content: Text(
-                      'Квартира удалена',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white),
-                    )));
-              }
-            },
-            child: FlatComponent(flat, widget._flatsRepository));
-      }).toList(),
+                            ],
+                          ),
+                        ],
+                      );
+                    });
+                return result;
+              },
+              onDismissed: (direction) async {
+                if (direction == DismissDirection.endToStart) {
+                  await widget._flatsRepository.removeById(flat.id);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: AppColors.primaryColor,
+                      content: Text(
+                        'Квартира удалена',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white),
+                      )));
+                }
+              },
+              child: FlatComponent(flat, widget._flatsRepository));
+        }).toList(),
+      ),
     );
   }
 
