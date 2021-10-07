@@ -1,6 +1,9 @@
 import 'package:event_flats/services/api_authentication.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/services/exceptions/no_internet.dart';
+import 'package:event_flats/services/exceptions/server_error_exception.dart';
+import 'package:event_flats/view/components/dialogs.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/home.screen.dart';
 import 'package:event_flats/view/ui/bezier_container.dart';
@@ -51,33 +54,25 @@ class _LoginScreenState extends State<LoginScreen> {
       final password = _passwordController.text;
       try {
         await _authenticationService.login(email, password);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(HomeScreen.route, (route) => false);
       } on AuthenticationFailed catch (ex) {
         showDialog(
             context: context,
-            builder: (context) => AlertDialog(
-                  title: Text('Ошибка авторизации'),
-                  content: Text(ex.getMessage()),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          'Закрыть',
-                          style: TextStyle(fontSize: 16),
-                        ))
-                  ],
-                ));
+            builder: (context) => buildAuthorizationErrorDialog(context, ex));
+      } on NoInternetException {
+        showDialog(
+            context: context,
+            builder: (context) => buildNoInternetDialog(context));
+      } on ServerErrorException {
+        showDialog(
+            context: context,
+            builder: (context) => buildServerErrorDialog(context));
+      } finally {
         setState(() {
           _isLoading = false;
         });
-        return;
       }
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil(HomeScreen.route, (route) => false);
     }
   }
 
