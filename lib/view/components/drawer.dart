@@ -1,13 +1,19 @@
-import 'package:event_flats/models/user.dart';
+import 'package:event_flats/services/authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {
-  const AppDrawer(this._user, {Key? key}) : super(key: key);
-  final User _user;
+  const AppDrawer(this._authenticationService, {Key? key}) : super(key: key);
+  final AuthenticationService _authenticationService;
+
+  void _onLogout(BuildContext context) async {
+    await _authenticationService.signOut();
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
+    var user = _authenticationService.getUser()!;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -20,14 +26,14 @@ class AppDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _user.displayName,
+                  user.displayName,
                   style: TextStyle(fontSize: 18, color: Colors.black),
                 ),
-                Text(_user.email, style: TextStyle(color: Colors.black54))
+                Text(user.email, style: TextStyle(color: Colors.black54))
               ],
             ),
           ),
-          if (_user.isAdmin)
+          if (user.isAdmin)
             ListTile(
               leading: Icon(CupertinoIcons.person_2_fill),
               title: const Text('Сотрудники'),
@@ -38,8 +44,7 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.logout),
             title: const Text('Выход'),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              _onLogout(context);
             },
           ),
         ],

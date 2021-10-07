@@ -61,7 +61,8 @@ class ApiAuthenticationService extends AuthenticationService {
     var user = usersBox.get('authenticated');
     if (user == null) return;
     await _httpClient.post('logout',
-        options: Options(headers: {'Authorization': user.accessToken}));
+        options:
+            Options(headers: {'Authorization': 'Bearer ${user.accessToken}'}));
     await usersBox.delete('authenticated');
     await init();
   }

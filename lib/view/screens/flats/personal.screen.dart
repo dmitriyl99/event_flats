@@ -51,7 +51,7 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: AppDrawer(widget._authenticationService.getUser()!),
+      drawer: AppDrawer(widget._authenticationService),
       appBar: AppBar(
         actions: [
           Padding(
