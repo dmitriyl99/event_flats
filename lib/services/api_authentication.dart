@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/services/exceptions/no_internet.dart';
 import 'package:hive/hive.dart';
 
 class ApiAuthenticationService extends AuthenticationService {
@@ -32,6 +35,7 @@ class ApiAuthenticationService extends AuthenticationService {
       response = await _httpClient.post('login/access-token',
           data: payload, options: Options(responseType: ResponseType.json));
     } on DioError catch (error) {
+      if (error.response == null) throw new NoInternetException();
       if (error.response!.statusCode == 401) {
         throw new AuthenticationFailed();
       }
