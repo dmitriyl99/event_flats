@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:event_flats/events/flat_created.dart';
 import 'package:event_flats/events/flat_favorited.dart';
+import 'package:event_flats/events/flat_updated.dart';
 import 'package:event_flats/events/service.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
@@ -41,12 +42,11 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
         setState(() {});
       }
     });
-  }
-
-  @override
-  void dispose() {
-    log('onDispose');
-    super.dispose();
+    EventService.bus.on<FlatUpdated>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override

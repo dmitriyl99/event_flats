@@ -1,5 +1,6 @@
 import 'package:event_flats/events/flat_created.dart';
 import 'package:event_flats/events/flat_favorited.dart';
+import 'package:event_flats/events/flat_updated.dart';
 import 'package:event_flats/events/service.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
@@ -36,6 +37,11 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
       }
     });
     EventService.bus.on<FlatCreated>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    EventService.bus.on<FlatUpdated>().listen((event) {
       if (mounted) {
         setState(() {});
       }

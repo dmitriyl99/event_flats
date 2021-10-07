@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:event_flats/events/flat_created.dart';
+import 'package:event_flats/events/flat_updated.dart';
 import 'package:event_flats/events/service.dart';
 import 'package:event_flats/models/dto/flat.dart';
 import 'package:event_flats/models/flat.dart';
@@ -105,6 +106,7 @@ class ApiFlatsRepository extends FlatsRepository {
       if (response.statusCode == 403)
         throw new ForbiddenException(message: response.data['error'] as String);
     }
+    EventService.bus.fire(FlatUpdated());
   }
 
   Future<User> _getUser() async {
