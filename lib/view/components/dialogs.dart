@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 
 AlertDialog buildNoInternetDialog(BuildContext context) {
   return AlertDialog(
-      title: Text('Ошибка соединения'),
+      title: Text(
+        'Ошибка соединения',
+        textAlign: TextAlign.center,
+      ),
       content: Container(
-        height: 100,
+        height: 120,
         child: Column(
           children: [
             Icon(
@@ -17,7 +20,8 @@ AlertDialog buildNoInternetDialog(BuildContext context) {
               height: 20,
             ),
             Text(
-              'Проверьте, включён ли интернет',
+              'Нет связи с сервером. Проверьте, включён ли интернет',
+              textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18),
             )
           ],
@@ -36,7 +40,7 @@ AlertDialog buildNoInternetDialog(BuildContext context) {
 AlertDialog buildAuthorizationErrorDialog(
     BuildContext context, AuthenticationFailed ex) {
   return AlertDialog(
-      title: Text('Ошибка авторизации'),
+      title: Text('Ошибка авторизации', textAlign: TextAlign.center),
       content: Container(
         height: 100,
         child: Column(
@@ -48,10 +52,8 @@ AlertDialog buildAuthorizationErrorDialog(
             SizedBox(
               height: 20,
             ),
-            Text(
-              ex.getMessage(),
-              style: TextStyle(fontSize: 18),
-            )
+            Text(ex.getMessage(),
+                style: TextStyle(fontSize: 18), textAlign: TextAlign.center)
           ],
         ),
       ),
@@ -67,7 +69,7 @@ AlertDialog buildAuthorizationErrorDialog(
 
 AlertDialog buildServerErrorDialog(BuildContext context) {
   return AlertDialog(
-      title: Text('Ошибка авторизации'),
+      title: Text('Ошибка сервера', textAlign: TextAlign.center),
       content: Container(
         height: 100,
         child: Column(
@@ -79,10 +81,37 @@ AlertDialog buildServerErrorDialog(BuildContext context) {
             SizedBox(
               height: 20,
             ),
-            Text(
-              'Ошибка сервера',
-              style: TextStyle(fontSize: 18),
-            )
+            Text('Opps..',
+                style: TextStyle(fontSize: 18), textAlign: TextAlign.center)
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('Ок', style: TextStyle(fontSize: 16)),
+        )
+      ]);
+}
+
+AlertDialog buildValidationError(BuildContext context) {
+  return AlertDialog(
+      title: Text('Ошибка валидации', textAlign: TextAlign.center),
+      content: Container(
+        height: 150,
+        child: Column(
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text('Проверьте, все ли поля заполнены правильно',
+                style: TextStyle(fontSize: 18), textAlign: TextAlign.center)
           ],
         ),
       ),

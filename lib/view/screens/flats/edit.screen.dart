@@ -6,11 +6,18 @@ import 'package:event_flats/models/dto/flat.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/districts.dart';
+import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/services/exceptions/no_internet.dart';
+import 'package:event_flats/services/exceptions/server_error_exception.dart';
+import 'package:event_flats/services/exceptions/validation_exception.dart';
 import 'package:event_flats/services/repairs.dart';
+import 'package:event_flats/view/components/dialogs.dart';
 import 'package:event_flats/view/components/flat_number.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../login.screen.dart';
 
 // ignore: must_be_immutable
 class EditFlatScreen extends StatefulWidget {
@@ -168,10 +175,32 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           _images,
           _ownerNameController.text,
           id: id);
-      await widget._flatsRepository.updateFlat(flat);
-      setState(() {
-        _isLoading = false;
-      });
+      try {
+        await widget._flatsRepository.updateFlat(flat);
+      } on ServerErrorException {
+        showDialog(
+            context: context,
+            builder: (context) => buildServerErrorDialog(context));
+        return;
+      } on NoInternetException {
+        showDialog(
+            context: context,
+            builder: (context) => buildNoInternetDialog(context));
+        return;
+      } on AuthenticationFailed {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(LoginScreen.route, (route) => false);
+        return;
+      } on ValidationException {
+        showDialog(
+            context: context,
+            builder: (context) => buildValidationError(context));
+        return;
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
       Navigator.of(context).pop(true);
     }
   }

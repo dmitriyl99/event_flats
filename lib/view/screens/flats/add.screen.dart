@@ -4,12 +4,18 @@ import 'package:event_flats/helpers/string.dart';
 import 'package:event_flats/models/dto/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/districts.dart';
+import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/services/exceptions/no_internet.dart';
+import 'package:event_flats/services/exceptions/server_error_exception.dart';
 import 'package:event_flats/services/exceptions/validation_exception.dart';
 import 'package:event_flats/services/repairs.dart';
+import 'package:event_flats/view/components/dialogs.dart';
 import 'package:event_flats/view/components/flat_number.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../login.screen.dart';
 
 // ignore: must_be_immutable
 class AddFlatScreen extends StatefulWidget {
@@ -164,27 +170,46 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           .toList()
           .where((element) => element.isNotEmpty)
           .toList());
+      var flat = FlatDto(
+          _currentDistrict,
+          _currentLandmark,
+          _landmarkController.text,
+          double.parse(_priceController.text),
+          int.parse(_roomsController.text),
+          int.parse(_floorController.text),
+          int.parse(_numberOfFloorsController.text),
+          _currentRepair,
+          double.parse(_areaController.text),
+          _descriptionController.text,
+          phones,
+          _images,
+          _ownerNameController.text);
       try {
-        await widget._flatsRepository.createFlat(FlatDto(
-            _currentDistrict,
-            _currentLandmark,
-            _landmarkController.text,
-            double.parse(_priceController.text),
-            int.parse(_roomsController.text),
-            int.parse(_floorController.text),
-            int.parse(_numberOfFloorsController.text),
-            _currentRepair,
-            double.parse(_areaController.text),
-            _descriptionController.text,
-            phones,
-            _images,
-            _ownerNameController.text));
-      } on ValidationException catch (error) {
-        print(error.getErrors());
+        await widget._flatsRepository.updateFlat(flat);
+      } on ServerErrorException {
+        showDialog(
+            context: context,
+            builder: (context) => buildServerErrorDialog(context));
+        return;
+      } on NoInternetException {
+        showDialog(
+            context: context,
+            builder: (context) => buildNoInternetDialog(context));
+        return;
+      } on AuthenticationFailed {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(LoginScreen.route, (route) => false);
+        return;
+      } on ValidationException {
+        showDialog(
+            context: context,
+            builder: (context) => buildValidationError(context));
+        return;
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
-      setState(() {
-        _isLoading = false;
-      });
       Navigator.of(context).pop(true);
     }
   }

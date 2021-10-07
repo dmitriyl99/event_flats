@@ -1,13 +1,12 @@
 import 'package:event_flats/models/repositories/api_flats_repository.dart';
-import 'package:event_flats/models/repositories/firebase_flats_repository.dart';
+import 'package:event_flats/models/repositories/users_repository.dart';
 import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/api_authentication.dart';
-import 'package:event_flats/services/authentication.dart';
+import 'package:event_flats/view/screens/admin/users_list.screen.dart';
 import 'package:event_flats/view/screens/flats/add.screen.dart';
 import 'package:event_flats/view/screens/flats/edit.screen.dart';
 import 'package:event_flats/view/screens/flats/filter.screen.dart';
 import 'package:event_flats/view/screens/flats/home.screen.dart';
-import 'package:event_flats/view/screens/flats/list.screen.dart';
 import 'package:event_flats/view/screens/flats/show.screen.dart';
 import 'package:event_flats/view/screens/login.screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -48,6 +47,8 @@ class MyApp extends StatelessWidget {
     ApiAuthenticationService authenticationService = ApiAuthenticationService();
     ApiFlatsRepository flatsRepository =
         ApiFlatsRepository(authenticationService);
+    UsersRepository usersRepository =
+        new UsersRepository(authenticationService);
     return MaterialApp(
       title: 'Event Flats',
       debugShowCheckedModeBanner: false,
@@ -61,7 +62,8 @@ class MyApp extends StatelessWidget {
             new FlatShowScreen(authenticationService, flatsRepository),
         AddFlatScreen.route: (context) => new AddFlatScreen(flatsRepository),
         EditFlatScreen.route: (context) => new EditFlatScreen(flatsRepository),
-        FilterScreen.route: (context) => new FilterScreen()
+        FilterScreen.route: (context) => new FilterScreen(),
+        UsersListScreen.route: (context) => new UsersListScreen(usersRepository)
       },
       initialRoute: initialRoute,
     );

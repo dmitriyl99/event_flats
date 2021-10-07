@@ -1,4 +1,5 @@
 import 'package:event_flats/services/authentication.dart';
+import 'package:event_flats/view/screens/admin/users_list.screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -36,8 +37,11 @@ class AppDrawer extends StatelessWidget {
           if (user.isAdmin)
             ListTile(
               leading: Icon(CupertinoIcons.person_2_fill),
-              title: const Text('Сотрудники'),
-              onTap: () {},
+              title: const Text('Пользователи'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushNamed(UsersListScreen.route);
+              },
             ),
           Divider(),
           ListTile(

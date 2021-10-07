@@ -4,8 +4,13 @@ import 'package:event_flats/helpers/date_formatting.dart';
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
+import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/services/exceptions/no_internet.dart';
+import 'package:event_flats/services/exceptions/server_error_exception.dart';
+import 'package:event_flats/view/components/dialogs.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/show.screen.dart';
+import 'package:event_flats/view/screens/login.screen.dart';
 import 'package:flutter/material.dart';
 
 class FlatComponent extends StatelessWidget {
@@ -15,6 +20,27 @@ class FlatComponent extends StatelessWidget {
       : super(key: key);
 
   final FlatsRepository _flatsRepository;
+
+  void _onHouseTap(context) async {
+    try {
+      await _flatsRepository.toggleFavorite(flat.id);
+    } on ServerErrorException {
+      showDialog(
+          context: context,
+          builder: (context) => buildServerErrorDialog(context));
+      return;
+    } on NoInternetException {
+      showDialog(
+          context: context,
+          builder: (context) => buildNoInternetDialog(context));
+      return;
+    } on AuthenticationFailed {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(LoginScreen.route, (route) => false);
+      return;
+    }
+    EventService.bus.fire(FlatFavorited(flat));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +60,8 @@ class FlatComponent extends StatelessWidget {
               leading: Column(
                 children: [
                   GestureDetector(
-                    onTap: () async {
-                      await _flatsRepository.toggleFavorite(flat.id);
-                      EventService.bus.fire(FlatFavorited(flat));
+                    onTap: () {
+                      _onHouseTap(context);
                     },
                     child: Image.asset(
                       flat.isFavorite

@@ -1,17 +1,21 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
-import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/authentication.dart';
+import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/services/exceptions/no_internet.dart';
+import 'package:event_flats/services/exceptions/server_error_exception.dart';
+import 'package:event_flats/services/exceptions/user_empty.dart';
+import 'package:event_flats/view/components/errors.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/edit.screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
+import '../login.screen.dart';
 
 class FlatShowScreen extends StatefulWidget {
   static String route = '/flats/show';
@@ -34,6 +38,10 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     if (result != null && result == true) {
       setState(() {});
     }
+  }
+
+  void _onRefresh() {
+    setState(() {});
   }
 
   bool _edited = false;
@@ -384,10 +392,18 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               ));
             }
             if (snapshot.hasError) {
-              log(snapshot.stackTrace.toString());
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
+              var error = snapshot.error;
+              if (error is ServerErrorException)
+                return buildServerError(onRefresh: _onRefresh);
+              if (error is NoInternetException)
+                return buildNoInternetError(onRefresh: _onRefresh);
+              if (error is UnauthorizedUserException ||
+                  error is AuthenticationFailed) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    LoginScreen.route, (route) => false);
+                return buildDefaultError();
+              }
+              return buildDefaultError(onRefresh: _onRefresh);
             }
             return Container();
           },
