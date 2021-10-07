@@ -444,7 +444,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 final XFile? image = await _picker.pickImage(
                                     source: ImageSource.camera);
                                 if (image != null) {
-                                  print(image.path);
                                   setState(() {
                                     _images.clear();
                                     _images.add(File(image.path));
