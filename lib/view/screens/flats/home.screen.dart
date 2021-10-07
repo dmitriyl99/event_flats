@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AuthenticationService _authenticationService) {
     _screens = [
       FlatsListScreen(_flatsRepository, _authenticationService),
-      FlatsPersonalListScreen(),
+      FlatsPersonalListScreen(_flatsRepository, _authenticationService),
       FlatsFavoritesListScreen(_flatsRepository, _authenticationService)
     ];
   }

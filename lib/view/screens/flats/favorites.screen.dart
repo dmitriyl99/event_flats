@@ -1,3 +1,6 @@
+import 'package:event_flats/events/flat_created.dart';
+import 'package:event_flats/events/flat_favorited.dart';
+import 'package:event_flats/events/service.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/view/components/drawer.dart';
@@ -24,6 +27,21 @@ class FlatsFavoritesListScreen extends StatefulWidget {
 class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
   FilterViewModel? _filter =
       new FilterViewModel(sortDate: true, favorite: true);
+  @override
+  void initState() {
+    super.initState();
+    EventService.bus.on<FlatFavorited>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    EventService.bus.on<FlatCreated>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

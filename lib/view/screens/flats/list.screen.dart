@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:event_flats/events/flat_created.dart';
 import 'package:event_flats/events/flat_favorited.dart';
 import 'package:event_flats/events/service.dart';
@@ -29,13 +31,22 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
   @override
   void initState() {
     super.initState();
-
     EventService.bus.on<FlatFavorited>().listen((event) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     EventService.bus.on<FlatCreated>().listen((event) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    log('onDispose');
+    super.dispose();
   }
 
   @override
