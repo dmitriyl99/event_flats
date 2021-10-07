@@ -48,6 +48,7 @@ class ApiAuthenticationService extends AuthenticationService {
     userData['access_token'] = accessToken;
     var userObj = User.fromJson(userData);
     usersBox.put('authenticated', userObj);
+    await init();
   }
 
   @override
@@ -58,5 +59,6 @@ class ApiAuthenticationService extends AuthenticationService {
     await _httpClient.post('logout',
         options: Options(headers: {'Authorization': user.accessToken}));
     await usersBox.delete('authenticated');
+    await init();
   }
 }
