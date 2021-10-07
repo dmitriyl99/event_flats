@@ -1,6 +1,8 @@
+import 'package:event_flats/services/api_authentication.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
 import 'package:event_flats/view/resources/colors.dart';
+import 'package:event_flats/view/screens/flats/home.screen.dart';
 import 'package:event_flats/view/ui/bezier_container.dart';
 import 'package:flutter/material.dart';
 
@@ -74,7 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = false;
       });
-      Navigator.of(context).pushNamedAndRemoveUntil('/flats', (route) => false);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(HomeScreen.route, (route) => false);
     }
   }
 
