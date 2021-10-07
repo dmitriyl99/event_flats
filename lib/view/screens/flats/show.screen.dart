@@ -307,6 +307,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     Widget? _editButton() {
       var currentUser = widget.authenticationService.getUser();
       if (currentUser == null) return null;
+      if (!currentUser.isAdmin) return null;
       return FloatingActionButton.extended(
         backgroundColor: AppColors.primaryColor,
         onPressed: () {

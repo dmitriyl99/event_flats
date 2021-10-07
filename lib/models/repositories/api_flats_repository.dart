@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:event_flats/events/flat_created.dart';
 import 'package:event_flats/events/service.dart';
@@ -92,13 +94,17 @@ class ApiFlatsRepository extends FlatsRepository {
   @override
   Future<void> updateFlat(FlatDto flat) async {
     var payload = flat.toJson();
-    var response = await _httpClient.post('/',
-        data: payload, options: await _authorizationOptions());
-    if (response.statusCode == 422)
-      throw new ValidationException(Map<String, dynamic>.from(response.data));
-    if (response.statusCode == 500) throw new ServerErrorException();
-    if (response.statusCode == 403)
-      throw new ForbiddenException(message: response.data['error'] as String);
+    try {
+      await _httpClient.put('/${flat.id}',
+          data: payload, options: await _authorizationOptions());
+    } on DioError catch (error) {
+      var response = error.response!;
+      if (response.statusCode == 422)
+        throw new ValidationException(Map<String, dynamic>.from(response.data));
+      if (response.statusCode == 500) throw new ServerErrorException();
+      if (response.statusCode == 403)
+        throw new ForbiddenException(message: response.data['error'] as String);
+    }
   }
 
   Future<User> _getUser() async {

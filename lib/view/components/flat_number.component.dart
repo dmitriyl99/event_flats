@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class FlatPhoneNumberComponent extends StatelessWidget {
-  FlatPhoneNumberComponent(Key key, this._onPhoneDelete) : super(key: key);
+  String? initialValue;
+  FlatPhoneNumberComponent(Key key, this._onPhoneDelete, {String? initialValue})
+      : super(key: key) {
+    _textEditingController = new TextEditingController();
+    if (initialValue != null) _textEditingController.text = initialValue;
+  }
 
   final Function _onPhoneDelete;
-  TextEditingController _textEditingController = new TextEditingController();
+  late TextEditingController _textEditingController;
 
   String getPhone() {
     return _textEditingController.text;

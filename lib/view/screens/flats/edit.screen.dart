@@ -7,6 +7,7 @@ import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/districts.dart';
 import 'package:event_flats/services/repairs.dart';
+import 'package:event_flats/view/components/flat_number.component.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,7 +36,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   List<String> _phones = [];
   List<File> _images = [];
 
-  late int _currentDistrict = 1;
+  late int _currentDistrict = 0;
   int? _currentLandmark;
   late String _currentRepair = _repairs.first;
   TextEditingController _landmarkController = new TextEditingController();
@@ -51,6 +52,10 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   final ImagePicker _picker = ImagePicker();
   File? _currentImage;
   late FocusNode _floorFocusNode;
+  List<FlatPhoneNumberComponent> _phoneFields = [];
+  int _phonesIndex = 0;
+
+  final ScrollController _scrollController = new ScrollController();
 
   @override
   void initState() {
@@ -69,7 +74,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
         setState(() {
           _districts = value;
           if (value.isNotEmpty) {
-            _currentDistrict = value.first['id'];
+            if (_currentDistrict == 0) _currentDistrict = value.first['id'];
           }
         });
       });
@@ -123,7 +128,15 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   }
 
   String? _validateOwnerPhone(String? value) {
-    if (value == null || value.isEmpty) return 'Укажите номер владельца';
+    var phones = _phoneFields
+        .map<String>((e) => e.getPhone())
+        .toList()
+        .where((element) => element.isNotEmpty);
+    if (value == null && phones.isNotEmpty) return null;
+    if (value != null && value.isEmpty && phones.isNotEmpty) return null;
+    if (value == null && phones.isEmpty) return 'Укажите номер владельца';
+    if (value != null && value.isEmpty && phones.isEmpty)
+      return 'Укажите номер владельца';
     return null;
   }
 
@@ -132,20 +145,29 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       setState(() {
         _isLoading = true;
       });
+      List<String> phones = [];
+      if (_ownerPhoneController.text.isNotEmpty)
+        phones.add(_ownerPhoneController.text);
+      phones.addAll(_phoneFields
+          .map<String>((e) => e.getPhone())
+          .toList()
+          .where((element) => element.isNotEmpty)
+          .toList());
       var flat = FlatDto(
           _currentDistrict,
           _currentLandmark,
           _landmarkController.text,
-          double.parse(_priceController.text),
+          double.parse(_priceController.text.replaceAll(',', '')),
           int.parse(_roomsController.text),
           int.parse(_floorController.text),
           int.parse(_numberOfFloorsController.text),
           _currentRepair,
           double.parse(_areaController.text),
           _descriptionController.text,
-          _phones,
+          phones,
           _images,
-          _ownerNameController.text);
+          _ownerNameController.text,
+          id: id);
       await widget._flatsRepository.updateFlat(flat);
       setState(() {
         _isLoading = false;
@@ -154,9 +176,11 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
     }
   }
 
-  bool _currentDistrictHasLandmarks() {
-    if (_districts.isEmpty) return false;
-    return _districts[_currentDistrict]['landmarks'].length > 0;
+  void _deletePhone(int index) {
+    setState(() {
+      _phoneFields
+          .removeWhere((element) => element.key == Key(index.toString()));
+    });
   }
 
   @override
@@ -177,7 +201,24 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       _descriptionController.text = flat.description ?? '';
       _ownerNameController.text = flat.ownerName ?? '';
       _loaded = true;
+      _ownerPhoneController.text = flat.phones![0].toString();
+      if (flat.phones != null && flat.phones!.length > 1) {
+        var phones = flat.phones!;
+        for (int i = 1; i < phones.length; i++) {
+          FlatPhoneNumberComponent element =
+              FlatPhoneNumberComponent(Key(i.toString()), () {
+            _deletePhone(i);
+          }, initialValue: phones[i]);
+          _phoneFields.add(element);
+          _phonesIndex = i;
+        }
+      }
     }
+    var landmarks = [];
+    if (_districts.isNotEmpty)
+      landmarks = _districts
+          .where((element) => element['id'] == _currentDistrict)
+          .first['landmarks'];
 
     return Scaffold(
         appBar: AppBar(
@@ -216,6 +257,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
+              controller: _scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -236,6 +278,8 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                   setState(() {
                                     _currentDistrict = value!;
                                   });
+                                  _landmarkController.text = '';
+                                  _currentLandmark = null;
                                 },
                                 items: _districts
                                     .map<DropdownMenuItem<int>>(
@@ -247,38 +291,32 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                           ),
                         );
                       }),
-                  Visibility(
-                    visible: _currentDistrictHasLandmarks(),
-                    child: FormField<int>(builder: (FormFieldState<int> state) {
-                      return InputDecorator(
-                        decoration: InputDecoration(labelText: "Ориентир"),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                              value: _currentLandmark,
-                              isDense: true,
-                              onChanged: (value) {
-                                setState(() {
-                                  _currentLandmark = value!;
-                                });
-                              },
-                              items: _districts[_currentDistrict]['lanndmarks']
-                                  .map<DropdownMenuItem<int>>(
-                                      (value) => DropdownMenuItem(
-                                            value: value['id'],
-                                            child: Text(value['title']),
-                                          ))
-                                  .toList()),
-                        ),
-                      );
-                    }),
-                  ),
-                  Visibility(
-                    visible: !_currentDistrictHasLandmarks(),
-                    child: TextFormField(
-                      controller: _landmarkController,
-                      decoration: InputDecoration(labelText: 'Ориентир'),
+                  Row(children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _landmarkController,
+                        decoration: InputDecoration(labelText: 'Ориентир'),
+                      ),
                     ),
-                  ),
+                    if (landmarks.length > 0)
+                      PopupMenuButton(
+                        icon: Icon(Icons.arrow_drop_down),
+                        onSelected: (value) {
+                          _landmarkController.text = landmarks
+                              .where((l) => l['id'] == value)
+                              .first['title'];
+                          setState(() {
+                            _currentLandmark = value! as int;
+                          });
+                        },
+                        itemBuilder: (context) {
+                          return landmarks
+                              .map<PopupMenuItem>((l) => PopupMenuItem(
+                                  child: Text(l['title']), value: l['id']))
+                              .toList();
+                        },
+                      )
+                  ]),
                   SizedBox(
                     height: 30,
                   ),
@@ -474,6 +512,41 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     validator: _validateOwnerPhone,
                     controller: _ownerPhoneController,
                     decoration: InputDecoration(labelText: 'Номер владельца'),
+                  ),
+                  ..._phoneFields,
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton.icon(
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                AppColors.primaryColor)),
+                        onPressed: () {
+                          var currentIndex = _phonesIndex;
+                          setState(() {
+                            FlatPhoneNumberComponent element =
+                                FlatPhoneNumberComponent(
+                                    Key(currentIndex.toString()), () {
+                              _deletePhone(currentIndex);
+                            });
+                            _phoneFields.add(element);
+                          });
+                          _phonesIndex++;
+                          _scrollController.animateTo(
+                              _scrollController.position.maxScrollExtent + 30,
+                              duration: Duration(seconds: 1),
+                              curve: Curves.fastOutSlowIn);
+                        },
+                        icon: Icon(Icons.add, color: Colors.black),
+                        label: Text(
+                          'Добавить номер',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 30,
