@@ -12,6 +12,7 @@ class FilterViewModel {
   final bool sortPriceUp;
   final bool sortDistrict;
   final bool sortDate;
+  final bool? favorite;
 
   FilterViewModel(
       {this.district,
@@ -23,6 +24,7 @@ class FilterViewModel {
       this.area,
       this.roomsStart,
       this.roomsEnd,
+      this.favorite,
       this.sortPriceDown = false,
       this.sortPriceUp = false,
       this.sortDistrict = false,
@@ -47,6 +49,7 @@ class FilterViewModel {
       'repair': repair,
       'area': area,
       'floor': floor,
+      'is_favorite': favorite,
       'rooms_start': roomsStart,
       'rooms_end': roomsEnd,
       'price_start': priceFrom,

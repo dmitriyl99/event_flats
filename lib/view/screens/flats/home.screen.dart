@@ -4,7 +4,6 @@ import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/favorites.screen.dart';
 import 'package:event_flats/view/screens/flats/list.screen.dart';
 import 'package:event_flats/view/screens/flats/personal.screen.dart';
-import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:flutter/material.dart';
 
 import 'add.screen.dart';
@@ -26,14 +25,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentScreenIndex = 0;
   late List<Widget> _screens;
-  FilterViewModel? _filter;
 
   _HomeScreenState(FlatsRepository _flatsRepository,
       AuthenticationService _authenticationService) {
     _screens = [
       FlatsListScreen(_flatsRepository, _authenticationService),
       FlatsPersonalListScreen(),
-      FlatsFavoritesListScreen()
+      FlatsFavoritesListScreen(_flatsRepository, _authenticationService)
     ];
   }
 
