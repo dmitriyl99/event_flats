@@ -3,6 +3,7 @@ import 'package:event_flats/events/flat_favorited.dart';
 import 'package:event_flats/events/service.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
+import 'package:event_flats/view/components/drawer.dart';
 import 'package:event_flats/view/components/flats_list.component.dart';
 import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,6 +41,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(widget._authenticationService.getUser()!),
       appBar: AppBar(
         actions: [
           Padding(
