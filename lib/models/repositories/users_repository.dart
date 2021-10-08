@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:event_flats/events/service.dart';
+import 'package:event_flats/events/user_updated.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
 import 'package:event_flats/services/exceptions/forbidden_exception.dart';
@@ -49,11 +51,13 @@ class UsersRepository {
     }
   }
 
-  Future<void> update(
+  Future<Map<String, dynamic>> update(
       int id, String name, String email, String password) async {
-    var payload = {'name': name, 'email': email, 'password': password};
+    var payload = {'name': name, 'email': email};
+    if (password.isNotEmpty) payload['password'] = password;
+    Response<dynamic> response;
     try {
-      await _httpClient.put('/$id',
+      response = await _httpClient.put('/$id',
           data: payload, options: _authorizationOptions());
     } on DioError catch (error) {
       if (error.response == null) throw NoInternetException();
@@ -63,6 +67,8 @@ class UsersRepository {
         throw new ForbiddenException(message: response.data['error'] as String);
       throw error;
     }
+    EventService.bus.fire(UserUpdated());
+    return Map<String, dynamic>.from(response.data);
   }
 
   Future<void> delete(int id) async {

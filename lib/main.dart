@@ -2,6 +2,7 @@ import 'package:event_flats/models/repositories/api_flats_repository.dart';
 import 'package:event_flats/models/repositories/users_repository.dart';
 import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/api_authentication.dart';
+import 'package:event_flats/view/screens/admin/user_show.screen.dart';
 import 'package:event_flats/view/screens/admin/users_list.screen.dart';
 import 'package:event_flats/view/screens/flats/add.screen.dart';
 import 'package:event_flats/view/screens/flats/edit.screen.dart';
@@ -63,7 +64,10 @@ class MyApp extends StatelessWidget {
         AddFlatScreen.route: (context) => new AddFlatScreen(flatsRepository),
         EditFlatScreen.route: (context) => new EditFlatScreen(flatsRepository),
         FilterScreen.route: (context) => new FilterScreen(),
-        UsersListScreen.route: (context) => new UsersListScreen(usersRepository)
+        UsersListScreen.route: (context) =>
+            new UsersListScreen(usersRepository),
+        UserShowScreen.route: (context) =>
+            new UserShowScreen(usersRepository, flatsRepository)
       },
       initialRoute: initialRoute,
     );
