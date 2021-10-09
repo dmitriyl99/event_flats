@@ -33,7 +33,7 @@ class ApiFlatsRepository extends FlatsRepository {
     var payload = flat.toJson();
     Response<dynamic> response;
     try {
-      response = await _httpClient.post('/',
+      response = await _httpClient.post('',
           data: payload, options: _authorizationOptions());
     } on DioError catch (err) {
       if (err.response == null) throw new NoInternetException();
@@ -43,7 +43,6 @@ class ApiFlatsRepository extends FlatsRepository {
             Map<String, dynamic>.from(err.response!.data));
       if (response.statusCode == 500) throw new ServerErrorException();
       if (response.statusCode == 401) throw new AuthenticationFailed();
-
       throw err;
     }
     var data = response.data['data'] as Map<String, dynamic>;
@@ -87,7 +86,7 @@ class ApiFlatsRepository extends FlatsRepository {
     Map<String, dynamic>? parameters = filter?.toMap();
     Response<dynamic> response;
     try {
-      response = await _httpClient.get('/',
+      response = await _httpClient.get('',
           queryParameters: parameters, options: _authorizationOptions());
     } on DioError catch (error) {
       log(error.toString());
