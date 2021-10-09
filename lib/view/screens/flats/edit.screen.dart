@@ -40,7 +40,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   List<Map<String, dynamic>> _districts = [];
   List<String> _repairs = getRepairs();
 
-  List<String> _phones = [];
   List<File> _images = [];
 
   late int _currentDistrict = 0;
