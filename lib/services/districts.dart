@@ -7,7 +7,7 @@ import 'exceptions/user_empty.dart';
 
 Future<List<Map<String, dynamic>>> getDistricts() async {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'http://localhost:8000/api/v1/addresses',
+      baseUrl: 'http://192.168.0.101:8000/api/v1/addresses',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
   var response =

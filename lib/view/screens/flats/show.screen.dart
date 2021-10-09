@@ -46,21 +46,22 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     setState(() {});
   }
 
-  bool _edited = false;
+  bool _loaded = false;
 
-  Widget _buildImage(Flat flat) {
-    return FutureBuilder(
-      future: flat.photo,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Container();
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container();
-        }
-        return Image.network(snapshot.data as String);
-      },
-    );
+  bool _edited = false;
+  List<String> _images = [];
+
+  void _getImages(Flat flat) {
+    flat.photos.then((value) {
+      var downloadUrlFutures = value;
+      Future.wait(downloadUrlFutures).then((value) {
+        Future.delayed(Duration.zero).then((value) {
+          setState(() {
+            _images = value;
+          });
+        });
+      });
+    });
   }
 
   void _launchPhone(String phone) async {
@@ -119,9 +120,45 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     setState(() {});
   }
 
+  Widget _buildImages(Flat flat) {
+    return FutureBuilder<List<Future<String>>>(
+        future: flat.photos,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done ||
+              snapshot.hasError) {
+            print(snapshot.error);
+            return Container();
+          }
+          return FutureBuilder<List<String>>(
+            future: Future.wait(snapshot.data!),
+            builder: (context, snapshot) {
+              if (snapshot.hasError || snapshot.data == null)
+                return Container();
+              var urls = snapshot.data!;
+              return Container(
+                height: 300,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: urls
+                      .map<Widget>((e) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Image.network(e),
+                          ))
+                      .toList(),
+                ),
+              );
+            },
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     late Flat flat = ModalRoute.of(context)!.settings.arguments as Flat;
+    if (_loaded) {
+      _getImages(flat);
+      _loaded = true;
+    }
 
     Widget _divider() {
       return Padding(
@@ -434,7 +471,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildImage(flat),
+                      _buildImages(flat),
                       _nameAndAddressSection(),
                       _divider(),
                       _roomsAndFloors(),

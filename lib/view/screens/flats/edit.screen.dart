@@ -56,7 +56,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   TextEditingController _ownerPhoneController = new TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
-  File? _currentImage;
   List<FlatPhoneNumberComponent> _phoneFields = [];
   int _phonesIndex = 0;
 
@@ -441,78 +440,87 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     'Изображение',
                     style: TextStyle(fontSize: 21),
                   ),
-                  if (_currentImage == null)
-                    FutureBuilder(
-                      future: flat.photo,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Container();
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Container();
-                        }
-                        return Image.network(snapshot.data as String);
-                      },
-                    ),
-                  if (_currentImage != null)
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Image.file(_currentImage!)
-                      ],
-                    ),
                   SizedBox(
                     height: 30,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
                     children: [
-                      ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  AppColors.primaryColor)),
-                          onPressed: () async {
-                            final XFile? image = await _picker.pickImage(
-                                source: ImageSource.camera);
-                            if (image != null) {
-                              print(image.path);
-                              setState(() {
-                                _currentImage = File(image.path);
-                              });
-                            }
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(12),
-                            child: Text('С камеры',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.black)),
-                          )),
-                      SizedBox(
-                        width: 20,
+                      Text(
+                        'Изображение',
+                        style: TextStyle(fontSize: 21),
                       ),
-                      ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  AppColors.primaryColor)),
-                          onPressed: () async {
-                            final XFile? image = await _picker.pickImage(
-                                source: ImageSource.gallery);
-                            if (image != null) {
-                              print(image.path);
-                              setState(() {
-                                _currentImage = File(image.path);
-                              });
-                            }
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(12),
-                            child: Text('С устройства',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.black)),
-                          ))
+                      if (_images.isNotEmpty)
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Container(
+                                height: 100,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: _images
+                                      .map<Widget>((e) => Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Image.file(e),
+                                          ))
+                                      .toList(),
+                                ))
+                          ],
+                        ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.primaryColor)),
+                              onPressed: () async {
+                                final XFile? image = await _picker.pickImage(
+                                    source: ImageSource.camera);
+                                if (image != null) {
+                                  setState(() {
+                                    _images.clear();
+                                    _images.add(File(image.path));
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                child: Text('С камеры',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.black)),
+                              )),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.primaryColor)),
+                              onPressed: () async {
+                                final List<XFile>? images = await _picker
+                                    .pickMultiImage(imageQuality: 60);
+                                if (images != null) {
+                                  setState(() {
+                                    _images = images
+                                        .map<File>((e) => File(e.path))
+                                        .toList();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                child: Text('С устройства',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.black)),
+                              ))
+                        ],
+                      )
                     ],
                   ),
                   SizedBox(

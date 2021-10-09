@@ -10,7 +10,7 @@ AlertDialog buildNoInternetDialog(BuildContext context) {
         textAlign: TextAlign.center,
       ),
       content: Container(
-        height: 120,
+        height: 140,
         child: Column(
           children: [
             Icon(

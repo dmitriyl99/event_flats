@@ -21,7 +21,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class ApiFlatsRepository extends FlatsRepository {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'http://localhost:8000/api/v1/flats',
+      baseUrl: 'http://192.168.0.101:8000/api/v1/flats',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
   final AuthenticationService _authenticationService;
@@ -49,7 +49,7 @@ class ApiFlatsRepository extends FlatsRepository {
     var data = response.data['data'] as Map<String, dynamic>;
     Flat createdFlat = Flat.fromJson(data);
     EventService.bus.fire(FlatCreated(createdFlat));
-    if (flat.images != null) return;
+    if (flat.images == null) return;
     flat.images!.forEach((file) async {
       var compressedFile =
           await FlutterImageCompress.compressWithFile(file.absolute.path);
@@ -57,7 +57,7 @@ class ApiFlatsRepository extends FlatsRepository {
       var timestamp = DateTime.now().millisecondsSinceEpoch;
       var fileName = "$timestamp.$fileExtension";
       if (compressedFile != null)
-        await FirebaseStorage.instance
+        var result = await FirebaseStorage.instance
             .ref()
             .child('flats')
             .child('/${createdFlat.id}/$fileName')
@@ -117,6 +117,7 @@ class ApiFlatsRepository extends FlatsRepository {
 
       throw error;
     }
+    await FirebaseStorage.instance.ref().child('flats').child('/$id/').delete();
   }
 
   @override
@@ -150,6 +151,26 @@ class ApiFlatsRepository extends FlatsRepository {
       throw error;
     }
     EventService.bus.fire(FlatUpdated());
+    if (flat.images == null) return;
+    if (flat.images!.length == 0)
+      return await FirebaseStorage.instance
+          .ref()
+          .child('flats')
+          .child('/${flat.id}')
+          .delete();
+    flat.images!.forEach((file) async {
+      var compressedFile =
+          await FlutterImageCompress.compressWithFile(file.absolute.path);
+      var fileExtension = file.path.split('.').last;
+      var timestamp = DateTime.now().millisecondsSinceEpoch;
+      var fileName = "$timestamp.$fileExtension";
+      if (compressedFile != null)
+        var result = await FirebaseStorage.instance
+            .ref()
+            .child('flats')
+            .child('/${flat.id}/$fileName')
+            .putData(compressedFile);
+    });
   }
 
   @override

@@ -184,6 +184,7 @@ class _FlatsListComponentState extends State<FlatsListComponent> {
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white),
           )));
+      widget.onRefresh.call();
     }
   }
 

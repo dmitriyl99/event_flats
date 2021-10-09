@@ -185,7 +185,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           _images,
           _ownerNameController.text);
       try {
-        await widget._flatsRepository.updateFlat(flat);
+        await widget._flatsRepository.createFlat(flat);
       } on ServerErrorException {
         showDialog(
             context: context,
@@ -450,7 +450,11 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 child: ListView(
                                   scrollDirection: Axis.horizontal,
                                   children: _images
-                                      .map<Image>((e) => Image.file(e))
+                                      .map<Widget>((e) => Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Image.file(e),
+                                          ))
                                       .toList(),
                                 ))
                           ],

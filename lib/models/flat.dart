@@ -89,12 +89,16 @@ class Flat {
         'price': price
       };
 
-  Future<String> get photo async {
-    var downloadUrl = await FirebaseStorage.instance
+  Future<List<Future<String>>> get photos async {
+    var files = await FirebaseStorage.instance
         .ref()
         .child('flats')
-        .child(this.id.toString())
-        .getDownloadURL();
-    return downloadUrl;
+        .child(this.id.toString() + '/')
+        .listAll();
+    List<Future<String>> downloadUrls = [];
+    files.items.forEach((element) {
+      downloadUrls.add(element.getDownloadURL());
+    });
+    return downloadUrls;
   }
 }

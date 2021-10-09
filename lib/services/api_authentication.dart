@@ -9,7 +9,7 @@ import 'package:hive/hive.dart';
 
 class ApiAuthenticationService extends AuthenticationService {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'http://localhost:8000/api/v1/auth/',
+      baseUrl: 'http://192.168.0.101:8000/api/v1/auth/',
       receiveDataWhenStatusError: true));
 
   static User? _currentUser;
