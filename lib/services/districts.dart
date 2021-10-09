@@ -7,7 +7,7 @@ import 'exceptions/user_empty.dart';
 
 Future<List<Map<String, dynamic>>> getDistricts() async {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'http://192.168.0.101:8000/api/v1/addresses',
+      baseUrl: 'https://event-flats.herokuapp.com/api/v1/addresses',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
   var response =
@@ -20,7 +20,7 @@ Future<List<Map<String, dynamic>>> getDistricts() async {
 Future<User> _getUser() async {
   ApiAuthenticationService authenticationService =
       new ApiAuthenticationService();
-  var user = await authenticationService.getUser();
+  var user = authenticationService.getUser();
   if (user == null) throw new UnauthorizedUserException();
   return user;
 }

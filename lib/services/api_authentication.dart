@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/authentication.dart';
@@ -9,7 +7,7 @@ import 'package:hive/hive.dart';
 
 class ApiAuthenticationService extends AuthenticationService {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'http://192.168.0.101:8000/api/v1/auth/',
+      baseUrl: 'https://event-flats.herokuapp.com/api/v1/auth/',
       receiveDataWhenStatusError: true));
 
   static User? _currentUser;
