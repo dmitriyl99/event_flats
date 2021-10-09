@@ -57,7 +57,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
 
   final ImagePicker _picker = ImagePicker();
   File? _currentImage;
-  late FocusNode _floorFocusNode;
   List<FlatPhoneNumberComponent> _phoneFields = [];
   int _phonesIndex = 0;
 
@@ -66,14 +65,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   @override
   void initState() {
     super.initState();
-
-    _floorFocusNode = new FocusNode();
-
-    _roomsController.addListener(() {
-      if (_roomsController.text.isNotEmpty) {
-        _floorFocusNode.requestFocus();
-      }
-    });
 
     getDistricts().then((value) {
       Future.delayed(Duration.zero, () {
@@ -383,7 +374,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                       ),
                       Expanded(
                         child: TextFormField(
-                          focusNode: _floorFocusNode,
                           validator: _validateFloors,
                           controller: _floorController,
                           textAlign: TextAlign.center,
