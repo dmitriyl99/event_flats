@@ -75,7 +75,7 @@ class _FlatsListComponentState extends State<FlatsListComponent> {
               style: TextStyle(fontSize: 42),
             ),
             Text(
-              'Квартиры ещё не добавлены. Нажмите на кнопку в правом нижнем углу, чтобы добавить квартиру',
+              'Квартиры ещё не добавлены',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 21),
             ),
