@@ -1,5 +1,5 @@
 class FilterViewModel {
-  final String? district;
+  final int? district;
   final int? rooms;
   final int? roomsStart;
   final int? roomsEnd;

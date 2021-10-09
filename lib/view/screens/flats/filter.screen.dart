@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:event_flats/services/districts.dart';
 import 'package:event_flats/services/repairs.dart';
 import 'package:event_flats/view/resources/colors.dart';
@@ -14,9 +16,11 @@ class FilterScreen extends StatefulWidget {
 }
 
 class _FilterScreenState extends State<FilterScreen> {
-  late String _currentDistrict = _districts[0];
+  late int _currentDistrict = 0;
   late String _currentRepair = _repairs[0];
-  List<String> _districts = ['Все районы'];
+  List<Map<String, dynamic>> _districts = [
+    {'id': 0, 'title': 'Все районы'}
+  ];
   List<String> _repairs = ['Все ремонты', ...getRepairs()];
   List<String> _roomsList = ['Все', '1', '2', '3', '4', '5', '6', '7'];
   late String _rooms = _roomsList[0];
@@ -29,6 +33,7 @@ class _FilterScreenState extends State<FilterScreen> {
   bool _priceUpSort = false;
   bool _priceDownSort = false;
   bool _dateSort = false;
+  FilterViewModel? _currentFilter;
 
   TextEditingController _fromPriceController = new TextEditingController();
   TextEditingController _toPriceController = new TextEditingController();
@@ -53,6 +58,17 @@ class _FilterScreenState extends State<FilterScreen> {
         _dateSort = false;
       });
     });
+
+    getDistricts().then((value) {
+      Future.delayed(Duration.zero, () {
+        setState(() {
+          _districts += value;
+          if (_currentFilter != null) {
+            _currentDistrict = _currentFilter?.district ?? 0;
+          }
+        });
+      });
+    });
   }
 
   @override
@@ -64,28 +80,29 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _districtFilter() {
-    return FormField<String>(builder: (FormFieldState<String> state) {
-      return InputDecorator(
-        decoration: InputDecoration(labelText: "Район"),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-              value: _currentDistrict,
-              isDense: true,
-              onChanged: (value) {
-                setState(() {
-                  _currentDistrict = value!;
-                  _nameSort = false;
-                });
-              },
-              items: _districts
-                  .map<DropdownMenuItem<String>>((value) => DropdownMenuItem(
-                        value: value,
-                        child: Text(value),
-                      ))
-                  .toList()),
-        ),
-      );
-    });
+    return FormField<int>(
+        enabled: _districts.isNotEmpty,
+        builder: (FormFieldState<int> state) {
+          return InputDecorator(
+            decoration: InputDecoration(labelText: "Район"),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                  value: _currentDistrict,
+                  isDense: true,
+                  onChanged: (value) {
+                    setState(() {
+                      _currentDistrict = value!;
+                    });
+                  },
+                  items: _districts
+                      .map<DropdownMenuItem<int>>((value) => DropdownMenuItem(
+                            value: value['id'],
+                            child: Text(value['title']),
+                          ))
+                      .toList()),
+            ),
+          );
+        });
   }
 
   Widget _roomsFloorFilter() {
@@ -236,6 +253,7 @@ class _FilterScreenState extends State<FilterScreen> {
                     onSelected: (bool value) {
                       setState(() {
                         _priceDownSort = value;
+                        _priceUpSort = false;
                       });
                     }),
                 FilterChip(
@@ -246,9 +264,6 @@ class _FilterScreenState extends State<FilterScreen> {
                     onSelected: (bool value) {
                       setState(() {
                         _nameSort = value;
-                        _fromPriceController.text = '';
-                        _toPriceController.text = '';
-                        _currentDistrict = _districts[0];
                       });
                     }),
               ],
@@ -266,6 +281,7 @@ class _FilterScreenState extends State<FilterScreen> {
                     onSelected: (bool value) {
                       setState(() {
                         _priceUpSort = value;
+                        _priceDownSort = false;
                       });
                     }),
                 FilterChip(
@@ -276,8 +292,6 @@ class _FilterScreenState extends State<FilterScreen> {
                     onSelected: (bool value) {
                       setState(() {
                         _dateSort = value;
-                        _fromPriceController.text = '';
-                        _toPriceController.text = '';
                       });
                     }),
               ],
@@ -297,10 +311,12 @@ class _FilterScreenState extends State<FilterScreen> {
     var args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     FilterViewModel? currentFilter = args['currentFilter'];
+    this._currentFilter = currentFilter;
 
     if (!_firstLoaded) {
       if (currentFilter != null) {
-        _currentDistrict = currentFilter.district ?? _districts[0];
+        if (_districts.length > 1)
+          _currentDistrict = currentFilter.district ?? 0;
         _currentRepair = currentFilter.repair ?? _repairs[0];
         _fromPriceController.text = currentFilter.priceFrom != null
             ? currentFilter.priceFrom!.toStringAsFixed(0)
@@ -332,9 +348,7 @@ class _FilterScreenState extends State<FilterScreen> {
               iconSize: 32,
               onPressed: () {
                 var viewModel = FilterViewModel(
-                    district: _currentDistrict == _districts[0]
-                        ? null
-                        : _currentDistrict,
+                    district: _currentDistrict == 0 ? null : _currentDistrict,
                     rooms: _rooms == _roomsList[0] ? null : int.parse(_rooms),
                     priceFrom: _priceFrom,
                     priceTo: _priceTo,
@@ -344,7 +358,9 @@ class _FilterScreenState extends State<FilterScreen> {
                     sortPriceDown: _priceDownSort,
                     sortPriceUp: _priceUpSort,
                     sortDistrict: _nameSort,
-                    sortDate: _dateSort);
+                    sortDate: _dateSort,
+                    favorite: currentFilter?.favorite,
+                    creatorId: currentFilter?.creatorId);
                 Navigator.of(context).pop(viewModel);
               },
             ),
