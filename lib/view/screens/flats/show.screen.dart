@@ -312,6 +312,23 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
       );
     }
 
+    Widget _creator() {
+      return Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Row(
+          children: [
+            Text('Добавил:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+            SizedBox(
+              width: 5,
+            ),
+            Text(flat.creatorName,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
+          ],
+        ),
+      );
+    }
+
     Widget? _editButton() {
       var currentUser = widget.authenticationService.getUser();
       if (currentUser == null) return null;
@@ -367,6 +384,8 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                       _flatRepair(),
                       _divider(),
                       _flatPrice(),
+                      _divider(),
+                      _creator(),
                       _divider(),
                       if (flat.description != null &&
                           flat.description!.isNotEmpty)
