@@ -49,20 +49,6 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
   bool _loaded = false;
 
   bool _edited = false;
-  List<String> _images = [];
-
-  void _getImages(Flat flat) {
-    flat.photos.then((value) {
-      var downloadUrlFutures = value;
-      Future.wait(downloadUrlFutures).then((value) {
-        Future.delayed(Duration.zero).then((value) {
-          setState(() {
-            _images = value;
-          });
-        });
-      });
-    });
-  }
 
   void _launchPhone(String phone) async {
     String url = 'tel:' + phone;
@@ -126,7 +112,6 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done ||
               snapshot.hasError) {
-            print(snapshot.error);
             return Container();
           }
           return FutureBuilder<List<String>>(
@@ -135,18 +120,22 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               if (snapshot.hasError || snapshot.data == null)
                 return Container();
               var urls = snapshot.data!;
-              return Container(
-                height: 300,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: urls
-                      .map<Widget>((e) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Image.network(e),
-                          ))
-                      .toList(),
-                ),
-              );
+              if (urls.length > 0) {
+                return Container(
+                  height: 300,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: urls
+                        .map<Widget>((e) => Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              child: Image.network(e),
+                            ))
+                        .toList(),
+                  ),
+                );
+              }
+              return Container();
             },
           );
         });
@@ -155,10 +144,6 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
   @override
   Widget build(BuildContext context) {
     late Flat flat = ModalRoute.of(context)!.settings.arguments as Flat;
-    if (_loaded) {
-      _getImages(flat);
-      _loaded = true;
-    }
 
     Widget _divider() {
       return Padding(
