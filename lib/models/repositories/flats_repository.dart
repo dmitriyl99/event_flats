@@ -9,4 +9,5 @@ abstract class FlatsRepository {
   Future<Flat?> getById(int id);
   Future<void> removeById(int id);
   Future<void> toggleFavorite(int id);
+  Future<void> sellFlat(int id);
 }

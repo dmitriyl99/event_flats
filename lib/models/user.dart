@@ -5,17 +5,20 @@ part 'user.g.dart';
 @HiveType(typeId: 0)
 class User {
   @HiveField(0)
-  final String displayName;
+  final int id;
   @HiveField(1)
-  final String email;
+  final String displayName;
   @HiveField(2)
-  final bool isAdmin;
+  final String email;
   @HiveField(3)
+  final bool isAdmin;
+  @HiveField(4)
   final String accessToken;
 
-  User(this.displayName, this.email, this.isAdmin, this.accessToken);
+  User(this.id, this.displayName, this.email, this.isAdmin, this.accessToken);
 
   factory User.fromJson(dynamic json) => User(
+      json['id'] as int,
       json['name'] as String,
       json['email'] as String,
       json['is_admin'] == 1,

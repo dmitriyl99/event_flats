@@ -152,6 +152,24 @@ class ApiFlatsRepository extends FlatsRepository {
     EventService.bus.fire(FlatUpdated());
   }
 
+  @override
+  Future<void> sellFlat(int id) async {
+    try {
+      await _httpClient.patch('/$id/sell', options: _authorizationOptions());
+    } on DioError catch (error) {
+      if (error.response == null) throw new NoInternetException();
+      var response = error.response!;
+      if (response.statusCode == 422)
+        throw new ValidationException(Map<String, dynamic>.from(response.data));
+      if (response.statusCode == 500) throw new ServerErrorException();
+      if (response.statusCode == 403)
+        throw new ForbiddenException(message: response.data['error'] as String);
+      if (response.statusCode == 401) throw new AuthenticationFailed();
+      throw error;
+    }
+    EventService.bus.fire(FlatUpdated());
+  }
+
   User _getUser() {
     var user = _authenticationService.getUser();
     if (user == null) throw new UnauthorizedUserException();

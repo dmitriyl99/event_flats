@@ -1,4 +1,5 @@
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/services/exceptions/forbidden_exception.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -111,6 +112,35 @@ AlertDialog buildValidationError(BuildContext context) {
               height: 20,
             ),
             Text('Проверьте, все ли поля заполнены правильно',
+                style: TextStyle(fontSize: 18), textAlign: TextAlign.center)
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('Ок', style: TextStyle(fontSize: 16)),
+        )
+      ]);
+}
+
+AlertDialog buildForbiddenError(BuildContext context, ForbiddenException ex) {
+  return AlertDialog(
+      title: Text('Ошибка авторизации', textAlign: TextAlign.center),
+      content: Container(
+        height: 150,
+        child: Column(
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(ex.message,
                 style: TextStyle(fontSize: 18), textAlign: TextAlign.center)
           ],
         ),

@@ -44,6 +44,11 @@ class FlatComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle titleStyle = TextStyle(fontSize: 18);
+    if (flat.sold) {
+      titleStyle = titleStyle.copyWith(
+          color: Colors.red, decoration: TextDecoration.lineThrough);
+    }
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 5),
         child: Card(
@@ -85,7 +90,7 @@ class FlatComponent extends StatelessWidget {
               },
               title: Text(
                 flat.address,
-                style: TextStyle(fontSize: 18),
+                style: titleStyle,
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

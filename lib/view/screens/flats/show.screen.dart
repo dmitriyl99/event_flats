@@ -5,9 +5,11 @@ import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/services/exceptions/forbidden_exception.dart';
 import 'package:event_flats/services/exceptions/no_internet.dart';
 import 'package:event_flats/services/exceptions/server_error_exception.dart';
 import 'package:event_flats/services/exceptions/user_empty.dart';
+import 'package:event_flats/view/components/dialogs.dart';
 import 'package:event_flats/view/components/errors.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/edit.screen.dart';
@@ -90,6 +92,31 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
         if (result != null) _launchPhone(result);
       }
     }
+  }
+
+  void _onSellButtonPressed(Flat flat) async {
+    try {
+      await widget.flatsRepository.sellFlat(flat.id);
+    } on ServerErrorException {
+      showDialog(
+          context: context,
+          builder: (context) => buildServerErrorDialog(context));
+      return;
+    } on NoInternetException {
+      showDialog(
+          context: context,
+          builder: (context) => buildNoInternetDialog(context));
+      return;
+    } on AuthenticationFailed {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(LoginScreen.route, (route) => false);
+      return;
+    } on ForbiddenException catch (error) {
+      showDialog(
+          context: context,
+          builder: (context) => buildForbiddenError(context, error));
+    }
+    setState(() {});
   }
 
   @override
@@ -230,6 +257,23 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
       );
     }
 
+    Widget _creator() {
+      return Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Row(
+          children: [
+            Text('Добавил:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+            SizedBox(
+              width: 5,
+            ),
+            Text(flat.creatorName,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
+          ],
+        ),
+      );
+    }
+
     Widget _ownerInfo() {
       return Column(
         children: [
@@ -312,21 +356,37 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
       );
     }
 
-    Widget _creator() {
-      return Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Row(
-          children: [
-            Text('Добавил:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
-            SizedBox(
-              width: 5,
-            ),
-            Text(flat.creatorName,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
-          ],
-        ),
-      );
+    Widget _sellButton() {
+      return flat.sold
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Квартира продана',
+                  style: TextStyle(color: Colors.red, fontSize: 21),
+                ),
+              ],
+            )
+          : ElevatedButton(
+              style: ButtonStyle(
+                  padding: MaterialStateProperty.all(EdgeInsets.all(10.0)),
+                  backgroundColor: MaterialStateProperty.all(Colors.red)),
+              onPressed: () {
+                _onSellButtonPressed(flat);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Продать',
+                    style: TextStyle(fontSize: 21),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Icon(Icons.sell)
+                ],
+              ));
     }
 
     Widget? _editButton() {
@@ -394,11 +454,20 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                           flat.description!.isNotEmpty)
                         _divider(),
                       _ownerInfo(),
-                      SizedBox(
-                        height: 30,
-                      ),
+                      if (flat.phones != null && flat.phones!.isNotEmpty)
+                        SizedBox(
+                          height: 30,
+                        ),
                       if (flat.phones != null && flat.phones!.isNotEmpty)
                         _callButton(),
+                      if (flat.creatorId ==
+                          widget.authenticationService.getUser()?.id)
+                        SizedBox(
+                          height: 30,
+                        ),
+                      if (flat.creatorId ==
+                          widget.authenticationService.getUser()?.id)
+                        _sellButton()
                     ],
                   ),
                 ),

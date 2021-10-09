@@ -12,6 +12,7 @@ class Flat {
   final int numberOfFloors;
   final int numberOfRooms;
   final String flatRepair;
+  final bool sold;
   final double? area;
   final String? landmark;
   final String? description;
@@ -36,6 +37,7 @@ class Flat {
       this.createdAt,
       this.isFavorite,
       this.area,
+      this.sold,
       this.description,
       this.landmark,
       this.phones,
@@ -61,6 +63,7 @@ class Flat {
                 ? (json['area'] as int).toDouble()
                 : json['area']
             : null,
+        sold = json['sold'] == 1,
         landmark = json['landmark'],
         description = json['note'],
         ownerName = json['owner_name'],
