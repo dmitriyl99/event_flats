@@ -1,13 +1,13 @@
 class FilterViewModel {
   final int? district;
-  final int? rooms;
   final int? roomsStart;
   final int? roomsEnd;
+  final int? floorsStart;
+  final int? floorsEnd;
   final double? priceFrom;
   final double? priceTo;
   final String? repair;
   final double? area;
-  final int? floor;
   final bool sortPriceDown;
   final bool sortPriceUp;
   final bool sortDistrict;
@@ -18,14 +18,14 @@ class FilterViewModel {
 
   FilterViewModel(
       {this.district,
-      this.rooms,
       this.priceFrom,
       this.priceTo,
-      this.floor,
       this.repair,
       this.area,
       this.roomsStart,
       this.roomsEnd,
+      this.floorsStart,
+      this.floorsEnd,
       this.favorite,
       this.personal,
       this.creatorId,
@@ -52,12 +52,13 @@ class FilterViewModel {
       'district': district,
       'repair': repair,
       'area': area,
-      'floor': floor,
       'is_favorite': favorite,
       'personal': personal,
       'creator_id': creatorId,
       'rooms_start': roomsStart,
       'rooms_end': roomsEnd,
+      'floor_start': floorsStart,
+      'floor_end': floorsEnd,
       'price_start': priceFrom,
       'price_end': priceTo,
       'order_by': sortString

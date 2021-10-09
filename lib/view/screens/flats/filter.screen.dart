@@ -22,12 +22,14 @@ class _FilterScreenState extends State<FilterScreen> {
     {'id': 0, 'title': 'Все районы'}
   ];
   List<String> _repairs = ['Все ремонты', ...getRepairs()];
-  List<String> _roomsList = ['Все', '1', '2', '3', '4', '5', '6', '7'];
-  late String _rooms = _roomsList[0];
   bool _firstLoaded = false;
 
   double? _priceFrom;
   double? _priceTo;
+  int? _roomsFrom;
+  int? _roomsTo;
+  int? _floorsFrom;
+  int? _floorsTo;
 
   bool _nameSort = false;
   bool _priceUpSort = false;
@@ -38,25 +40,33 @@ class _FilterScreenState extends State<FilterScreen> {
   TextEditingController _fromPriceController = new TextEditingController();
   TextEditingController _toPriceController = new TextEditingController();
   TextEditingController _floorController = new TextEditingController();
+  TextEditingController _fromRoomsController = new TextEditingController();
+  TextEditingController _toRoomsController = new TextEditingController();
+  TextEditingController _fromFloorsController = new TextEditingController();
+  TextEditingController _toFloorsController = new TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _fromPriceController.addListener(() {
       _priceFrom = double.tryParse(_fromPriceController.text);
-      if (_fromPriceController.text.isEmpty) return;
-      setState(() {
-        _nameSort = false;
-        _dateSort = false;
-      });
     });
     _toPriceController.addListener(() {
       _priceTo = double.tryParse(_toPriceController.text);
-      if (_toPriceController.text.isEmpty) return;
-      setState(() {
-        _nameSort = false;
-        _dateSort = false;
-      });
+    });
+
+    _fromRoomsController.addListener(() {
+      _roomsFrom = int.tryParse(_fromRoomsController.text);
+    });
+    _toRoomsController.addListener(() {
+      _roomsTo = int.tryParse(_toRoomsController.text);
+    });
+
+    _fromFloorsController.addListener(() {
+      _floorsFrom = int.tryParse(_fromFloorsController.text);
+    });
+    _toFloorsController.addListener(() {
+      _floorsTo = int.tryParse(_toFloorsController.text);
     });
 
     getDistricts().then((value) {
@@ -76,6 +86,10 @@ class _FilterScreenState extends State<FilterScreen> {
     _fromPriceController.dispose();
     _toPriceController.dispose();
     _floorController.dispose();
+    _fromRoomsController.dispose();
+    _toRoomsController.dispose();
+    _fromFloorsController.dispose();
+    _toFloorsController.dispose();
     super.dispose();
   }
 
@@ -105,7 +119,7 @@ class _FilterScreenState extends State<FilterScreen> {
         });
   }
 
-  Widget _roomsFloorFilter() {
+  Widget _roomsFilter() {
     return Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,32 +132,39 @@ class _FilterScreenState extends State<FilterScreen> {
             width: 24,
           ),
           Expanded(
-            child: FormField<String>(builder: (FormFieldState<String> state) {
-              return InputDecorator(
-                decoration: InputDecoration(),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                      value: _rooms,
-                      isDense: true,
-                      onChanged: (value) {
-                        setState(() {
-                          _rooms = value!;
-                        });
-                      },
-                      items: _roomsList
-                          .map<DropdownMenuItem<String>>(
-                              (value) => DropdownMenuItem(
-                                    value: value,
-                                    child: Text(value),
-                                  ))
-                          .toList()),
-                ),
-              );
-            }),
+            child: TextFormField(
+              controller: _fromRoomsController,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: 'От'),
+            ),
           ),
           SizedBox(
-            width: 24,
+            width: 10,
           ),
+          Text(
+            '-',
+            style: TextStyle(fontSize: 30),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: TextFormField(
+              controller: _toRoomsController,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: 'До'),
+            ),
+          ),
+        ]);
+  }
+
+  Widget _floorsFilter() {
+    return Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
           Text(
             'Этаж:',
             style: TextStyle(fontSize: 21),
@@ -152,12 +173,31 @@ class _FilterScreenState extends State<FilterScreen> {
             width: 24,
           ),
           Expanded(
-            child: TextField(
-              controller: _floorController,
-              keyboardType: TextInputType.number,
+            child: TextFormField(
+              controller: _fromFloorsController,
               textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: 'От'),
             ),
-          )
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Text(
+            '-',
+            style: TextStyle(fontSize: 30),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: TextFormField(
+              controller: _toFloorsController,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: 'До'),
+            ),
+          ),
         ]);
   }
 
@@ -306,6 +346,38 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 
+  Widget _resetButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(AppColors.primaryColor)),
+            onPressed: () {
+              setState(() {
+                _currentDistrict = 0;
+                _fromPriceController.text = '';
+                _toPriceController.text = '';
+                _fromRoomsController.text = '';
+                _toRoomsController.text = '';
+                _fromFloorsController.text = '';
+                _toFloorsController.text = '';
+                _currentRepair = _repairs[0];
+                _dateSort = false;
+                _priceDownSort = false;
+                _priceUpSort = false;
+                _nameSort = false;
+              });
+            },
+            child: Text(
+              'Сбросить',
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            )),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var args =
@@ -318,21 +390,19 @@ class _FilterScreenState extends State<FilterScreen> {
         if (_districts.length > 1)
           _currentDistrict = currentFilter.district ?? 0;
         _currentRepair = currentFilter.repair ?? _repairs[0];
-        _fromPriceController.text = currentFilter.priceFrom != null
-            ? currentFilter.priceFrom!.toStringAsFixed(0)
-            : '';
-        _toPriceController.text = currentFilter.priceTo != null
-            ? currentFilter.priceTo!.toStringAsFixed(0)
-            : '';
-        _rooms = currentFilter.rooms != null
-            ? currentFilter.rooms.toString()
-            : _roomsList[0];
+        _fromPriceController.text =
+            currentFilter.priceFrom?.toStringAsFixed(0) ?? '';
+        _toPriceController.text =
+            currentFilter.priceTo?.toStringAsFixed(0) ?? '';
+        _fromRoomsController.text = currentFilter.roomsStart?.toString() ?? '';
+        _toRoomsController.text = currentFilter.roomsEnd?.toString() ?? '';
+        _fromFloorsController.text =
+            currentFilter.floorsStart?.toString() ?? '';
+        _toFloorsController.text = currentFilter.floorsEnd?.toString() ?? '';
         _dateSort = currentFilter.sortDate;
         _priceUpSort = currentFilter.sortPriceUp;
         _priceDownSort = currentFilter.sortPriceDown;
         _nameSort = currentFilter.sortDistrict;
-        _floorController.text =
-            currentFilter.floor != null ? currentFilter.floor.toString() : '';
       }
       _firstLoaded = true;
     }
@@ -349,18 +419,20 @@ class _FilterScreenState extends State<FilterScreen> {
               onPressed: () {
                 var viewModel = FilterViewModel(
                     district: _currentDistrict == 0 ? null : _currentDistrict,
-                    rooms: _rooms == _roomsList[0] ? null : int.parse(_rooms),
+                    roomsStart: _roomsFrom,
+                    roomsEnd: _roomsTo,
                     priceFrom: _priceFrom,
                     priceTo: _priceTo,
                     repair:
                         _currentRepair == _repairs[0] ? null : _currentRepair,
-                    floor: int.tryParse(_floorController.text),
+                    floorsStart: _floorsFrom,
+                    floorsEnd: _floorsTo,
                     sortPriceDown: _priceDownSort,
                     sortPriceUp: _priceUpSort,
                     sortDistrict: _nameSort,
                     sortDate: _dateSort,
                     favorite: currentFilter?.favorite,
-                    creatorId: currentFilter?.creatorId);
+                    personal: currentFilter?.personal);
                 Navigator.of(context).pop(viewModel);
               },
             ),
@@ -377,7 +449,11 @@ class _FilterScreenState extends State<FilterScreen> {
               SizedBox(
                 height: 32,
               ),
-              _roomsFloorFilter(),
+              _roomsFilter(),
+              SizedBox(
+                height: 32,
+              ),
+              _floorsFilter(),
               SizedBox(
                 height: 32,
               ),
@@ -386,7 +462,11 @@ class _FilterScreenState extends State<FilterScreen> {
               SizedBox(
                 height: 32,
               ),
-              _sortFilter()
+              _sortFilter(),
+              SizedBox(
+                height: 32,
+              ),
+              _resetButton()
             ],
           ),
         ),
