@@ -266,6 +266,8 @@ class _FlatsListComponentState extends State<FlatsListComponent> {
                   .pushNamedAndRemoveUntil(LoginScreen.route, (route) => false);
               return buildDefaultError();
             }
+            log('Error while getting flats list',
+                error: error, stackTrace: snapshot.stackTrace);
             return buildDefaultError(onRefresh: widget.onRefresh);
           }
           return buildList(snapshot);
