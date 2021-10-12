@@ -185,6 +185,8 @@ class ApiFlatsRepository extends FlatsRepository {
       if (response.statusCode == 403)
         throw new ForbiddenException(message: response.data['error'] as String);
       if (response.statusCode == 401) throw new AuthenticationFailed();
+      log("Error while selling flat $id", error: error);
+      log(error.response.toString());
       throw error;
     }
     EventService.bus.fire(FlatUpdated());

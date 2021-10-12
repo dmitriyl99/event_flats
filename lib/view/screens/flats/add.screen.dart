@@ -223,11 +223,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var landmarks = [];
-    if (_districts.isNotEmpty)
-      landmarks = _districts
-          .where((element) => element['id'] == _currentDistrict)
-          .first['landmarks'];
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -306,25 +301,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                         decoration: InputDecoration(labelText: 'Ориентир'),
                       ),
                     ),
-                    if (landmarks.length > 0)
-                      PopupMenuButton(
-                        icon: Icon(Icons.arrow_drop_down),
-                        onSelected: (value) {
-                          _landmarkController.text = landmarks
-                              .where((l) => l['id'] == value)
-                              .first['title'];
-                          setState(() {
-                            _currentLandmark = value! as int;
-                          });
-                          _priceFocusNode.requestFocus();
-                        },
-                        itemBuilder: (context) {
-                          return landmarks
-                              .map<PopupMenuItem>((l) => PopupMenuItem(
-                                  child: Text(l['title']), value: l['id']))
-                              .toList();
-                        },
-                      )
                   ]),
                   SizedBox(
                     height: 30,

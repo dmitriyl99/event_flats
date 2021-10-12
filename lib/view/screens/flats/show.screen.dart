@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
@@ -129,7 +130,22 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                         .map<Widget>((e) => Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8),
-                              child: Image.network(e),
+                              child: CachedNetworkImage(
+                                imageUrl: e,
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) =>
+                                        Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation(
+                                            AppColors.primaryColor),
+                                        value: downloadProgress.progress),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
                             ))
                         .toList(),
                   ),
@@ -380,15 +396,26 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
 
     Widget _sellButton() {
       return flat.sold
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Квартира продана',
-                  style: TextStyle(color: Colors.red, fontSize: 21),
-                ),
-              ],
-            )
+          ? ElevatedButton(
+              style: ButtonStyle(
+                  padding: MaterialStateProperty.all(EdgeInsets.all(10.0)),
+                  backgroundColor: MaterialStateProperty.all(Colors.green)),
+              onPressed: () {
+                _onSellButtonPressed(flat);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Отменить продажу',
+                    style: TextStyle(fontSize: 21),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Icon(Icons.sell)
+                ],
+              ))
           : ElevatedButton(
               style: ButtonStyle(
                   padding: MaterialStateProperty.all(EdgeInsets.all(10.0)),
@@ -400,7 +427,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Продать',
+                    'Продано',
                     style: TextStyle(fontSize: 21),
                   ),
                   SizedBox(

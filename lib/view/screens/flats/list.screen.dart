@@ -68,7 +68,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                 });
               },
               icon: Image.asset('assets/filter_white.png'),
-              iconSize: 32,
+              iconSize: 20,
             ),
           )
         ],

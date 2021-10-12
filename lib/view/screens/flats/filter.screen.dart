@@ -71,12 +71,13 @@ class _FilterScreenState extends State<FilterScreen> {
 
     getDistricts().then((value) {
       Future.delayed(Duration.zero, () {
-        setState(() {
-          _districts += value;
-          if (_currentFilter != null) {
-            _currentDistrict = _currentFilter?.district ?? 0;
-          }
-        });
+        if (mounted)
+          setState(() {
+            _districts += value;
+            if (_currentFilter != null) {
+              _currentDistrict = _currentFilter?.district ?? 0;
+            }
+          });
       });
     });
   }

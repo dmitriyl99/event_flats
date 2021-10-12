@@ -232,11 +232,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
         }
       }
     }
-    var landmarks = [];
-    if (_districts.isNotEmpty)
-      landmarks = _districts
-          .where((element) => element['id'] == _currentDistrict)
-          .first['landmarks'];
 
     return Scaffold(
         appBar: AppBar(
@@ -316,24 +311,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                         decoration: InputDecoration(labelText: 'Ориентир'),
                       ),
                     ),
-                    if (landmarks.length > 0)
-                      PopupMenuButton(
-                        icon: Icon(Icons.arrow_drop_down),
-                        onSelected: (value) {
-                          _landmarkController.text = landmarks
-                              .where((l) => l['id'] == value)
-                              .first['title'];
-                          setState(() {
-                            _currentLandmark = value! as int;
-                          });
-                        },
-                        itemBuilder: (context) {
-                          return landmarks
-                              .map<PopupMenuItem>((l) => PopupMenuItem(
-                                  child: Text(l['title']), value: l['id']))
-                              .toList();
-                        },
-                      )
                   ]),
                   SizedBox(
                     height: 30,

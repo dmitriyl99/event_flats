@@ -80,7 +80,7 @@ class FlatComponent extends StatelessWidget {
                   ),
                   Text(
                     '${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors}',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
