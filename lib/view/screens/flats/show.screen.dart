@@ -514,7 +514,10 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                         ),
                       if (flat.creatorId ==
                           widget.authenticationService.getUser()?.id)
-                        _sellButton()
+                        _sellButton(),
+                      SizedBox(
+                        height: 100,
+                      ),
                     ],
                   ),
                 ),
