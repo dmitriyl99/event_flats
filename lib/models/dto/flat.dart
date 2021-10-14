@@ -34,7 +34,7 @@ class FlatDto {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'district_id': districtId,
-        'landmark': landmarkId ?? landmark,
+        'landmark': landmark,
         'area': area,
         'note': note,
         'repair': repair,
