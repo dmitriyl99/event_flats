@@ -47,15 +47,13 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     setState(() {});
   }
 
-  bool _loaded = false;
-
   bool _edited = false;
 
   void _launchPhone(String phone) async {
-    String url = 'tel:' + phone;
-    if (await canLaunch(url)) {
-      await launch(url);
-    }
+    String url = 'telprompt://$phone';
+    if (!(await canLaunch(url))) url = 'tel://$phone';
+    if (!(await canLaunch(url))) url = 'tel:$phone';
+    await launch(url);
   }
 
   void _onCallButtonPressed(Flat flat) async {

@@ -151,25 +151,29 @@ class ApiFlatsRepository extends FlatsRepository {
     }
     EventService.bus.fire(FlatUpdated());
     if (flat.images == null) return;
-    if (flat.images!.length == 0)
-      return await FirebaseStorage.instance
-          .ref()
-          .child('flats')
-          .child('/${flat.id}')
-          .delete();
-    flat.images!.forEach((file) async {
-      var compressedFile =
-          await FlutterImageCompress.compressWithFile(file.absolute.path);
-      var fileExtension = file.path.split('.').last;
-      var timestamp = DateTime.now().millisecondsSinceEpoch;
-      var fileName = "$timestamp.$fileExtension";
-      if (compressedFile != null)
-        var result = await FirebaseStorage.instance
+    print(flat.images);
+    if (flat.images!.length != 0) {
+      try {
+        await FirebaseStorage.instance
             .ref()
             .child('flats')
-            .child('/${flat.id}/$fileName')
-            .putData(compressedFile);
-    });
+            .child('/${flat.id}')
+            .delete();
+      } on Exception {}
+      flat.images!.forEach((file) async {
+        var compressedFile =
+            await FlutterImageCompress.compressWithFile(file.absolute.path);
+        var fileExtension = file.path.split('.').last;
+        var timestamp = DateTime.now().millisecondsSinceEpoch;
+        var fileName = "$timestamp.$fileExtension";
+        if (compressedFile != null)
+          var result = await FirebaseStorage.instance
+              .ref()
+              .child('flats')
+              .child('/${flat.id}/$fileName')
+              .putData(compressedFile);
+      });
+    }
   }
 
   @override
