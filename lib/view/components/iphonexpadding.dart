@@ -32,11 +32,9 @@ class IPhoneXPadding extends Container {
   }
 
   bool _isIPhoneX(MediaQueryData mediaQuery) {
-    if (Platform.isIOS) {
-      var size = mediaQuery.size;
-      if (size.height == 812.0 || size.width == 812.0) {
-        return true;
-      }
+    var size = mediaQuery.size;
+    if (size.height == 812.0 || size.width == 812.0) {
+      return true;
     }
     return false;
   }
