@@ -7,11 +7,11 @@ import 'exceptions/user_empty.dart';
 
 Future<List<Map<String, dynamic>>> getDistricts() async {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'https://event-flats.herokuapp.com/api/v1/addresses',
+      baseUrl: 'https://event-flats.herokuapp.com/api/v1/',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
-  var response =
-      await _httpClient.get('/', options: await _authorizationOptions());
+  var response = await _httpClient.get('addresses',
+      options: await _authorizationOptions());
   if (response.statusCode == 500) throw new ServerErrorException();
   var data = List<Map<String, dynamic>>.from(response.data);
   return data;
