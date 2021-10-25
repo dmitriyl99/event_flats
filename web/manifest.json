@@ -1,6 +1,6 @@
 {
-    "name": "event_flats",
-    "short_name": "event_flats",
+    "name": "Event Flats",
+    "short_name": "Event Flats",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
