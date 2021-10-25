@@ -465,7 +465,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               Navigator.of(context).pop(_edited);
             },
             icon: Icon(
-              Platform.isIOS ? CupertinoIcons.back : Icons.arrow_back,
+              Icons.arrow_back,
               size: 28,
             ),
           ),
