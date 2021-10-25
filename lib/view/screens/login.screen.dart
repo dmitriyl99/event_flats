@@ -169,10 +169,6 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Container(
       height: height,
       child: Stack(children: <Widget>[
-        Positioned(
-            top: -height * .15,
-            right: -MediaQuery.of(context).size.width * .4,
-            child: BezierContainer()),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: SingleChildScrollView(
