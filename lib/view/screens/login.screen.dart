@@ -1,4 +1,3 @@
-import 'package:event_flats/services/api_authentication.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
 import 'package:event_flats/services/exceptions/no_internet.dart';
@@ -6,7 +5,6 @@ import 'package:event_flats/services/exceptions/server_error_exception.dart';
 import 'package:event_flats/view/components/dialogs.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/home.screen.dart';
-import 'package:event_flats/view/ui/bezier_container.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -130,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-          text: 'Eve',
+          text: 'Lup',
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.w700,
@@ -138,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           children: [
             TextSpan(
-              text: 'nt F',
+              text: 'er F',
               style: TextStyle(color: Colors.white, fontSize: 30),
             ),
             TextSpan(
