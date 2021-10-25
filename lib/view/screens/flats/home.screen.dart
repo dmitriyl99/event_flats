@@ -1,5 +1,6 @@
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
+import 'package:event_flats/view/components/iphonexpadding.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/favorites.screen.dart';
 import 'package:event_flats/view/screens/flats/list.screen.dart';
@@ -43,36 +44,38 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: _currentScreenIndex == 0
-          ? FloatingActionButton.extended(
-              backgroundColor: AppColors.primaryColor,
-              onPressed: () {
-                Navigator.of(context).pushNamed(AddFlatScreen.route);
-              },
-              label: Text(
-                'Добавить',
-                style: TextStyle(color: Colors.black),
-              ),
-              icon: Icon(
-                Icons.add,
-                color: Colors.black,
-              ),
-            )
-          : null,
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: _onTabTapped,
-        currentIndex: _currentScreenIndex,
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list), label: 'Общий список'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: 'Персональные'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.favorite), label: 'Избранные')
-        ],
+    return IPhoneXPadding(
+      child: Scaffold(
+        floatingActionButton: _currentScreenIndex == 0
+            ? FloatingActionButton.extended(
+                backgroundColor: AppColors.primaryColor,
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AddFlatScreen.route);
+                },
+                label: Text(
+                  'Добавить',
+                  style: TextStyle(color: Colors.black),
+                ),
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.black,
+                ),
+              )
+            : null,
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: _onTabTapped,
+          currentIndex: _currentScreenIndex,
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.list), label: 'Общий список'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.person), label: 'Персональные'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.favorite), label: 'Избранные')
+          ],
+        ),
+        body: _screens[_currentScreenIndex],
       ),
-      body: _screens[_currentScreenIndex],
     );
   }
 }
