@@ -456,6 +456,8 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
       );
     }
 
+    var user = widget.authenticationService.getUser()!;
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -498,13 +500,11 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                         ),
                       if (flat.phones != null && flat.phones!.isNotEmpty)
                         _callButton(),
-                      if (flat.creatorId ==
-                          widget.authenticationService.getUser()?.id)
+                      if (flat.creatorId == user.id || user.isAdmin)
                         SizedBox(
                           height: 30,
                         ),
-                      if (flat.creatorId ==
-                          widget.authenticationService.getUser()?.id)
+                      if (flat.creatorId == user.id || user.isAdmin)
                         _sellButton(),
                       SizedBox(
                         height: 100,
