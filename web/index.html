@@ -31,6 +31,23 @@
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyDhP3l2Qg6qcH15xS55bFLViRno577vmnY",
+      authDomain: "eventflats.firebaseapp.com",
+      databaseURL: "https://eventflats-default-rtdb.firebaseio.com",
+      projectId: "eventflats",
+      storageBucket: "eventflats.appspot.com",
+      messagingSenderId: "229608689606",
+      appId: "1:229608689606:web:4aa735227b9894cd2eacc7",
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
   <script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;
