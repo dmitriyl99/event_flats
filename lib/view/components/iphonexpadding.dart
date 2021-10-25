@@ -14,10 +14,6 @@ class IPhoneXPadding extends Container {
   @override
   Widget build(BuildContext context) {
     var mediaQueryData = MediaQuery.of(context);
-    if (!_isIPhoneX(mediaQueryData)) {
-      // fallback for all non iPhone X
-      return child;
-    }
 
     var homeIndicatorHeight =
         mediaQueryData.orientation == Orientation.portrait ? 22.0 : 20.0;
