@@ -50,8 +50,9 @@ class ApiFlatsRepository extends FlatsRepository {
     EventService.bus.fire(FlatCreated(createdFlat));
     if (flat.images == null) return;
     flat.images!.forEach((file) async {
-      var compressedFile =
-          await FlutterImageCompress.compressWithFile(file.absolute.path);
+      var compressedFile = await FlutterImageCompress.compressWithFile(
+          file.absolute.path,
+          quality: 70);
       var fileExtension = file.path.split('.').last;
       var timestamp = DateTime.now().millisecondsSinceEpoch;
       var fileName = "$timestamp.$fileExtension";
