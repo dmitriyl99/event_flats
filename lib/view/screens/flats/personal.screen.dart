@@ -71,7 +71,7 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
             ),
           )
         ],
-        title: Text('Event Flats'),
+        title: Text('Luper Flats'),
         centerTitle: true,
       ),
       body: FlatsListComponent(

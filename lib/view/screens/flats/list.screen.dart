@@ -72,7 +72,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
             ),
           )
         ],
-        title: Text('Event Flats'),
+        title: Text('Luper Flats'),
         centerTitle: true,
       ),
       body: FlatsListComponent(

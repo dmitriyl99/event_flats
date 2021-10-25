@@ -1,9 +1,9 @@
 {
-    "name": "Event Flats",
-    "short_name": "Event Flats",
+    "name": "Luper Flats",
+    "short_name": "Luper Flats",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
+    "background_color": "#000000",
     "theme_color": "#0175C2",
     "description": "A new Flutter project.",
     "orientation": "portrait-primary",

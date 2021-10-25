@@ -71,7 +71,7 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
             ),
           )
         ],
-        title: Text('Event Flats'),
+        title: Text('Luper Flats'),
         centerTitle: true,
       ),
       body: FlatsListComponent(
