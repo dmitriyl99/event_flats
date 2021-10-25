@@ -460,15 +460,6 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: Text('Event Flats'),
-          leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop(_edited);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              size: 28,
-            ),
-          ),
         ),
         body: FutureBuilder(
           future: widget.flatsRepository.getById(flat.id),
