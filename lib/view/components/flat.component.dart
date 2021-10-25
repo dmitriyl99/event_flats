@@ -109,12 +109,12 @@ class FlatComponent extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: AppColors.primaryColor,
                         borderRadius: BorderRadius.circular(10)),
-                    padding: EdgeInsets.all(7),
+                    padding: EdgeInsets.all(3),
                     child: Text(
                       NumberFormattingHelper.currency(flat.price),
                       style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
                           color: Colors.black),
                     ),
                   ),
