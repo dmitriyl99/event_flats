@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/helpers/string.dart';
@@ -40,7 +41,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   List<Map<String, dynamic>> _districts = [];
   List<String> _repairs = getRepairs();
 
-  List<File> _images = [];
+  List<Uint8List> _images = [];
 
   late int _currentDistrict = 0;
   int? _currentLandmark;
@@ -440,7 +441,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                       .map<Widget>((e) => Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0),
-                                            child: Image.file(e),
+                                            child: Image.memory(e),
                                           ))
                                       .toList(),
                                 ))
@@ -458,11 +459,12 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                       AppColors.primaryColor)),
                               onPressed: () async {
                                 final XFile? image = await _picker.pickImage(
-                                    source: ImageSource.camera);
+                                    source: ImageSource.camera,
+                                    imageQuality: 60);
                                 if (image != null) {
-                                  setState(() {
+                                  setState(() async {
                                     _images.clear();
-                                    _images.add(File(image.path));
+                                    _images.add(await image.readAsBytes());
                                   });
                                 }
                               },
@@ -484,9 +486,9 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                     .pickMultiImage(imageQuality: 60);
                                 if (images != null) {
                                   setState(() {
-                                    _images = images
-                                        .map<File>((e) => File(e.path))
-                                        .toList();
+                                    images.forEach((element) async {
+                                      _images.add(await element.readAsBytes());
+                                    });
                                   });
                                 }
                               },

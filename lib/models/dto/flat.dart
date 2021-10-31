@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'dart:typed_data';
+
 class FlatDto {
   final int? id;
   final int districtId;
@@ -13,7 +15,7 @@ class FlatDto {
   final double area;
   final String note;
   final List<String> phones;
-  final List<File>? images;
+  final List<Uint8List>? images;
   final String? ownerName;
 
   FlatDto(

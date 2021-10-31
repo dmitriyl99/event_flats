@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:event_flats/events/flat_created.dart';
@@ -50,18 +51,13 @@ class ApiFlatsRepository extends FlatsRepository {
     EventService.bus.fire(FlatCreated(createdFlat));
     if (flat.images == null) return;
     flat.images!.forEach((file) async {
-      var compressedFile = await FlutterImageCompress.compressWithFile(
-          file.absolute.path,
-          quality: 70);
-      var fileExtension = file.path.split('.').last;
       var timestamp = DateTime.now().millisecondsSinceEpoch;
-      var fileName = "$timestamp.$fileExtension";
-      if (compressedFile != null)
-        var result = await FirebaseStorage.instance
-            .ref()
-            .child('flats')
-            .child('/${createdFlat.id}/$fileName')
-            .putData(compressedFile);
+      var fileName = "$timestamp";
+      var result = await FirebaseStorage.instance
+          .ref()
+          .child('flats')
+          .child('/${createdFlat.id}/$fileName')
+          .putData(file);
     });
   }
 
@@ -162,17 +158,13 @@ class ApiFlatsRepository extends FlatsRepository {
             .delete();
       } on Exception {}
       flat.images!.forEach((file) async {
-        var compressedFile =
-            await FlutterImageCompress.compressWithFile(file.absolute.path);
-        var fileExtension = file.path.split('.').last;
         var timestamp = DateTime.now().millisecondsSinceEpoch;
-        var fileName = "$timestamp.$fileExtension";
-        if (compressedFile != null)
-          var result = await FirebaseStorage.instance
-              .ref()
-              .child('flats')
-              .child('/${flat.id}/$fileName')
-              .putData(compressedFile);
+        var fileName = "$timestamp";
+        var result = await FirebaseStorage.instance
+            .ref()
+            .child('flats')
+            .child('/${flat.id}/$fileName')
+            .putData(file);
       });
     }
   }
