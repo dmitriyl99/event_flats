@@ -68,8 +68,8 @@ class MyApp extends StatelessWidget {
         FilterScreen.route: (context) => new FilterScreen(),
         UsersListScreen.route: (context) =>
             new UsersListScreen(usersRepository),
-        UserShowScreen.route: (context) =>
-            new UserShowScreen(usersRepository, flatsRepository)
+        UserShowScreen.route: (context) => new UserShowScreen(
+            usersRepository, flatsRepository, authenticationService)
       },
       initialRoute: initialRoute,
     );
