@@ -79,8 +79,11 @@ class ApiFlatsRepository extends FlatsRepository {
   }
 
   @override
-  Future<List<Flat>> getFlats({FilterViewModel? filter}) async {
-    Map<String, dynamic>? parameters = filter?.toMap();
+  Future<List<Flat>> getFlats({FilterViewModel? filter, int page = 1}) async {
+    Map<String, dynamic> parameters = {'page': page};
+    if (filter != null) {
+      parameters.addAll(filter.toMap());
+    }
     Response<dynamic> response;
     try {
       response = await _httpClient.get('',
