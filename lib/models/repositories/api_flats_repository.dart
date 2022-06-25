@@ -22,7 +22,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class ApiFlatsRepository extends FlatsRepository {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'https://event-flats.herokuapp.com/api/v1/flats',
+      baseUrl: 'http://161.35.61.88/api/v1/flats',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
   final AuthenticationService _authenticationService;

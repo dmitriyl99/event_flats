@@ -12,7 +12,7 @@ import '../user.dart';
 
 class UsersRepository {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'https://event-flats.herokuapp.com/api/v1/admin/users',
+      baseUrl: 'http://161.35.61.88/api/v1/admin/users',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
 
