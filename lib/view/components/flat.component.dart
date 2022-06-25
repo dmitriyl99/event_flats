@@ -39,6 +39,7 @@ class FlatComponent extends StatelessWidget {
           .pushNamedAndRemoveUntil(LoginScreen.route, (route) => false);
       return;
     }
+    flat.isFavorite = !flat.isFavorite;
     EventService.bus.fire(FlatFavorited(flat));
   }
 

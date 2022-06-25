@@ -43,7 +43,11 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     super.initState();
     EventService.bus.on<FlatFavorited>().listen((event) {
       if (mounted) {
-        setState(() {});
+        Flat flat =
+            _flats.where((element) => element.id == event.flat.id).first;
+        setState(() {
+          flat.isFavorite = event.flat.isFavorite;
+        });
       }
     });
     EventService.bus.on<FlatCreated>().listen((event) {

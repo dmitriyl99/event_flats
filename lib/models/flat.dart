@@ -18,7 +18,7 @@ class Flat {
   final String? description;
   final String? ownerName;
   final List<String>? phones;
-  final bool isFavorite;
+  bool isFavorite;
   final String creatorName;
   final int creatorId;
   final DateTime createdAt;
