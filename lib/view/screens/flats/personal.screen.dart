@@ -60,15 +60,17 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
     _scrollcontroller.addListener(() {
       if (_scrollcontroller.position.pixels >=
           _scrollcontroller.position.maxScrollExtent) {
-        setState(() {
-          _page += 1;
-        });
+        if (!_isLoading)
+          setState(() {
+            _page += 1;
+          });
       }
     });
   }
 
   List<Flat> _flats = [];
   int _page = 1;
+  bool _isLoading = false;
   final _scrollcontroller = ScrollController();
 
   @override
@@ -333,6 +335,7 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
               widget._flatsRepository.getFlats(filter: _filter, page: _page),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
+              _isLoading = true;
               return buildList(_flats, isLoading: true);
             }
             if (snapshot.hasError) {
@@ -351,8 +354,9 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
                   error: error, stackTrace: snapshot.stackTrace);
               return buildDefaultError(onRefresh: () => setState(() {}));
             }
+            _isLoading = false;
             _flats.addAll(snapshot.data as List<Flat>);
-            return buildList(snapshot.data as List<Flat>);
+            return buildList(_flats);
           },
         ),
       ),

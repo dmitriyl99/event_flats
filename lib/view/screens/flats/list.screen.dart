@@ -316,6 +316,8 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                 if (filter == null) return;
                 setState(() {
                   this._filter = filter as FilterViewModel;
+                  this._page = 1;
+                  this._flats = [];
                 });
               },
               icon: Image.asset('assets/filter_white.png'),
@@ -354,7 +356,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
             }
             _isLoading = false;
             _flats.addAll(snapshot.data as List<Flat>);
-            return buildList(snapshot.data as List<Flat>);
+            return buildList(_flats);
           },
         ),
       ),
