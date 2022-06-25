@@ -52,12 +52,18 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     });
     EventService.bus.on<FlatCreated>().listen((event) {
       if (mounted) {
-        setState(() {});
+        setState(() {
+          _page = 1;
+          _flats = [];
+        });
       }
     });
     EventService.bus.on<FlatUpdated>().listen((event) {
       if (mounted) {
-        setState(() {});
+        setState(() {
+          _page = 1;
+          _flats = [];
+        });
       }
     });
     _scrollcontroller.addListener(() {
@@ -246,7 +252,10 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
       backgroundColor: AppColors.primaryColor,
       color: Colors.black,
       onRefresh: () async {
-        setState(() {});
+        setState(() {
+          _page = 1;
+          _flats = [];
+        });
       },
       child: ListView(
         controller: _scrollcontroller,
@@ -359,7 +368,15 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
               return buildDefaultError(onRefresh: () => setState(() {}));
             }
             _isLoading = false;
-            _flats.addAll(snapshot.data as List<Flat>);
+            final loadedFlats = snapshot.data as List<Flat>;
+            loadedFlats.forEach((loadedFlat) {
+              if (_flats
+                  .where((element) => element.id == loadedFlat.id)
+                  .isNotEmpty) {
+                return;
+              }
+              _flats.add(loadedFlat);
+            });
             return buildList(_flats);
           },
         ),

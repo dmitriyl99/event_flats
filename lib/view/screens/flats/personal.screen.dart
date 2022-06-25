@@ -44,17 +44,27 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
     super.initState();
     EventService.bus.on<FlatFavorited>().listen((event) {
       if (mounted) {
-        setState(() {});
+        Flat flat =
+            _flats.where((element) => element.id == event.flat.id).first;
+        setState(() {
+          flat.isFavorite = event.flat.isFavorite;
+        });
       }
     });
     EventService.bus.on<FlatCreated>().listen((event) {
       if (mounted) {
-        setState(() {});
+        setState(() {
+          _page = 1;
+          _flats = [];
+        });
       }
     });
     EventService.bus.on<FlatUpdated>().listen((event) {
       if (mounted) {
-        setState(() {});
+        setState(() {
+          _page = 1;
+          _flats = [];
+        });
       }
     });
     _scrollcontroller.addListener(() {
@@ -244,7 +254,9 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
       backgroundColor: AppColors.primaryColor,
       color: Colors.black,
       onRefresh: () async {
-        setState(() {});
+        setState(() {
+          _flats = [];
+        });
       },
       child: ListView(
         controller: _scrollcontroller,
@@ -317,6 +329,7 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
                     arguments: {'currentFilter': _filter});
                 if (filter == null) return;
                 setState(() {
+                  _flats = [];
                   this._filter = filter as FilterViewModel;
                 });
               },
@@ -355,7 +368,15 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
               return buildDefaultError(onRefresh: () => setState(() {}));
             }
             _isLoading = false;
-            _flats.addAll(snapshot.data as List<Flat>);
+            final loadedFlats = snapshot.data as List<Flat>;
+            loadedFlats.forEach((loadedFlat) {
+              if (_flats
+                  .where((element) => element.id == loadedFlat.id)
+                  .isNotEmpty) {
+                return;
+              }
+              _flats.add(loadedFlat);
+            });
             return buildList(_flats);
           },
         ),

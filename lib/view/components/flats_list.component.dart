@@ -1,88 +1,54 @@
 import 'dart:developer';
 
-import 'package:event_flats/events/flat_created.dart';
-import 'package:event_flats/events/flat_favorited.dart';
-import 'package:event_flats/events/flat_updated.dart';
-import 'package:event_flats/events/service.dart';
+import 'package:event_flats/models/flat.dart';
 import 'package:event_flats/models/repositories/flats_repository.dart';
 import 'package:event_flats/services/authentication.dart';
-import 'package:event_flats/view/components/drawer.dart';
+import 'package:event_flats/services/exceptions/authentication_failed.dart';
+import 'package:event_flats/services/exceptions/no_internet.dart';
+import 'package:event_flats/services/exceptions/server_error_exception.dart';
+import 'package:event_flats/services/exceptions/user_empty.dart';
+import 'package:event_flats/view/components/dialogs.dart';
+import 'package:event_flats/view/components/errors.dart';
+import 'package:event_flats/view/components/flat.component.dart';
+import 'package:event_flats/view/resources/colors.dart';
+import 'package:event_flats/view/screens/login.screen.dart';
 import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:flutter/material.dart';
 
-import '../../../models/flat.dart';
-import '../../../services/exceptions/authentication_failed.dart';
-import '../../../services/exceptions/no_internet.dart';
-import '../../../services/exceptions/server_error_exception.dart';
-import '../../../services/exceptions/user_empty.dart';
-import '../../components/dialogs.dart';
-import '../../components/errors.dart';
-import '../../components/flat.component.dart';
-import '../../resources/colors.dart';
-import '../login.screen.dart';
-import 'filter.screen.dart';
+class FlatsListComponent extends StatefulWidget {
+  final Future<List<Flat>> loadingFlatsFuture;
+  final FlatsRepository flatsRepository;
+  final AuthenticationService authenticationService;
+  final FilterViewModel? filterViewModel;
 
-class FlatsFavoritesListScreen extends StatefulWidget {
-  final FlatsRepository _flatsRepository;
-  final AuthenticationService _authenticationService;
+  final RefreshCallback onRefresh;
 
-  const FlatsFavoritesListScreen(
-      this._flatsRepository, this._authenticationService,
-      {Key? key})
+  const FlatsListComponent(
+      this.loadingFlatsFuture, this.flatsRepository, this.authenticationService,
+      {Key? key, this.filterViewModel, required this.onRefresh})
       : super(key: key);
 
   @override
-  _FlatsFavoritesListScreenState createState() =>
-      _FlatsFavoritesListScreenState();
+  _FlatsListComponentState createState() => _FlatsListComponentState();
 }
 
-class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
-  FilterViewModel? _filter =
-      new FilterViewModel(sortDate: true, favorite: true);
+class _FlatsListComponentState extends State<FlatsListComponent> {
+  List<Flat> _flats = [];
+  int _page = 1;
+  final _scrollcontroller = ScrollController();
+
   @override
   void initState() {
     super.initState();
-    EventService.bus.on<FlatFavorited>().listen((event) {
-      if (mounted) {
-        Flat flat =
-            _flats.where((element) => element.id == event.flat.id).first;
-        setState(() {
-          flat.isFavorite = event.flat.isFavorite;
-        });
-      }
-    });
-    EventService.bus.on<FlatCreated>().listen((event) {
-      if (mounted) {
-        setState(() {
-          _page = 1;
-          _flats = [];
-        });
-      }
-    });
-    EventService.bus.on<FlatUpdated>().listen((event) {
-      if (mounted) {
-        setState(() {
-          _page = 1;
-          _flats = [];
-        });
-      }
-    });
-
     _scrollcontroller.addListener(() {
       if (_scrollcontroller.position.pixels >=
           _scrollcontroller.position.maxScrollExtent) {
-        if (_isLoading)
-          setState(() {
-            _page += 1;
-          });
+        setState(() {
+          _page += 1;
+        });
       }
     });
   }
-
-  List<Flat> _flats = [];
-  int _page = 1;
-  bool _isLoading = false;
-  final _scrollcontroller = ScrollController();
 
   @override
   void dispose() {
@@ -144,7 +110,7 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
 
   Future<bool?> _confirmDismiss(DismissDirection direction, Flat flat) async {
     if (direction != DismissDirection.endToStart) return false;
-    if (!(widget._authenticationService.getUser())!.isAdmin) {
+    if (!(widget.authenticationService.getUser())!.isAdmin) {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -218,7 +184,7 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
   void _onDismissed(DismissDirection direction, Flat flat) async {
     if (direction == DismissDirection.endToStart) {
       try {
-        await widget._flatsRepository.removeById(flat.id);
+        await widget.flatsRepository.removeById(flat.id);
       } on ServerErrorException {
         showDialog(
             context: context,
@@ -241,12 +207,13 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white),
           )));
-      setState(() {});
+      widget.onRefresh.call();
     }
   }
 
-  Widget buildList(List<Flat> flats, {bool isLoading = false}) {
-    if (flats.length == 0 && _filter != null) {
+  Widget buildList(AsyncSnapshot<List<Flat>> snapshot) {
+    var flats = snapshot.data!;
+    if (flats.length == 0 && widget.filterViewModel != null) {
       return _buildNotFound();
     } else if (flats.length == 0) {
       return _buildEmptyList();
@@ -254,14 +221,9 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
     return RefreshIndicator(
       backgroundColor: AppColors.primaryColor,
       color: Colors.black,
-      onRefresh: () async {
-        setState(() {
-          _flats = [];
-        });
-      },
+      onRefresh: widget.onRefresh,
       child: ListView(
-        controller: _scrollcontroller,
-        children: _flats
+        children: flats
             .asMap()
             .map<int, Widget>((int index, Flat flat) {
               Widget value = Dismissible(
@@ -289,18 +251,8 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
                   onDismissed: (direction) {
                     _onDismissed(direction, flat);
                   },
-                  child: FlatComponent(flat, widget._flatsRepository));
-              if (index == _flats.length - 1 && isLoading) {
-                return MapEntry(
-                    index,
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ));
-              }
-              if (index == _flats.length - 1 && !isLoading)
+                  child: FlatComponent(flat, widget.flatsRepository));
+              if (index == flats.length - 1)
                 return MapEntry(
                     index,
                     Padding(
@@ -317,69 +269,32 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: AppDrawer(widget._authenticationService),
-      appBar: AppBar(
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 15),
-            child: IconButton(
-              onPressed: () async {
-                var filter = await Navigator.of(context).pushNamed(
-                    FilterScreen.route,
-                    arguments: {'currentFilter': _filter});
-                if (filter == null) return;
-                setState(() {
-                  this._filter = filter as FilterViewModel;
-                });
-              },
-              icon: Image.asset('assets/filter_white.png'),
-              iconSize: 32,
-            ),
-          )
-        ],
-        title: Text('Luper Flats'),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 16.0),
-        child: FutureBuilder<List<Flat>>(
-          future:
-              widget._flatsRepository.getFlats(filter: _filter, page: _page),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              _isLoading = true;
-              return buildList(_flats, isLoading: true);
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: FutureBuilder<List<Flat>>(
+        future: widget.loadingFlatsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return buildLoading();
+          }
+          if (snapshot.hasError) {
+            var error = snapshot.error;
+            if (error is ServerErrorException)
+              return buildServerError(onRefresh: widget.onRefresh);
+            if (error is NoInternetException)
+              return buildNoInternetError(onRefresh: widget.onRefresh);
+            if (error is UnauthorizedUserException ||
+                error is AuthenticationFailed) {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(LoginScreen.route, (route) => false);
+              return buildDefaultError();
             }
-            if (snapshot.hasError) {
-              var error = snapshot.error;
-              if (error is ServerErrorException)
-                return buildServerError(onRefresh: () => setState(() {}));
-              if (error is NoInternetException)
-                return buildNoInternetError(onRefresh: () => setState(() {}));
-              if (error is UnauthorizedUserException ||
-                  error is AuthenticationFailed) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    LoginScreen.route, (route) => false);
-                return buildDefaultError();
-              }
-              log('Error while getting flats list',
-                  error: error, stackTrace: snapshot.stackTrace);
-              return buildDefaultError(onRefresh: () => setState(() {}));
-            }
-            _isLoading = false;
-            final loadedFlats = snapshot.data as List<Flat>;
-            loadedFlats.forEach((loadedFlat) {
-              if (_flats
-                  .where((element) => element.id == loadedFlat.id)
-                  .isNotEmpty) {
-                return;
-              }
-              _flats.add(loadedFlat);
-            });
-            return buildList(_flats);
-          },
-        ),
+            log('Error while getting flats list',
+                error: error, stackTrace: snapshot.stackTrace);
+            return buildDefaultError(onRefresh: widget.onRefresh);
+          }
+          return buildList(snapshot);
+        },
       ),
     );
   }
