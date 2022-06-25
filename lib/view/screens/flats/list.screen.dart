@@ -36,6 +36,7 @@ class FlatsListScreen extends StatefulWidget {
 
 class _FlatsListScreenState extends State<FlatsListScreen> {
   FilterViewModel? _filter = new FilterViewModel(sortDate: true);
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -58,9 +59,10 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
     _scrollcontroller.addListener(() {
       if (_scrollcontroller.position.pixels >=
           _scrollcontroller.position.maxScrollExtent) {
-        setState(() {
-          _page += 1;
-        });
+        if (!_isLoading)
+          setState(() {
+            _page += 1;
+          });
       }
     });
   }
@@ -331,6 +333,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
               widget._flatsRepository.getFlats(filter: _filter, page: _page),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
+              _isLoading = true;
               return buildList(_flats, isLoading: true);
             }
             if (snapshot.hasError) {
@@ -349,6 +352,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                   error: error, stackTrace: snapshot.stackTrace);
               return buildDefaultError(onRefresh: () => setState(() {}));
             }
+            _isLoading = false;
             _flats.addAll(snapshot.data as List<Flat>);
             return buildList(snapshot.data as List<Flat>);
           },
