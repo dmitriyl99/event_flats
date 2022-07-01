@@ -330,6 +330,8 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
                     arguments: {'currentFilter': _filter});
                 if (filter == null) return;
                 setState(() {
+                  _flats = [];
+                  this._page = 1;
                   this._filter = filter as FilterViewModel;
                 });
               },

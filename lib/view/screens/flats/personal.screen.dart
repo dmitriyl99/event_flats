@@ -330,6 +330,7 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
                 if (filter == null) return;
                 setState(() {
                   _flats = [];
+                  this._page = 1;
                   this._filter = filter as FilterViewModel;
                 });
               },
