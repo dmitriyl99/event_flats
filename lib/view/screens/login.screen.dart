@@ -36,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   String? _validatePassword(String? value) {
+    
     if (value == null || value.isEmpty) {
       return 'Введите пароль';
     }
