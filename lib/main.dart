@@ -41,7 +41,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final String initialRoute;
-
   const MyApp({Key? key, this.initialRoute = LoginScreen.route})
       : super(key: key);
 
