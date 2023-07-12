@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:event_flats/events/flat_created.dart';
@@ -18,11 +17,10 @@ import 'package:event_flats/services/exceptions/user_empty.dart';
 import 'package:event_flats/services/exceptions/validation_exception.dart';
 import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class ApiFlatsRepository extends FlatsRepository {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'http://161.35.61.88/api/v1/flats',
+      baseUrl: 'http://localhost:5000/api/v1/flats',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
   final AuthenticationService _authenticationService;
@@ -32,6 +30,7 @@ class ApiFlatsRepository extends FlatsRepository {
   @override
   Future<void> createFlat(FlatDto flat) async {
     var payload = flat.toJson();
+
     Response<dynamic> response;
     try {
       response = await _httpClient.post('',
@@ -53,7 +52,7 @@ class ApiFlatsRepository extends FlatsRepository {
     flat.images!.forEach((file) async {
       var timestamp = DateTime.now().millisecondsSinceEpoch;
       var fileName = "$timestamp";
-      var result = await FirebaseStorage.instance
+      await FirebaseStorage.instance
           .ref()
           .child('flats')
           .child('/${createdFlat.id}/$fileName')
@@ -163,7 +162,7 @@ class ApiFlatsRepository extends FlatsRepository {
       flat.images!.forEach((file) async {
         var timestamp = DateTime.now().millisecondsSinceEpoch;
         var fileName = "$timestamp";
-        var result = await FirebaseStorage.instance
+        await FirebaseStorage.instance
             .ref()
             .child('flats')
             .child('/${flat.id}/$fileName')

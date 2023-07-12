@@ -5,8 +5,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 class Flat {
   late int id;
   final String address;
+  final String? subDistrict;
   final int districtId;
-  final int? landmarkId;
+  final int? subDistrictId;
   final double price;
   final int floor;
   final int numberOfFloors;
@@ -27,8 +28,9 @@ class Flat {
   Flat(
       this.id,
       this.address,
+      this.subDistrict,
       this.districtId,
-      this.landmarkId,
+      this.subDistrictId,
       this.price,
       this.floor,
       this.numberOfFloors,
@@ -49,8 +51,9 @@ class Flat {
   Flat.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         address = json['address'],
+        subDistrict = json['sub_district'],
         districtId = json['district_id'],
-        landmarkId = json['landmark_id'],
+        subDistrictId = json['sub_district_id'],
         price = json['price'] is int
             ? (json['price'] as int).toDouble()
             : json['price'],
@@ -77,7 +80,8 @@ class Flat {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'district_id': districtId,
-        'landmark': landmarkId ?? landmark,
+        'sub_district_id': subDistrictId,
+        'landmark': landmark,
         'area': area,
         'note': description,
         'repair': flatRepair,

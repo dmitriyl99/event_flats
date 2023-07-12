@@ -183,6 +183,13 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                   style: TextStyle(fontSize: 23),
                 ),
               ),
+            if (flat.subDistrict != null && flat.subDistrict!.isNotEmpty)
+              Flexible(
+                child: Text(
+                  flat.subDistrict!,
+                  style: TextStyle(fontSize: 23),
+                ),
+              ),
           ],
         ),
       );

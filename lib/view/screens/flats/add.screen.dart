@@ -37,8 +37,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   List<String> _repairs = getRepairs();
   List<Uint8List> _images = [];
 
-  late int _currentDistrict = 1;
-  int? _currentLandmark;
+  int _currentDistrict = 1;
+  int? _currentSubDistrict;
   late String _currentRepair = _repairs.first;
   TextEditingController _landmarkController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
@@ -170,9 +170,10 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           .toList()
           .where((element) => element.isNotEmpty)
           .toList());
+      print('_currentSubDistrict: ' + _currentSubDistrict.toString());
       var flat = FlatDto(
           _currentDistrict,
-          _currentLandmark,
+          _currentSubDistrict,
           _landmarkController.text,
           double.parse(_priceController.text),
           int.parse(_roomsController.text),
@@ -278,10 +279,9 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 onChanged: (value) {
                                   setState(() {
                                     _currentDistrict = value!;
+                                    _currentSubDistrict = null;
                                   });
                                   _landmarkController.text = '';
-                                  _currentLandmark = null;
-                                  _landmarkFocusNode.requestFocus();
                                 },
                                 items: _districts
                                     .map<DropdownMenuItem<int>>(
@@ -293,6 +293,44 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                           ),
                         );
                       }),
+                  if (_districts.isNotEmpty && _districts
+                          .where((element) => element['id'] == _currentDistrict)
+                          .first['sub_districts'] !=
+                      null)
+                    FormField<int?>(
+                      enabled: _districts.isNotEmpty,
+                      builder: (FormFieldState<int?> state) {
+                        var currentDistrictEntity = _districts
+                            .where(
+                                (element) => element['id'] == _currentDistrict)
+                            .first;
+                        var subDistricts =
+                            currentDistrictEntity['sub_districts'] ?? [];
+
+                        return InputDecorator(
+                          decoration: InputDecoration(
+                              labelText: 'Дополнительный район'),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<int?>(
+                              value: _currentSubDistrict,
+                              isDense: true,
+                              onChanged: (value) {
+                                setState(() {
+                                  _currentSubDistrict = value;
+                                });
+                                _landmarkFocusNode.requestFocus();
+                              },
+                              items: subDistricts
+                                  .map<DropdownMenuItem<int?>>((e) =>
+                                      DropdownMenuItem<int?>(
+                                          value: e['id'],
+                                          child: Text(e['title'])))
+                                  .toList(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   Row(children: [
                     Expanded(
                       child: TextFormField(

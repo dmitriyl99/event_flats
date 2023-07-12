@@ -3,7 +3,7 @@ import 'dart:typed_data';
 class FlatDto {
   final int? id;
   final int districtId;
-  final int? landmarkId;
+  final int? subDistrictId;
   final String? landmark;
   final double price;
   final int roomsNumber;
@@ -18,7 +18,7 @@ class FlatDto {
 
   FlatDto(
       this.districtId,
-      this.landmarkId,
+      this.subDistrictId,
       this.landmark,
       this.price,
       this.roomsNumber,
@@ -34,6 +34,7 @@ class FlatDto {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'district_id': districtId,
+        'sub_district_id': subDistrictId,
         'landmark': landmark,
         'area': area,
         'note': note,
