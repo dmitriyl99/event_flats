@@ -33,6 +33,5 @@ class FlatPhoneNumberComponent extends StatelessWidget {
         color: Colors.red,
       )
     ]);
-    ;
   }
 }

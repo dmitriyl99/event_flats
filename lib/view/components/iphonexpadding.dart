@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/widgets.dart';
 
 // workaround for iPhone X which draws navigation in the bottom of the screen.

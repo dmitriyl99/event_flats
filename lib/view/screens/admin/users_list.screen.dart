@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:event_flats/events/service.dart';
 import 'package:event_flats/events/user_updated.dart';
 import 'package:event_flats/helpers/string.dart';

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:event_flats/services/districts.dart';
 import 'package:event_flats/services/repairs.dart';
 import 'package:event_flats/view/resources/colors.dart';

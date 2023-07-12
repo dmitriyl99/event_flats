@@ -33,8 +33,6 @@ class FlatsListComponent extends StatefulWidget {
 }
 
 class _FlatsListComponentState extends State<FlatsListComponent> {
-  List<Flat> _flats = [];
-  int _page = 1;
   final _scrollcontroller = ScrollController();
 
   @override
@@ -43,9 +41,7 @@ class _FlatsListComponentState extends State<FlatsListComponent> {
     _scrollcontroller.addListener(() {
       if (_scrollcontroller.position.pixels >=
           _scrollcontroller.position.maxScrollExtent) {
-        setState(() {
-          _page += 1;
-        });
+        setState(() {});
       }
     });
   }
