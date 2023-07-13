@@ -15,6 +15,7 @@ class FilterScreen extends StatefulWidget {
 
 class _FilterScreenState extends State<FilterScreen> {
   late int _currentDistrict = 0;
+  int? _currentSubDistrict;
   late String _currentRepair = _repairs[0];
   List<Map<String, dynamic>> _districts = [
     {'id': 0, 'title': 'Все районы'}
@@ -105,6 +106,7 @@ class _FilterScreenState extends State<FilterScreen> {
                   onChanged: (value) {
                     setState(() {
                       _currentDistrict = value!;
+                      _currentSubDistrict = null;
                     });
                   },
                   items: _districts
@@ -116,6 +118,39 @@ class _FilterScreenState extends State<FilterScreen> {
             ),
           );
         });
+  }
+
+  Widget _subDistrictFilter() {
+    return FormField<int?>(
+        enabled: _districts.isNotEmpty,
+        builder: (FormFieldState<int?> state) {
+          var currentDistrictEntity = _districts
+              .where(
+                  (element) => element['id'] == _currentDistrict)
+              .first;
+          var subDistricts =
+              currentDistrictEntity['sub_districts'] ?? [];
+          return InputDecorator(
+            decoration: InputDecoration(labelText: "Доп район"),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int?>(
+                  value: _currentSubDistrict,
+                  isDense: true,
+                  onChanged: (value) {
+                    setState(() {
+                      _currentSubDistrict = value;
+                    });
+                  },
+                  items: subDistricts
+                      .map<DropdownMenuItem<int?>>((e) =>
+                      DropdownMenuItem<int?>(
+                          value: e['id'],
+                          child: Text(e['title'])))
+                      .toList()),
+            ),
+          );
+        }
+    );
   }
 
   Widget _roomsFilter() {
@@ -356,6 +391,7 @@ class _FilterScreenState extends State<FilterScreen> {
             onPressed: () {
               setState(() {
                 _currentDistrict = 0;
+                _currentSubDistrict = null;
                 _fromPriceController.text = '';
                 _toPriceController.text = '';
                 _fromRoomsController.text = '';
@@ -386,8 +422,10 @@ class _FilterScreenState extends State<FilterScreen> {
 
     if (!_firstLoaded) {
       if (currentFilter != null) {
-        if (_districts.length > 1)
+        if (_districts.length > 1) {
           _currentDistrict = currentFilter.district ?? 0;
+          _currentSubDistrict = currentFilter.subDistrict;
+        }
         _currentRepair = currentFilter.repair ?? _repairs[0];
         _fromPriceController.text =
             currentFilter.priceFrom?.toStringAsFixed(0) ?? '';
@@ -418,6 +456,7 @@ class _FilterScreenState extends State<FilterScreen> {
               onPressed: () {
                 var viewModel = FilterViewModel(
                     district: _currentDistrict == 0 ? null : _currentDistrict,
+                    subDistrict: _currentSubDistrict,
                     roomsStart: _roomsFrom,
                     roomsEnd: _roomsTo,
                     priceFrom: _priceFrom,
@@ -448,6 +487,18 @@ class _FilterScreenState extends State<FilterScreen> {
               SizedBox(
                 height: 32,
               ),
+              if (_districts.isNotEmpty && _districts
+                  .where((element) => element['id'] == _currentDistrict)
+                  .first['sub_districts'] !=
+                  null)
+                _subDistrictFilter(),
+              if (_districts.isNotEmpty && _districts
+                  .where((element) => element['id'] == _currentDistrict)
+                  .first['sub_districts'] !=
+                  null)
+                SizedBox(
+                  height: 32,
+                ),
               _roomsFilter(),
               SizedBox(
                 height: 32,

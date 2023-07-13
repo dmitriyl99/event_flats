@@ -1,5 +1,6 @@
 class FilterViewModel {
   final int? district;
+  final int? subDistrict;
   final int? roomsStart;
   final int? roomsEnd;
   final int? floorsStart;
@@ -18,6 +19,7 @@ class FilterViewModel {
 
   FilterViewModel(
       {this.district,
+        this.subDistrict,
       this.priceFrom,
       this.priceTo,
       this.repair,
@@ -50,6 +52,7 @@ class FilterViewModel {
     }
     return {
       'district': district,
+      'sub_district': subDistrict,
       'repair': repair,
       'area': area,
       'is_favorite': favorite,
