@@ -21,6 +21,7 @@ class _FilterScreenState extends State<FilterScreen> {
     {'id': 0, 'title': 'Все районы'}
   ];
   List<String> _repairs = ['Все ремонты', ...getRepairs()];
+  String? _currentLayout;
   bool _firstLoaded = false;
 
   double? _priceFrom;
@@ -305,6 +306,31 @@ class _FilterScreenState extends State<FilterScreen> {
     });
   }
 
+  Widget _layoutFilter() {
+    return FormField<String?>(builder: (FormFieldState<String?> state) {
+      return InputDecorator(
+        decoration: InputDecoration(labelText: "Планировка"),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String?>(
+              value: _currentLayout,
+              onChanged: (value) {
+                setState(() {
+                  _currentLayout = value;
+                });
+              },
+              items: [
+                DropdownMenuItem(value: 'Свердловская', child: Text('Свердловская')),
+                DropdownMenuItem(value: 'Французская', child: Text('Французская')),
+                DropdownMenuItem(value: 'Московская', child: Text('Московская')),
+                DropdownMenuItem(value: 'Хрущевская', child: Text('Хрущевская')),
+                DropdownMenuItem(value: 'Улучшенная', child: Text('Улучшенная')),
+                DropdownMenuItem(value: 'Другая', child: Text('Другая')),
+              ]),
+        ),
+      );
+    });
+  }
+
   Widget _sortFilter() {
     var textStyle = TextStyle(fontSize: 18);
     return Column(
@@ -457,6 +483,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 var viewModel = FilterViewModel(
                     district: _currentDistrict == 0 ? null : _currentDistrict,
                     subDistrict: _currentSubDistrict,
+                    layout: _currentLayout,
                     roomsStart: _roomsFrom,
                     roomsEnd: _roomsTo,
                     priceFrom: _priceFrom,
@@ -509,6 +536,10 @@ class _FilterScreenState extends State<FilterScreen> {
               ),
               _priceFilter(),
               _repairFilter(),
+              SizedBox(
+                height: 32,
+              ),
+              _layoutFilter(),
               SizedBox(
                 height: 32,
               ),

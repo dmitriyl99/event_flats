@@ -8,6 +8,7 @@ class FilterViewModel {
   final double? priceFrom;
   final double? priceTo;
   final String? repair;
+  final String? layout;
   final double? area;
   final bool sortPriceDown;
   final bool sortPriceUp;
@@ -19,10 +20,11 @@ class FilterViewModel {
 
   FilterViewModel(
       {this.district,
-        this.subDistrict,
+      this.subDistrict,
       this.priceFrom,
       this.priceTo,
       this.repair,
+      this.layout,
       this.area,
       this.roomsStart,
       this.roomsEnd,
@@ -54,6 +56,7 @@ class FilterViewModel {
       'district': district,
       'sub_district': subDistrict,
       'repair': repair,
+      'layout': layout,
       'area': area,
       'is_favorite': favorite,
       'personal': personal,
