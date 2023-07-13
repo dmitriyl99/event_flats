@@ -44,6 +44,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
 
   late int _currentDistrict = 0;
   int? _currentSubDistrict;
+  String? _currentLayout;
   late String _currentRepair = _repairs.first;
   TextEditingController _landmarkController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
@@ -153,6 +154,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           _currentDistrict,
           _currentSubDistrict,
           _landmarkController.text,
+          _currentLayout,
           double.parse(_priceController.text.replaceAll(',', '')),
           int.parse(_roomsController.text),
           int.parse(_floorController.text),
@@ -208,6 +210,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       _currentDistrict = flat.districtId;
       _currentSubDistrict = flat.subDistrictId;
       _currentRepair = flat.flatRepair;
+      _currentLayout = flat.layout;
       _landmarkController.text = flat.landmark ?? '';
       _priceController.text = NumberFormattingHelper.format(flat.price);
       _roomsController.text = flat.numberOfRooms.toString();
@@ -433,6 +436,28 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                           child: Text(value),
                                         ))
                                 .toList()),
+                      ),
+                    );
+                  }),
+                  FormField<String?>(builder: (FormFieldState<String?> state) {
+                    return InputDecorator(
+                      decoration: InputDecoration(labelText: "Планировка"),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String?>(
+                            value: _currentLayout,
+                            onChanged: (value) {
+                              setState(() {
+                                _currentLayout = value;
+                              });
+                            },
+                            items: [
+                              DropdownMenuItem(value: 'Свердловская', child: Text('Свердловская')),
+                              DropdownMenuItem(value: 'Французская', child: Text('Французская')),
+                              DropdownMenuItem(value: 'Московская', child: Text('Московская')),
+                              DropdownMenuItem(value: 'Хрущевская', child: Text('Хрущевская')),
+                              DropdownMenuItem(value: 'Улучшенная', child: Text('Улучшенная')),
+                              DropdownMenuItem(value: 'Другая', child: Text('Другая')),
+                            ]),
                       ),
                     );
                   }),

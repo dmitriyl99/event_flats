@@ -272,6 +272,23 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
       );
     }
 
+    Widget _flatLayout() {
+      return Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Row(
+          children: [
+            Text('Планировка:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+            SizedBox(
+              width: 5,
+            ),
+            Text(flat.layout ?? 'Не указана',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
+          ],
+        ),
+      );
+    }
+
     Widget _flatDescription() {
       return Padding(
         padding: EdgeInsets.all(5.0),
@@ -484,6 +501,8 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                       if (flat.area != null) _flatArea(),
                       if (flat.area != null) _divider(),
                       _flatRepair(),
+                      _divider(),
+                      _flatLayout(),
                       _divider(),
                       _flatPrice(),
                       _divider(),

@@ -39,6 +39,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
 
   int _currentDistrict = 1;
   int? _currentSubDistrict;
+  String? _currentLayout;
   late String _currentRepair = _repairs.first;
   TextEditingController _landmarkController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
@@ -60,6 +61,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   late FocusNode _priceFocusNode;
   late FocusNode _floorsNumberFocusNode;
   late FocusNode _areaFocusNode;
+  late FocusNode _layoutFocusNode;
   final ScrollController _scrollController = new ScrollController();
 
   @override
@@ -70,6 +72,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
     _priceFocusNode = new FocusNode();
     _floorsNumberFocusNode = new FocusNode();
     _areaFocusNode = new FocusNode();
+    _layoutFocusNode = new FocusNode();
 
     _roomsController.addListener(() {
       if (_roomsController.text.isNotEmpty) {
@@ -175,6 +178,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           _currentDistrict,
           _currentSubDistrict,
           _landmarkController.text,
+          _currentLayout,
           double.parse(_priceController.text),
           int.parse(_roomsController.text),
           int.parse(_floorController.text),
@@ -418,7 +422,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                             onChanged: (value) {
                               setState(() {
                                 _currentRepair = value!;
-                                _areaFocusNode.requestFocus();
+                                _layoutFocusNode.requestFocus();
                               });
                             },
                             items: _repairs
@@ -428,6 +432,30 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                           child: Text(value),
                                         ))
                                 .toList()),
+                      ),
+                    );
+                  }),
+                  FormField<String?>(builder: (FormFieldState<String?> state) {
+                    return InputDecorator(
+                      decoration: InputDecoration(labelText: "Планировка"),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String?>(
+                          focusNode: _layoutFocusNode,
+                            value: _currentLayout,
+                            onChanged: (value) {
+                              setState(() {
+                                _currentLayout = value;
+                                _areaFocusNode.requestFocus();
+                              });
+                            },
+                            items: [
+                              DropdownMenuItem(value: 'Свердловская', child: Text('Свердловская')),
+                              DropdownMenuItem(value: 'Французская', child: Text('Французская')),
+                              DropdownMenuItem(value: 'Московская', child: Text('Московская')),
+                              DropdownMenuItem(value: 'Хрущевская', child: Text('Хрущевская')),
+                              DropdownMenuItem(value: 'Улучшенная', child: Text('Улучшенная')),
+                              DropdownMenuItem(value: 'Другая', child: Text('Другая')),
+                            ]),
                       ),
                     );
                   }),

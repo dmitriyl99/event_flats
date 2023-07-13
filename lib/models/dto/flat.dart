@@ -5,6 +5,7 @@ class FlatDto {
   final int districtId;
   final int? subDistrictId;
   final String? landmark;
+  final String? layout;
   final double price;
   final int roomsNumber;
   final int floor;
@@ -20,6 +21,7 @@ class FlatDto {
       this.districtId,
       this.subDistrictId,
       this.landmark,
+      this.layout,
       this.price,
       this.roomsNumber,
       this.floor,
@@ -36,6 +38,7 @@ class FlatDto {
         'district_id': districtId,
         'sub_district_id': subDistrictId,
         'landmark': landmark,
+        'layout': layout,
         'area': area,
         'note': note,
         'repair': repair,
