@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uz.event.flats">
    <application
-        android:label="Luper Flats"
+        android:label="Sultan Flats"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
