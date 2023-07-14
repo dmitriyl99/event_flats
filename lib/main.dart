@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
     UsersRepository usersRepository =
         new UsersRepository(authenticationService);
     return MaterialApp(
-      title: 'Sultan Flats',
+      title: 'Ruslan Flats',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData.dark().copyWith(
@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
             floatingLabelStyle: TextStyle(color: AppColors.primaryColor),
             focusedBorder: UnderlineInputBorder(
-                borderSide: const BorderSide(color: Color(0xff722cce)))),
+                borderSide: const BorderSide(color: Color(0xff7ddf2b)))),
         scaffoldBackgroundColor: AppColors.darkBackground,
         cardTheme: CardTheme(color: AppColors.accentBackground),
         dropdownMenuTheme: ThemeData.dark().dropdownMenuTheme.copyWith(),

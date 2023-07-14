@@ -338,7 +338,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
             ),
           )
         ],
-        title: Text('Sultan Flats'),
+        title: Text('Ruslan Flats'),
         centerTitle: true,
       ),
       body: Padding(
