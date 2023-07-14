@@ -466,11 +466,9 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
         },
         label: Text(
           'Редактировать',
-          style: TextStyle(color: Colors.black),
         ),
         icon: Icon(
           Icons.edit,
-          color: Colors.black,
         ),
       );
     }

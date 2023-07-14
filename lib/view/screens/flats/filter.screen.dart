@@ -102,6 +102,7 @@ class _FilterScreenState extends State<FilterScreen> {
             decoration: InputDecoration(labelText: "Район"),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
+                  dropdownColor: AppColors.darkBackground,
                   value: _currentDistrict,
                   isDense: true,
                   onChanged: (value) {
@@ -135,6 +136,7 @@ class _FilterScreenState extends State<FilterScreen> {
             decoration: InputDecoration(labelText: "Доп район"),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int?>(
+                  dropdownColor: AppColors.darkBackground,
                   value: _currentSubDistrict,
                   isDense: true,
                   onChanged: (value) {
@@ -288,6 +290,7 @@ class _FilterScreenState extends State<FilterScreen> {
         decoration: InputDecoration(labelText: "Ремонт"),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
+              dropdownColor: AppColors.darkBackground,
               value: _currentRepair,
               isDense: true,
               onChanged: (value) {
@@ -312,6 +315,7 @@ class _FilterScreenState extends State<FilterScreen> {
         decoration: InputDecoration(labelText: "Планировка"),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String?>(
+              dropdownColor: AppColors.darkBackground,
               value: _currentLayout,
               onChanged: (value) {
                 setState(() {

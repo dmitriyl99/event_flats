@@ -116,13 +116,13 @@ class _UserFormComponentState extends State<UserFormComponent> {
                 minWidth: 130,
                 child: !_userFormLoading
                     ? Text('Сохранить',
-                        style: TextStyle(fontSize: 18, color: Colors.black))
+                        style: TextStyle(fontSize: 18, color: Colors.white))
                     : SizedBox(
                         height: 24,
                         width: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 3,
-                          valueColor: AlwaysStoppedAnimation(Colors.black),
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
                         ))),
           )
         ],

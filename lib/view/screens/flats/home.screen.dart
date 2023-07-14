@@ -48,22 +48,21 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         floatingActionButton: _currentScreenIndex == 0
             ? FloatingActionButton.extended(
-                backgroundColor: AppColors.primaryColor,
                 onPressed: () {
                   Navigator.of(context).pushNamed(AddFlatScreen.route);
                 },
                 label: Text(
                   'Добавить',
-                  style: TextStyle(color: Colors.black),
                 ),
                 icon: Icon(
                   Icons.add,
-                  color: Colors.black,
                 ),
               )
             : null,
         bottomNavigationBar: BottomNavigationBar(
           onTap: _onTabTapped,
+          selectedIconTheme: Theme.of(context).iconTheme.copyWith(color: AppColors.primaryColor),
+          selectedItemColor: AppColors.primaryColor,
           currentIndex: _currentScreenIndex,
           items: [
             BottomNavigationBarItem(

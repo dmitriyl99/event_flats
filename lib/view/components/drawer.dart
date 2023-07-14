@@ -1,4 +1,5 @@
 import 'package:event_flats/services/authentication.dart';
+import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/admin/users_list.screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,16 +22,16 @@ class AppDrawer extends StatelessWidget {
         children: [
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Color(0xff00d6d1),
+              color: AppColors.primaryColor,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   user.displayName,
-                  style: TextStyle(fontSize: 18, color: Colors.black),
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
-                Text(user.email, style: TextStyle(color: Colors.black54))
+                Text(user.email, style: TextStyle(color: Colors.white54))
               ],
             ),
           ),

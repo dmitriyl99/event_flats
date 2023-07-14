@@ -114,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
               color: AppColors.primaryColor),
           child: !_isLoading
               ? Text('Вход',
-                  style: TextStyle(fontSize: 21, color: Colors.black))
+                  style: TextStyle(fontSize: 21, color: Colors.white))
               : SizedBox(
                   height: 24,
                   width: 24,

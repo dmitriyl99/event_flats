@@ -288,6 +288,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                           decoration: InputDecoration(labelText: "Район"),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<int>(
+                                dropdownColor: AppColors.darkBackground,
                                 value: _currentDistrict,
                                 isDense: true,
                                 onChanged: (value) {
@@ -326,6 +327,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                               labelText: 'Дополнительный район'),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<int?>(
+                              dropdownColor: AppColors.darkBackground,
                               value: _currentSubDistrict,
                               isDense: true,
                               onChanged: (value) {
@@ -423,6 +425,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                       decoration: InputDecoration(labelText: "Ремонт"),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
+                            dropdownColor: AppColors.darkBackground,
                             value: _currentRepair,
                             onChanged: (value) {
                               setState(() {
@@ -444,6 +447,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                       decoration: InputDecoration(labelText: "Планировка"),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String?>(
+                            dropdownColor: AppColors.darkBackground,
                             value: _currentLayout,
                             onChanged: (value) {
                               setState(() {
@@ -533,7 +537,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                 padding: EdgeInsets.all(12),
                                 child: Text('С камеры',
                                     style: TextStyle(
-                                        fontSize: 18, color: Colors.black)),
+                                        fontSize: 18, color: Colors.white)),
                               )),
                           SizedBox(
                             width: 20,
@@ -557,7 +561,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                 padding: EdgeInsets.all(12),
                                 child: Text('С устройства',
                                     style: TextStyle(
-                                        fontSize: 18, color: Colors.black)),
+                                        fontSize: 18, color: Colors.white)),
                               ))
                         ],
                       )

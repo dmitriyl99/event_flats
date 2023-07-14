@@ -53,7 +53,6 @@ class FlatComponent extends StatelessWidget {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 5),
         child: Card(
-          elevation: 4,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: InkWell(
@@ -116,7 +115,7 @@ class FlatComponent extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                   SizedBox(

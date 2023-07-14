@@ -278,6 +278,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                           decoration: InputDecoration(labelText: "Район"),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<int>(
+                              dropdownColor: AppColors.darkBackground,
                                 value: _currentDistrict,
                                 isDense: true,
                                 onChanged: (value) {
@@ -316,6 +317,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                               labelText: 'Дополнительный район'),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<int?>(
+                              dropdownColor: AppColors.darkBackground,
                               value: _currentSubDistrict,
                               isDense: true,
                               onChanged: (value) {
@@ -418,6 +420,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       decoration: InputDecoration(labelText: "Ремонт"),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
+                            dropdownColor: AppColors.darkBackground,
                             value: _currentRepair,
                             onChanged: (value) {
                               setState(() {
@@ -440,6 +443,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       decoration: InputDecoration(labelText: "Планировка"),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String?>(
+                            dropdownColor: AppColors.darkBackground,
                           focusNode: _layoutFocusNode,
                             value: _currentLayout,
                             onChanged: (value) {
@@ -526,7 +530,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 padding: EdgeInsets.all(12),
                                 child: Text('С камеры',
                                     style: TextStyle(
-                                        fontSize: 18, color: Colors.black)),
+                                        fontSize: 18, color: Colors.white)),
                               )),
                           SizedBox(
                             width: 20,
@@ -552,7 +556,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 padding: EdgeInsets.all(12),
                                 child: Text('С устройства',
                                     style: TextStyle(
-                                        fontSize: 18, color: Colors.black)),
+                                        fontSize: 18, color: Colors.white)),
                               ))
                         ],
                       )
@@ -602,10 +606,10 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                               duration: Duration(seconds: 1),
                               curve: Curves.fastOutSlowIn);
                         },
-                        icon: Icon(Icons.add, color: Colors.black),
+                        icon: Icon(Icons.add, color: Colors.white),
                         label: Text(
                           'Добавить номер',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],
