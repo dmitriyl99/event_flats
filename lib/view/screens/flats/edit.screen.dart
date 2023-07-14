@@ -610,10 +610,10 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                               duration: Duration(seconds: 1),
                               curve: Curves.fastOutSlowIn);
                         },
-                        icon: Icon(Icons.add, color: Colors.black),
+                        icon: Icon(Icons.add, color: Colors.white),
                         label: Text(
                           'Добавить номер',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],
