@@ -11,7 +11,6 @@ import 'package:event_flats/view/screens/flats/filter.screen.dart';
 import 'package:event_flats/view/screens/flats/home.screen.dart';
 import 'package:event_flats/view/screens/flats/show.screen.dart';
 import 'package:event_flats/view/screens/login.screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -37,7 +36,6 @@ void main() async {
   if (currentUser != null) {
     initialRoute = HomeScreen.route;
   }
-  await FirebaseAuth.instance.signInAnonymously();
   runApp(MyApp(
     initialRoute: initialRoute,
   ));

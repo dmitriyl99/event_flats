@@ -7,6 +7,9 @@ class FlatDto {
   final String? landmark;
   final String? layout;
   final double price;
+  final double? publicPrice;
+  final String? hashTag1;
+  final String? hashTag2;
   final int roomsNumber;
   final int floor;
   final int floorsNumber;
@@ -23,6 +26,9 @@ class FlatDto {
       this.landmark,
       this.layout,
       this.price,
+      this.publicPrice,
+      this.hashTag1,
+      this.hashTag2,
       this.roomsNumber,
       this.floor,
       this.floorsNumber,
@@ -47,6 +53,9 @@ class FlatDto {
         'rooms_number': roomsNumber,
         'owner_name': ownerName,
         'phones': phones,
-        'price': price
+        'price': price,
+        'public_price': publicPrice,
+        'hashtag_1': hashTag1,
+        'hashtag_2': hashTag2,
       };
 }
