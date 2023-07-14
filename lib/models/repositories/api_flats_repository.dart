@@ -20,7 +20,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class ApiFlatsRepository extends FlatsRepository {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'http://localhost:5000/api/v1/flats',
+      baseUrl: 'https://6cf8-95-214-210-143.ngrok-free.app/api/v1/flats',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
   final AuthenticationService _authenticationService;

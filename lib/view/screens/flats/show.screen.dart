@@ -8,6 +8,7 @@ import 'package:event_flats/services/exceptions/forbidden_exception.dart';
 import 'package:event_flats/services/exceptions/no_internet.dart';
 import 'package:event_flats/services/exceptions/server_error_exception.dart';
 import 'package:event_flats/services/exceptions/user_empty.dart';
+import 'package:event_flats/services/telegram.dart';
 import 'package:event_flats/view/components/dialogs.dart';
 import 'package:event_flats/view/components/errors.dart';
 import 'package:event_flats/view/resources/colors.dart';
@@ -32,6 +33,7 @@ class FlatShowScreen extends StatefulWidget {
 }
 
 class _FlatShowScreenState extends State<FlatShowScreen> {
+  late Flat flat;
   void _onEdit(BuildContext context, Flat flat) async {
     var result = await Navigator.of(context)
         .pushNamed(EditFlatScreen.route, arguments: flat);
@@ -153,6 +155,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
   @override
   Widget build(BuildContext context) {
     late Flat flat = ModalRoute.of(context)!.settings.arguments as Flat;
+    this.flat = flat;
 
     Widget _divider() {
       return Padding(
@@ -411,6 +414,37 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
       );
     }
 
+    Widget _sendTelegramMessage() {
+      return ElevatedButton(
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.blue),
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+              side: BorderSide(color: Colors.white),
+            ))),
+        onPressed: () {
+          var service = new TelegramService();
+          service.sendMessageToChannel(flat);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Отправить в Telegram-канал',
+                style: TextStyle(fontSize: 20),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Icon(Icons.telegram)
+            ],
+          ),
+        ),
+      );
+    }
+
     Widget _sellButton() {
       return flat.sold
           ? ElevatedButton(
@@ -518,7 +552,14 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                           height: 30,
                         ),
                       if (flat.phones != null && flat.phones!.isNotEmpty)
+                        SizedBox(
+                          height: 30,
+                        ),
                         _callButton(),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      _sendTelegramMessage(),
                       if (flat.creatorId == user.id || user.isAdmin)
                         SizedBox(
                           height: 30,

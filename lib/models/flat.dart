@@ -9,6 +9,7 @@ class Flat {
   final int districtId;
   final int? subDistrictId;
   final double price;
+  final double? publicPrice;
   final int floor;
   final String? layout;
   final int numberOfFloors;
@@ -24,6 +25,8 @@ class Flat {
   final String creatorName;
   final int creatorId;
   final DateTime createdAt;
+  final String? hashTag1;
+  final String? hashTag2;
   File? image;
 
   Flat(
@@ -33,6 +36,9 @@ class Flat {
       this.districtId,
       this.subDistrictId,
       this.price,
+      this.publicPrice,
+      this.hashTag1,
+      this.hashTag2,
       this.floor,
       this.layout,
       this.numberOfFloors,
@@ -60,6 +66,9 @@ class Flat {
             ? (json['price'] as int).toDouble()
             : json['price'],
         floor = json['floor'],
+        publicPrice = json['public_price'],
+        hashTag1 = json['hashtag_1'],
+        hashTag2 = json['hashtag_2'],
         numberOfFloors = json['floors_number'],
         numberOfRooms = json['rooms_number'],
         flatRepair = json['repair'],

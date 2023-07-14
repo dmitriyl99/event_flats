@@ -305,30 +305,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.3"
-  firebase_auth:
-    dependency: "direct main"
-    description:
-      name: firebase_auth
-      sha256: e946a21254784116d32e497e09b851b4d03a3c65880e80d6939a720dfce88aed
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.2.2"
-  firebase_auth_platform_interface:
-    dependency: transitive
-    description:
-      name: firebase_auth_platform_interface
-      sha256: "4d30c51a60df38e7ba2240fe9dbf8d5c17f7e51b8699f66ae3b263927a0ab586"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.14.0"
-  firebase_auth_web:
-    dependency: transitive
-    description:
-      name: firebase_auth_web
-      sha256: bf8f3093c141abd0a624e0244864154d9db694682ba0cc1fcfdf60ecb6f7f2e3
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.2.2"
   firebase_core:
     dependency: "direct main"
     description:
