@@ -8,11 +8,12 @@ import 'package:event_flats/services/exceptions/no_internet.dart';
 import 'package:event_flats/services/exceptions/server_error_exception.dart';
 import 'package:event_flats/services/exceptions/user_empty.dart';
 
+import '../../services/api_settings.dart';
 import '../user.dart';
 
 class UsersRepository {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'https://6cf8-95-214-210-143.ngrok-free.app/api/v1/admin/users',
+      baseUrl: '${ApiSettings.host}/api/v1/admin/users',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
 

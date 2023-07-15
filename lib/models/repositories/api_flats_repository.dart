@@ -18,9 +18,11 @@ import 'package:event_flats/services/exceptions/validation_exception.dart';
 import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import '../../services/api_settings.dart';
+
 class ApiFlatsRepository extends FlatsRepository {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'https://6cf8-95-214-210-143.ngrok-free.app/api/v1/flats',
+      baseUrl: '${ApiSettings.host}/api/v1/flats',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
   final AuthenticationService _authenticationService;
@@ -50,13 +52,10 @@ class ApiFlatsRepository extends FlatsRepository {
     EventService.bus.fire(FlatCreated(createdFlat));
     if (flat.images == null) return;
     flat.images!.forEach((file) async {
-      var timestamp = DateTime.now().millisecondsSinceEpoch;
-      var fileName = "$timestamp";
-      await FirebaseStorage.instance
-          .ref()
-          .child('flats')
-          .child('/${createdFlat.id}/$fileName')
-          .putData(file);
+      FormData formData = FormData.fromMap({
+        'image': MultipartFile.fromBytes(file)
+      });
+      await _httpClient.post("${flat.id}/image", data: formData);
     });
   }
 
@@ -199,6 +198,7 @@ class ApiFlatsRepository extends FlatsRepository {
 
   Options _authorizationOptions() {
     var user = _getUser();
+    print(user.accessToken);
     return Options(headers: {'Authorization': 'Bearer ${user.accessToken}'});
   }
 }

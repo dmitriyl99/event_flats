@@ -363,6 +363,7 @@ class _FlatsListScreenState extends State<FlatsListScreen> {
                     LoginScreen.route, (route) => false);
                 return buildDefaultError();
               }
+              print(error);
               log('Error while getting flats list',
                   error: error, stackTrace: snapshot.stackTrace);
               return buildDefaultError(onRefresh: () => setState(() {}));

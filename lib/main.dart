@@ -55,12 +55,12 @@ class MyApp extends StatelessWidget {
     UsersRepository usersRepository =
         new UsersRepository(authenticationService);
     return MaterialApp(
-      title: 'Ruslan Flats',
+      title: 'HomeHub',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData.dark().copyWith(
         drawerTheme: DrawerThemeData(backgroundColor: AppColors.darkBackground),
-        chipTheme: ChipThemeData(backgroundColor: AppColors.accentBackground),
+        chipTheme: ChipThemeData(backgroundColor: AppColors.accentBackground, secondaryLabelStyle: TextStyle(color: Colors.black)),
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: AppColors.primaryColor
         ),
@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
         dropdownMenuTheme: ThemeData.dark().dropdownMenuTheme.copyWith(),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
             backgroundColor: AppColors.primaryColor,
-            foregroundColor: Colors.white),
+            foregroundColor: Colors.black),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
             selectedItemColor: AppColors.primaryColor,
             selectedIconTheme: IconThemeData(color: AppColors.primaryColor),

@@ -116,7 +116,7 @@ class _UserFormComponentState extends State<UserFormComponent> {
                 minWidth: 130,
                 child: !_userFormLoading
                     ? Text('Сохранить',
-                        style: TextStyle(fontSize: 18, color: Colors.white))
+                        style: TextStyle(fontSize: 18, color: Colors.black))
                     : SizedBox(
                         height: 24,
                         width: 24,

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:event_flats/models/user.dart';
+import 'package:event_flats/services/api_settings.dart';
 import 'package:event_flats/services/authentication.dart';
 import 'package:event_flats/services/exceptions/authentication_failed.dart';
 import 'package:event_flats/services/exceptions/no_internet.dart';
@@ -7,7 +8,7 @@ import 'package:hive/hive.dart';
 
 class ApiAuthenticationService extends AuthenticationService {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'https://6cf8-95-214-210-143.ngrok-free.app/api/v1/auth/',
+      baseUrl: '${ApiSettings.host}/api/v1/auth/',
       receiveDataWhenStatusError: true));
 
   static User? _currentUser;
@@ -28,11 +29,15 @@ class ApiAuthenticationService extends AuthenticationService {
   @override
   Future<void> login(String email, String password) async {
     var payload = {"email": email, "password": password};
+    print(payload);
+
     Response<dynamic> response;
+    print(ApiSettings.host);
     try {
       response = await _httpClient.post('login/access-token',
           data: payload, options: Options(responseType: ResponseType.json));
     } on DioError catch (error) {
+      print(error);
       if (error.response == null) throw new NoInternetException();
       if (error.response!.statusCode == 401) {
         throw new AuthenticationFailed();

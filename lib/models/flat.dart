@@ -27,7 +27,7 @@ class Flat {
   final DateTime createdAt;
   final String? hashTag1;
   final String? hashTag2;
-  File? image;
+  final List<String> photos;
 
   Flat(
       this.id,
@@ -53,8 +53,8 @@ class Flat {
       this.phones,
       this.creatorId,
       this.creatorName,
-      {this.ownerName,
-      this.image});
+      this.photos,
+      {this.ownerName});
 
   Flat.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -86,6 +86,7 @@ class Flat {
         isFavorite = json['is_favorite'],
         creatorId = json['creator_id'],
         creatorName = json['creator_name'],
+        photos = json['photos'] != null ? json['photos'].map<String>((e) => e['image_url'] as String).toList() : <String>[],
         createdAt = DateTime.parse(
           json['created_at'],
         );
@@ -105,17 +106,4 @@ class Flat {
         'phones': phones,
         'price': price
       };
-
-  Future<List<Future<String>>> get photos async {
-    var files = await FirebaseStorage.instance
-        .ref()
-        .child('flats')
-        .child(this.id.toString() + '/')
-        .listAll();
-    List<Future<String>> downloadUrls = [];
-    files.items.forEach((element) {
-      downloadUrls.add(element.getDownloadURL());
-    });
-    return downloadUrls;
-  }
 }

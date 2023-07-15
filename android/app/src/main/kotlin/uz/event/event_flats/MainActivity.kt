@@ -1,4 +1,4 @@
-package uz.event.flats
+package uz.event.event_flats
 
 import io.flutter.embedding.android.FlutterActivity
 

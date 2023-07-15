@@ -2,12 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:event_flats/models/user.dart';
 import 'package:event_flats/services/api_authentication.dart';
 
+import 'api_settings.dart';
 import 'exceptions/server_error_exception.dart';
 import 'exceptions/user_empty.dart';
 
 Future<List<Map<String, dynamic>>> getDistricts() async {
   final Dio _httpClient = new Dio(BaseOptions(
-      baseUrl: 'https://https://6cf8-95-214-210-143.ngrok-free.app/api/v1/',
+      baseUrl: '${ApiSettings.host}/api/v1/',
       responseType: ResponseType.json,
       headers: {'Accept': 'application/json'}));
   var response = await _httpClient.get('addresses',
