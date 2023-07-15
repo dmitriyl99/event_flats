@@ -497,7 +497,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('WebHome'),
+          title: Text('Sultan Flats'),
         ),
         body: FutureBuilder(
           future: widget.flatsRepository.getById(flat.id),

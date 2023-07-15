@@ -339,7 +339,7 @@ class _FlatsPersonalListScreenState extends State<FlatsPersonalListScreen> {
             ),
           )
         ],
-        title: Text('WebHome'),
+        title: Text('Sultan Flats'),
         centerTitle: true,
       ),
       body: Padding(
