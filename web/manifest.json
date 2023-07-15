@@ -1,6 +1,6 @@
 {
-    "name": "Sultan Flats",
-    "short_name": "Sultan Flats",
+    "name": "WebHome",
+    "short_name": "WebHome",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#000000",

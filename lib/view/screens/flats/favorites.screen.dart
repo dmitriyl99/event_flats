@@ -340,7 +340,7 @@ class _FlatsFavoritesListScreenState extends State<FlatsFavoritesListScreen> {
             ),
           )
         ],
-        title: Text('Sultan Flats'),
+        title: Text('WebHome'),
         centerTitle: true,
       ),
       body: Padding(
