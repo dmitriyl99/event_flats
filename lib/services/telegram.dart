@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:event_flats/models/flat.dart';
 
+import '../helpers/number_formatting.dart';
+
 class TelegramService {
   Future<void> sendMessageToChannel(Flat flat) async {
     String textAddress = "${flat.address + (flat.subDistrict ?? '')}";
@@ -15,13 +17,12 @@ class TelegramService {
         .hashTag2 ?? (flat.numberOfRooms.toString() + 'комнатная')} "
         "${flat.area} кв.м\n${flat.floor} этаж\n${flat
         .numberOfFloors}-этажный\n"
-        "${flat.publicPrice ?? flat.price} стартовая цена";
+        "${NumberFormattingHelper.format(flat.publicPrice ?? flat.price)}\$ стартовая цена";
     List<Map<String, dynamic>> media = [];
-    for (var photo in await flat.photos) {
+    for (var photo in flat.photos.where((element) => element['watermarked'] == 1)) {
       media.add({
         "type": 'photo',
-        "media": photo,
-        'caption': text
+        "media": photo['url'],
       });
     }
     var payload = {
@@ -30,6 +31,7 @@ class TelegramService {
     };
     var apiPath = 'sendMessage';
     if (media.isNotEmpty) {
+      media[0]['caption'] = text;
       payload = {
         "chat_id": -1001813277591,
         "media": jsonEncode(media)

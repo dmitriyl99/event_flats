@@ -217,8 +217,13 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       _currentSubDistrict = flat.subDistrictId;
       _currentRepair = flat.flatRepair;
       _currentLayout = flat.layout;
+      _hashTag1Controller.text = flat.hashTag1 ?? '';
+      _hashTag2Controller.text = flat.hashTag2 ?? '';
       _landmarkController.text = flat.landmark ?? '';
       _priceController.text = NumberFormattingHelper.format(flat.price);
+      if (flat.publicPrice != null) {
+        _publicPriceController.text = NumberFormattingHelper.format(flat.publicPrice!);
+      }
       _roomsController.text = flat.numberOfRooms.toString();
       _floorController.text = flat.floor.toString();
       _numberOfFloorsController.text = flat.numberOfFloors.toString();

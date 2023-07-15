@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:firebase_storage/firebase_storage.dart';
-
 class Flat {
   late int id;
   final String address;
@@ -27,7 +23,7 @@ class Flat {
   final DateTime createdAt;
   final String? hashTag1;
   final String? hashTag2;
-  final List<String> photos;
+  final List<Map<String, dynamic>> photos;
 
   Flat(
       this.id,
@@ -66,7 +62,7 @@ class Flat {
             ? (json['price'] as int).toDouble()
             : json['price'],
         floor = json['floor'],
-        publicPrice = json['public_price'],
+        publicPrice = json['public_price'] != null ? (json['public_price'] as int).toDouble() : null,
         hashTag1 = json['hashtag_1'],
         hashTag2 = json['hashtag_2'],
         numberOfFloors = json['floors_number'],
@@ -86,7 +82,7 @@ class Flat {
         isFavorite = json['is_favorite'],
         creatorId = json['creator_id'],
         creatorName = json['creator_name'],
-        photos = json['photos'] != null ? json['photos'].map<String>((e) => e['image_url'] as String).toList() : <String>[],
+        photos = json['photos'] != null ? json['photos'].map<Map<String, dynamic>>((e) => {'url': e['image_url'], 'watermarked': e['watermarked']}).toList() : <String>[],
         createdAt = DateTime.parse(
           json['created_at'],
         );

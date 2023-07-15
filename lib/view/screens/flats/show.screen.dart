@@ -107,17 +107,16 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     if (flat.photos.isEmpty) {
       return Container();
     }
-    print(flat.photos);
     return Container(
       height: 300,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        children: flat.photos
+        children: flat.photos.where((element) => element['watermarked'] == 0)
             .map<Widget>((e) => Padding(
           padding:
           const EdgeInsets.symmetric(horizontal: 8),
           child: CachedNetworkImage(
-            imageUrl: e,
+            imageUrl: e['url'],
             progressIndicatorBuilder:
                 (context, url, downloadProgress) =>
                 Container(
