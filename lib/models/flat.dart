@@ -82,7 +82,7 @@ class Flat {
         isFavorite = json['is_favorite'],
         creatorId = json['creator_id'],
         creatorName = json['creator_name'],
-        photos = json['photos'] != null ? json['photos'].map<Map<String, dynamic>>((e) => {'url': e['image_url'], 'watermarked': e['watermarked']}).toList() : <String>[],
+        photos = json['photos'] != null ? json['photos'].map<Map<String, dynamic>>((e) => {'url': e['image_url'], 'watermarked': e['watermarked']}).toList<Map<String, dynamic>>() : <String>[],
         createdAt = DateTime.parse(
           json['created_at'],
         );

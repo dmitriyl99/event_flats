@@ -1,6 +1,6 @@
 {
-    "name": "WebHome",
-    "short_name": "WebHome",
+    "name": "iHome",
+    "short_name": "iHome",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#000000",

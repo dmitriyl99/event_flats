@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-          text: 'Rus',
+          text: 'i',
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.w700,
@@ -137,11 +137,11 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           children: [
             TextSpan(
-              text: 'lan F',
+              text: 'Ho',
               style: TextStyle(color: Colors.white, fontSize: 30),
             ),
             TextSpan(
-              text: 'lats',
+              text: 'me',
               style: TextStyle(color: AppColors.primaryColor, fontSize: 30),
             ),
           ]),
