@@ -60,20 +60,20 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData.dark().copyWith(
         drawerTheme: DrawerThemeData(backgroundColor: AppColors.darkBackground),
-        chipTheme: ChipThemeData(backgroundColor: AppColors.accentBackground, secondaryLabelStyle: TextStyle(color: Colors.black)),
+        chipTheme: ChipThemeData(backgroundColor: AppColors.accentBackground, secondaryLabelStyle: TextStyle(color: Colors.white)),
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: AppColors.primaryColor
         ),
         inputDecorationTheme: InputDecorationTheme(
             floatingLabelStyle: TextStyle(color: AppColors.primaryColor),
             focusedBorder: UnderlineInputBorder(
-                borderSide: const BorderSide(color: Color(0xff7ddf2b)))),
+                borderSide: const BorderSide(color: Color(0xff722cce)))),
         scaffoldBackgroundColor: AppColors.darkBackground,
         cardTheme: CardTheme(color: AppColors.accentBackground),
         dropdownMenuTheme: ThemeData.dark().dropdownMenuTheme.copyWith(),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
             backgroundColor: AppColors.primaryColor,
-            foregroundColor: Colors.black),
+            foregroundColor: Colors.white),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
             selectedItemColor: AppColors.primaryColor,
             selectedIconTheme: IconThemeData(color: AppColors.primaryColor),

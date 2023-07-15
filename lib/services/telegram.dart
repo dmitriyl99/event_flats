@@ -19,7 +19,7 @@ class TelegramService {
         .numberOfFloors}-этажный\n"
         "${NumberFormattingHelper.format(flat.publicPrice ?? flat.price)}\$ стартовая цена";
     List<Map<String, dynamic>> media = [];
-    for (var photo in flat.photos.where((element) => element['watermarked'] == 1)) {
+    for (var photo in flat.photos) {
       media.add({
         "type": 'photo',
         "media": photo['url'],

@@ -115,7 +115,7 @@ class FlatComponent extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                   SizedBox(
