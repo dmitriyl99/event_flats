@@ -491,12 +491,10 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                   ),
                   TextFormField(
                     controller: _hashTag1Controller,
-                    maxLines: 4,
                     decoration: InputDecoration(labelText: 'Хэштег 1'),
                   ),
                   TextFormField(
                     controller: _hashTag2Controller,
-                    maxLines: 4,
                     decoration: InputDecoration(labelText: 'Хэштег 2'),
                   ),
                   SizedBox(
