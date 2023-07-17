@@ -32,20 +32,25 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
-  <script>
-    var firebaseConfig = {
-      apiKey: "AIzaSyDhP3l2Qg6qcH15xS55bFLViRno577vmnY",
-      authDomain: "eventflats.firebaseapp.com",
-      databaseURL: "https://eventflats-default-rtdb.firebaseio.com",
-      projectId: "eventflats",
-      storageBucket: "eventflats.appspot.com",
-      messagingSenderId: "229608689606",
-      appId: "1:229608689606:web:4aa735227b9894cd2eacc7",
-    };
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-  </script>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAGlbQLR3UC5EQzGj0jadapVl6cULyQja8",
+    authDomain: "ruslanflats.firebaseapp.com",
+    projectId: "ruslanflats",
+    storageBucket: "ruslanflats.appspot.com",
+    messagingSenderId: "1060893969455",
+    appId: "1:1060893969455:web:6f4dde24ec29a6dcd90ada"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
   <script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;

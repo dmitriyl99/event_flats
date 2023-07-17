@@ -52,15 +52,13 @@ class ApiFlatsRepository extends FlatsRepository {
     EventService.bus.fire(FlatCreated(createdFlat));
     if (flat.bytesImages == null) return;
     flat.bytesImages!.forEach((file) async {
-      FormData formData = FormData.fromMap({
-        'image':  MultipartFile.fromBytes(file)
-      });
-      try {
-        await _httpClient.post("/${createdFlat.id}/image", data: formData,
-            options: _authorizationOptions());
-      } on DioException catch (error) {
-        print(error.response);
-      }
+      var timestamp = DateTime.now().millisecondsSinceEpoch;
+      var fileName = "$timestamp";
+      var result = await FirebaseStorage.instance
+          .ref()
+          .child('flats')
+          .child('/${createdFlat.id}/$fileName')
+          .putData(file);
     });
   }
 

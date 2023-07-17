@@ -23,7 +23,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -47,32 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDhP3l2Qg6qcH15xS55bFLViRno577vmnY',
-    appId: '1:229608689606:web:45cc94236d4424ab2eacc7',
-    messagingSenderId: '229608689606',
-    projectId: 'eventflats',
-    authDomain: 'eventflats.firebaseapp.com',
-    databaseURL: 'https://eventflats-default-rtdb.firebaseio.com',
-    storageBucket: 'eventflats.appspot.com',
+    apiKey: 'AIzaSyAGlbQLR3UC5EQzGj0jadapVl6cULyQja8',
+    appId: '1:1060893969455:web:6f4dde24ec29a6dcd90ada',
+    messagingSenderId: '1060893969455',
+    projectId: 'ruslanflats',
+    authDomain: 'ruslanflats.firebaseapp.com',
+    storageBucket: 'ruslanflats.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCQ200hV1Wzkx5uhCJwjutbV0ENxYUcVN8',
-    appId: '1:229608689606:android:b8eb95f56ca973cc2eacc7',
-    messagingSenderId: '229608689606',
-    projectId: 'eventflats',
-    databaseURL: 'https://eventflats-default-rtdb.firebaseio.com',
-    storageBucket: 'eventflats.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAnsu0cFrIAC_XbWYLGuUC_TwGpDY0GCfo',
-    appId: '1:229608689606:ios:70b706b777a409f32eacc7',
-    messagingSenderId: '229608689606',
-    projectId: 'eventflats',
-    databaseURL: 'https://eventflats-default-rtdb.firebaseio.com',
-    storageBucket: 'eventflats.appspot.com',
-    iosClientId: '229608689606-28ogunehl5bbt3f662perha5tl033o29.apps.googleusercontent.com',
-    iosBundleId: 'uz.event.flat',
+    apiKey: 'AIzaSyDdrpwMU6vrQY0Wiv9aLzOKrnlzQ4VeSEI',
+    appId: '1:1060893969455:android:5644ec8439159409d90ada',
+    messagingSenderId: '1060893969455',
+    projectId: 'ruslanflats',
+    storageBucket: 'ruslanflats.appspot.com',
   );
 }

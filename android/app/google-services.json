@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "1060893969455",
+    "project_id": "ruslanflats",
+    "storage_bucket": "ruslanflats.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060893969455:android:5644ec8439159409d90ada",
+        "android_client_info": {
+          "package_name": "uz.event.event_flats"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1060893969455-r72fqiqn525ul8sv9m26b7ufkg03431s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdrpwMU6vrQY0Wiv9aLzOKrnlzQ4VeSEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1060893969455-r72fqiqn525ul8sv9m26b7ufkg03431s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060893969455:android:f66a7efd41601bd9d90ada",
+        "android_client_info": {
+          "package_name": "uz.event.flats"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1060893969455-r72fqiqn525ul8sv9m26b7ufkg03431s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdrpwMU6vrQY0Wiv9aLzOKrnlzQ4VeSEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1060893969455-r72fqiqn525ul8sv9m26b7ufkg03431s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
