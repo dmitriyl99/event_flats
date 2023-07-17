@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:js_interop';
 
 import 'package:dio/dio.dart';
 import 'package:event_flats/events/flat_created.dart';
@@ -151,6 +152,25 @@ class ApiFlatsRepository extends FlatsRepository {
       throw error;
     }
     EventService.bus.fire(FlatUpdated());
+    if (flat.bytesImages!.length != 0) {
+      try {
+        await FirebaseStorage.instance
+            .ref()
+            .child('flats')
+            .child('/${flat.id}')
+            .delete();
+      } catch (e) {
+      }
+      flat.bytesImages!.forEach((file) async {
+        var timestamp = DateTime.now().millisecondsSinceEpoch;
+        var fileName = "$timestamp";
+        await FirebaseStorage.instance
+            .ref()
+            .child('flats')
+            .child('/${flat.id}/$fileName')
+            .putData(file);
+      });
+    }
   }
 
   @override

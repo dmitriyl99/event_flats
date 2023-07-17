@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:event_flats/helpers/number_formatting.dart';
@@ -41,7 +40,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   List<Map<String, dynamic>> _districts = [];
   List<String> _repairs = getRepairs();
 
-  List<String> _images = [];
+  List<Uint8List> _images = [];
 
   late int _currentDistrict = 0;
   int? _currentSubDistrict;
@@ -168,8 +167,8 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           double.parse(_areaController.text),
           _descriptionController.text,
           phones,
-          _images,
-          _ownerNameController.text, null, null,
+          null,
+          _ownerNameController.text, _images, null,
           id: id);
       try {
         await widget._flatsRepository.updateFlat(flat);
@@ -520,7 +519,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                       .map<Widget>((e) => Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0),
-                                            child: Image.memory(File(e).readAsBytesSync()),
+                                            child: Image.memory(e),
                                           ))
                                       .toList(),
                                 ))
@@ -543,7 +542,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                 if (image != null) {
                                   setState(() async {
                                     _images.clear();
-                                    _images.add(image.path);
+                                    _images.add(await image.readAsBytes());
                                   });
                                 }
                               },
@@ -563,11 +562,14 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                               onPressed: () async {
                                 final List<XFile>? images = await _picker
                                     .pickMultiImage(imageQuality: 60);
+                                print(images);
                                 if (images != null) {
+                                  List<Uint8List> converted = [];
+                                  for (var element in images) {
+                                    converted.add(await element.readAsBytes());
+                                  }
                                   setState(() {
-                                    images.forEach((element) async {
-                                      _images.add(element.path);
-                                    });
+                                    _images = converted;
                                   });
                                 }
                               },

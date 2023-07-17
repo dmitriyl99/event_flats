@@ -26,7 +26,7 @@ class TelegramService {
         });
       }
     }
-    var payload = {"chat_id": -1001813277591, "text": text};
+    var payload = {"chat_id": -1001813277591, "text": text, "parse_mode": "HTML"};
     var apiPath = 'sendMessage';
     if (media.isNotEmpty) {
       media[0]['caption'] = text;

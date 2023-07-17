@@ -24,12 +24,4 @@ class IPhoneXPadding extends Container {
                 outer.left, outer.top, outer.right, bottom)),
         child: child);
   }
-
-  bool _isIPhoneX(MediaQueryData mediaQuery) {
-    var size = mediaQuery.size;
-    if (size.height == 812.0 || size.width == 812.0) {
-      return true;
-    }
-    return false;
-  }
 }
