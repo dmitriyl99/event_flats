@@ -14,14 +14,17 @@ class TelegramService {
         "Ор-р: ${flat.landmark}\n"
         "Цена: ${NumberFormattingHelper.format(flat.publicPrice ?? flat.price)}\n"
         "Тел: +998998078071\n"
-        "#${flat.numberOfRooms}ком";
+        "#${flat.numberOfRooms}ком\n"
+        "https://t.me/iHometashkent";
     List<Map<String, dynamic>> media = [];
-    for (var photo
-        in flat.photos.where((element) => element['watermarked'] == 1)) {
-      media.add({
-        "type": 'photo',
-        "media": photo['url'],
-      });
+    var photos = await flat.photosFirebase;
+    if (photos.length > 0) {
+      for (var photo in photos) {
+        media.add({
+          "type": "photo",
+          "media": (await photo)
+        });
+      }
     }
     var payload = {"chat_id": -1001813277591, "text": text};
     var apiPath = 'sendMessage';

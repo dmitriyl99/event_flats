@@ -53,7 +53,7 @@ class ApiFlatsRepository extends FlatsRepository {
     if (flat.bytesImages == null) return;
     flat.bytesImages!.forEach((file) async {
       var timestamp = DateTime.now().millisecondsSinceEpoch;
-      var fileName = "$timestamp";
+      var fileName = "$timestamp.jpeg";
       var result = await FirebaseStorage.instance
           .ref()
           .child('flats')

@@ -116,6 +116,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               if (snapshot.hasError || snapshot.data == null)
                 return Container();
               var urls = snapshot.data!;
+              print(urls);
               if (urls.length > 0) {
                 return Container(
                   height: 300,
@@ -138,8 +139,9 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                                     value: downloadProgress.progress),
                               ),
                             ),
-                        errorWidget: (context, url, error) =>
-                            Icon(Icons.error),
+                        errorWidget: (context, url, error) {
+                          return Icon(Icons.error);
+                        }
                       ),
                     ))
                         .toList(),

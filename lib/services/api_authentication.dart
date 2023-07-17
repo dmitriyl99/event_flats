@@ -29,10 +29,8 @@ class ApiAuthenticationService extends AuthenticationService {
   @override
   Future<void> login(String email, String password) async {
     var payload = {"email": email, "password": password};
-    print(payload);
 
     Response<dynamic> response;
-    print(ApiSettings.host);
     try {
       response = await _httpClient.post('login/access-token',
           data: payload, options: Options(responseType: ResponseType.json));
