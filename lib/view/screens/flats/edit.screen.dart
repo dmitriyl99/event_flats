@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:event_flats/helpers/number_formatting.dart';
@@ -40,7 +41,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   List<Map<String, dynamic>> _districts = [];
   List<String> _repairs = getRepairs();
 
-  List<Uint8List> _images = [];
+  List<String> _images = [];
 
   late int _currentDistrict = 0;
   int? _currentSubDistrict;
@@ -168,7 +169,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           _descriptionController.text,
           phones,
           _images,
-          _ownerNameController.text,
+          _ownerNameController.text, null, null,
           id: id);
       try {
         await widget._flatsRepository.updateFlat(flat);
@@ -468,12 +469,12 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                               });
                             },
                             items: [
-                              DropdownMenuItem(value: 'Свердловская', child: Text('Свердловская')),
-                              DropdownMenuItem(value: 'Французская', child: Text('Французская')),
-                              DropdownMenuItem(value: 'Московская', child: Text('Московская')),
-                              DropdownMenuItem(value: 'Хрущевская', child: Text('Хрущевская')),
-                              DropdownMenuItem(value: 'Улучшенная', child: Text('Улучшенная')),
-                              DropdownMenuItem(value: 'Другая', child: Text('Другая')),
+                              DropdownMenuItem(value: 'Свердловская - Планировка', child: Text('Свердловская - Планировка')),
+                              DropdownMenuItem(value: 'Французская - Планировка', child: Text('Французская - Планировка')),
+                              DropdownMenuItem(value: 'Московская - Планировка', child: Text('Московская - Планировка')),
+                              DropdownMenuItem(value: 'Хрущевская - Планировка', child: Text('Хрущевская - Планировка')),
+                              DropdownMenuItem(value: 'Улучшенная - Планировка', child: Text('Улучшенная - Планировка')),
+                              DropdownMenuItem(value: 'Другая Планировка', child: Text('Другая Планировка')),
                             ]),
                       ),
                     );
@@ -519,7 +520,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                       .map<Widget>((e) => Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0),
-                                            child: Image.memory(e),
+                                            child: Image.memory(File(e).readAsBytesSync()),
                                           ))
                                       .toList(),
                                 ))
@@ -542,7 +543,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                 if (image != null) {
                                   setState(() async {
                                     _images.clear();
-                                    _images.add(await image.readAsBytes());
+                                    _images.add(image.path);
                                   });
                                 }
                               },
@@ -565,7 +566,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                 if (images != null) {
                                   setState(() {
                                     images.forEach((element) async {
-                                      _images.add(await element.readAsBytes());
+                                      _images.add(element.path);
                                     });
                                   });
                                 }

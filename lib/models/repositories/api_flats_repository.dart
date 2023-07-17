@@ -50,12 +50,17 @@ class ApiFlatsRepository extends FlatsRepository {
     var data = response.data['data'] as Map<String, dynamic>;
     Flat createdFlat = Flat.fromJson(data);
     EventService.bus.fire(FlatCreated(createdFlat));
-    if (flat.images == null) return;
-    flat.images!.forEach((file) async {
+    if (flat.bytesImages == null) return;
+    flat.bytesImages!.forEach((file) async {
       FormData formData = FormData.fromMap({
-        'image': MultipartFile.fromBytes(file)
+        'image':  MultipartFile.fromBytes(file)
       });
-      await _httpClient.post("${flat.id}/image", data: formData);
+      try {
+        await _httpClient.post("/${createdFlat.id}/image", data: formData,
+            options: _authorizationOptions());
+      } on DioException catch (error) {
+        print(error.response);
+      }
     });
   }
 
@@ -148,26 +153,6 @@ class ApiFlatsRepository extends FlatsRepository {
       throw error;
     }
     EventService.bus.fire(FlatUpdated());
-    if (flat.images == null) return;
-    print(flat.images);
-    if (flat.images!.length != 0) {
-      try {
-        await FirebaseStorage.instance
-            .ref()
-            .child('flats')
-            .child('/${flat.id}')
-            .delete();
-      } on Exception {}
-      flat.images!.forEach((file) async {
-        var timestamp = DateTime.now().millisecondsSinceEpoch;
-        var fileName = "$timestamp";
-        await FirebaseStorage.instance
-            .ref()
-            .child('flats')
-            .child('/${flat.id}/$fileName')
-            .putData(file);
-      });
-    }
   }
 
   @override
@@ -198,7 +183,6 @@ class ApiFlatsRepository extends FlatsRepository {
 
   Options _authorizationOptions() {
     var user = _getUser();
-    print(user.accessToken);
     return Options(headers: {'Authorization': 'Bearer ${user.accessToken}'});
   }
 }

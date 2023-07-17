@@ -35,7 +35,9 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
 
   List<Map<String, dynamic>> _districts = [];
   List<String> _repairs = getRepairs();
-  List<Uint8List> _images = [];
+  List<String> _images = [];
+  List<Uint8List> _imagesBytes = [];
+  List<String> _imagesStrings = [];
 
   int _currentDistrict = 1;
   int? _currentSubDistrict;
@@ -193,7 +195,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           _descriptionController.text,
           phones,
           _images,
-          _ownerNameController.text);
+          _ownerNameController.text, _imagesBytes, _imagesStrings);
       try {
         await widget._flatsRepository.createFlat(flat);
       } on ServerErrorException {
@@ -496,7 +498,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                         'Изображение',
                         style: TextStyle(fontSize: 21),
                       ),
-                      if (_images.isNotEmpty)
+                      if (_imagesBytes.isNotEmpty)
                         Column(
                           children: [
                             SizedBox(
@@ -506,7 +508,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 height: 100,
                                 child: ListView(
                                   scrollDirection: Axis.horizontal,
-                                  children: _images
+                                  children: _imagesBytes
                                       .map<Widget>((e) => Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0),
@@ -533,7 +535,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 if (image != null) {
                                   setState(() async {
                                     _images.clear();
-                                    _images.add(await image.readAsBytes());
+                                    _images.add(image.path);
+                                    _imagesBytes.add(await image.readAsBytes());
                                   });
                                 }
                               },
@@ -554,12 +557,17 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 final List<XFile>? images = await _picker
                                     .pickMultiImage(imageQuality: 60);
                                 if (images != null) {
-                                  List<Uint8List> converted = [];
+                                  List<String> converted = [];
+                                  List<Uint8List> bytesImages = [];
+                                  List<String> stringsImages = [];
                                   for (var element in images) {
-                                    converted.add(await element.readAsBytes());
+                                    converted.add(element.path);
+                                    bytesImages.add(await element.readAsBytes());
                                   }
                                   setState(() {
                                     _images = converted;
+                                    _imagesBytes = bytesImages;
+                                    _imagesStrings = stringsImages;
                                   });
                                 }
                               },

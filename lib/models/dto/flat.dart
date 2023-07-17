@@ -17,7 +17,9 @@ class FlatDto {
   final double area;
   final String note;
   final List<String> phones;
-  final List<Uint8List>? images;
+  final List<String>? images;
+  final List<Uint8List>? bytesImages;
+  final List<String>? imagesStrings;
   final String? ownerName;
 
   FlatDto(
@@ -38,6 +40,8 @@ class FlatDto {
       this.phones,
       this.images,
       this.ownerName,
+      this.bytesImages,
+      this.imagesStrings,
       {this.id});
 
   Map<String, dynamic> toJson() => <String, dynamic>{
