@@ -1,3 +1,5 @@
+import 'package:firebase_storage/firebase_storage.dart';
+
 class Flat {
   late int id;
   final String address;
@@ -102,4 +104,17 @@ class Flat {
         'phones': phones,
         'price': price
       };
+
+  Future<List<Future<String>>> get photosFirebase async {
+    var files = await FirebaseStorage.instance
+        .ref()
+        .child('flats')
+        .child(this.id.toString() + '/')
+        .listAll();
+    List<Future<String>> downloadUrls = [];
+    files.items.forEach((element) {
+      downloadUrls.add(element.getDownloadURL());
+    });
+    return downloadUrls;
+  }
 }
