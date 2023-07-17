@@ -424,9 +424,25 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               borderRadius: BorderRadius.circular(15),
               side: BorderSide(color: Colors.white),
             ))),
-        onPressed: () {
+        onPressed: () async {
           var service = new TelegramService();
-          service.sendMessageToChannel(flat);
+          await service.sendMessageToChannel(flat);
+          showDialog(context: context, builder: (context) {
+            return AlertDialog(
+              title: const Text("Готово!"),
+              content: Container(
+                height: 100,
+                child: Center(
+                  child: Text('Сообщение отправлено в ваш канал!'),
+                ),
+              ),
+              actions: [
+                TextButton(onPressed: () {
+                  Navigator.of(context).pop();
+                }, child: Text('Ok'))
+              ],
+            );
+          });
         },
         child: Padding(
           padding: const EdgeInsets.all(10.0),

@@ -15,7 +15,7 @@ class TelegramService {
         "Цена: ${NumberFormattingHelper.format(flat.publicPrice ?? flat.price)}\n"
         "Тел: +998998078071\n"
         "#${flat.numberOfRooms}ком\n"
-        "https://t.me/iHometashkent";
+        "<a href='https://t.me/iHometashkent'>Telegram</a> | <a href='https://www.instagram.com/tashkent_realtor'>Instagram</a>";
     List<Map<String, dynamic>> media = [];
     var photos = await flat.photosFirebase;
     if (photos.length > 0) {
@@ -30,6 +30,7 @@ class TelegramService {
     var apiPath = 'sendMessage';
     if (media.isNotEmpty) {
       media[0]['caption'] = text;
+      media[0]['parse_mode'] = 'HTML';
       payload = {"chat_id": -1001813277591, "media": jsonEncode(media)};
       apiPath = 'sendMediaGroup';
     }
