@@ -103,38 +103,53 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
   }
 
   Widget _buildImages(Flat flat) {
-
-    if (flat.photos.isEmpty) {
-      return Container();
-    }
-    return Container(
-      height: 300,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: flat.photos.where((element) => element['watermarked'] == 0)
-            .map<Widget>((e) => Padding(
-          padding:
-          const EdgeInsets.symmetric(horizontal: 8),
-          child: CachedNetworkImage(
-            imageUrl: e['url'],
-            progressIndicatorBuilder:
-                (context, url, downloadProgress) =>
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(
-                            AppColors.primaryColor),
-                        value: downloadProgress.progress),
+    return FutureBuilder<List<Future<String>>>(
+        future: flat.photosFirebase,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done ||
+              snapshot.hasError) {
+            return Container();
+          }
+          return FutureBuilder<List<String>>(
+            future: Future.wait(snapshot.data!),
+            builder: (context, snapshot) {
+              if (snapshot.hasError || snapshot.data == null)
+                return Container();
+              var urls = snapshot.data!;
+              if (urls.length > 0) {
+                return Container(
+                  height: 300,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: urls
+                        .map<Widget>((e) => Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 8),
+                      child: CachedNetworkImage(
+                        imageUrl: e,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation(
+                                        AppColors.primaryColor),
+                                    value: downloadProgress.progress),
+                              ),
+                            ),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error),
+                      ),
+                    ))
+                        .toList(),
                   ),
-                ),
-            errorWidget: (context, url, error) =>
-                Icon(Icons.error),
-          ),
-        ))
-            .toList(),
-      ),
-    );
+                );
+              }
+              return Container();
+            },
+          );
+        });
   }
 
   @override
