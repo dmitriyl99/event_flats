@@ -59,19 +59,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               )
             : null,
-        bottomNavigationBar: BottomNavigationBar(
-          onTap: _onTabTapped,
-          selectedIconTheme: Theme.of(context).iconTheme.copyWith(color: AppColors.primaryColor),
-          selectedItemColor: AppColors.primaryColor,
-          currentIndex: _currentScreenIndex,
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.list), label: 'Общий список'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.person), label: 'Персональные'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.favorite), label: 'Избранные')
-          ],
+        bottomNavigationBar: SafeArea(
+          bottom: true,
+          child: BottomNavigationBar(
+            onTap: _onTabTapped,
+            selectedIconTheme: Theme.of(context).iconTheme.copyWith(color: AppColors.primaryColor),
+            selectedItemColor: AppColors.primaryColor,
+            currentIndex: _currentScreenIndex,
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.list), label: 'Общий список'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person), label: 'Персональные'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite), label: 'Избранные')
+            ],
+          ),
         ),
         body: _screens[_currentScreenIndex],
       ),
