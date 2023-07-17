@@ -7,35 +7,27 @@ import '../helpers/number_formatting.dart';
 
 class TelegramService {
   Future<void> sendMessageToChannel(Flat flat) async {
-    String textAddress = "${flat.address + (flat.subDistrict ?? '')}";
-    if (flat.hashTag1 != null) {
-      textAddress = "${flat.hashTag1} квартал";
-    }
 
     String text =
-        "#${textAddress}\nОриентир: ${flat.landmark ?? ''}\n#${flat
-        .hashTag2 ?? (flat.numberOfRooms.toString() + 'комнатная')} "
-        "${flat.area} кв.м\n${flat.floor} этаж\n${flat
-        .numberOfFloors}-этажный\n"
-        "${NumberFormattingHelper.format(flat.publicPrice ?? flat.price)}\$ стартовая цена";
+        "${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors} ${flat.subDistrict}\n"
+        "Состояние: ${flat.flatRepair} ${flat.area}кв.м\n"
+        "Ор-р: ${flat.landmark}\n"
+        "Цена: ${NumberFormattingHelper.format(flat.publicPrice ?? flat.price)}\n"
+        "Тел: +998998078071\n"
+        "#${flat.numberOfRooms}ком";
     List<Map<String, dynamic>> media = [];
-    for (var photo in flat.photos.where((element) => element['watermarked'] == 1)) {
+    for (var photo
+        in flat.photos.where((element) => element['watermarked'] == 1)) {
       media.add({
         "type": 'photo',
         "media": photo['url'],
       });
     }
-    var payload = {
-      "chat_id": -1001813277591,
-      "text": text
-    };
+    var payload = {"chat_id": -1001813277591, "text": text};
     var apiPath = 'sendMessage';
     if (media.isNotEmpty) {
       media[0]['caption'] = text;
-      payload = {
-        "chat_id": -1001813277591,
-        "media": jsonEncode(media)
-      };
+      payload = {"chat_id": -1001813277591, "media": jsonEncode(media)};
       apiPath = 'sendMediaGroup';
     }
 
@@ -43,7 +35,8 @@ class TelegramService {
     print("https://api.telegram.org/bot$botToken/${apiPath}");
     try {
       final response = await Dio().post(
-          "https://api.telegram.org/bot$botToken/${apiPath}", data: payload,
+          "https://api.telegram.org/bot$botToken/${apiPath}",
+          data: payload,
           options: Options(responseType: ResponseType.json));
     } on DioException catch (error) {
       print(error.response!.data.toString());

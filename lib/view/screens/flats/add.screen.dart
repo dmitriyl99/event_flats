@@ -50,8 +50,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   TextEditingController _descriptionController = new TextEditingController();
   TextEditingController _ownerNameController = new TextEditingController();
   TextEditingController _ownerPhoneController = new TextEditingController();
-  TextEditingController _hashTag1Controller = new TextEditingController();
-  TextEditingController _hashTag2Controller = new TextEditingController();
   TextEditingController _publicPriceController = new TextEditingController();
 
 
@@ -185,8 +183,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           _currentLayout,
           double.parse(_priceController.text),
           _publicPriceController.text.isNotEmpty ? double.parse(_publicPriceController.text) : null,
-          _hashTag1Controller.text,
-          _hashTag2Controller.text,
+          null,
+          null,
           int.parse(_roomsController.text),
           int.parse(_floorController.text),
           int.parse(_numberOfFloorsController.text),
@@ -466,12 +464,12 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                               });
                             },
                             items: [
-                              DropdownMenuItem(value: 'Свердловская', child: Text('Свердловская')),
-                              DropdownMenuItem(value: 'Французская', child: Text('Французская')),
-                              DropdownMenuItem(value: 'Московская', child: Text('Московская')),
-                              DropdownMenuItem(value: 'Хрущевская', child: Text('Хрущевская')),
-                              DropdownMenuItem(value: 'Улучшенная', child: Text('Улучшенная')),
-                              DropdownMenuItem(value: 'Другая', child: Text('Другая')),
+                              DropdownMenuItem(value: 'Свердловская - Планировка', child: Text('Свердловская - Планировка')),
+                              DropdownMenuItem(value: 'Французская - Планировка', child: Text('Французская - Планировка')),
+                              DropdownMenuItem(value: 'Московская - Планировка', child: Text('Московская - Планировка')),
+                              DropdownMenuItem(value: 'Хрущевская - Планировка', child: Text('Хрущевская - Планировка')),
+                              DropdownMenuItem(value: 'Улучшенная - Планировка', child: Text('Улучшенная - Планировка')),
+                              DropdownMenuItem(value: 'Другая Планировка', child: Text('Другая Планировка')),
                             ]),
                       ),
                     );
@@ -488,16 +486,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     controller: _descriptionController,
                     maxLines: 4,
                     decoration: InputDecoration(labelText: 'Описание'),
-                  ),
-                  TextFormField(
-                    controller: _hashTag1Controller,
-                    maxLines: 4,
-                    decoration: InputDecoration(labelText: 'Хэштег 1'),
-                  ),
-                  TextFormField(
-                    controller: _hashTag2Controller,
-                    maxLines: 4,
-                    decoration: InputDecoration(labelText: 'Хэштег 2'),
                   ),
                   SizedBox(
                     height: 30,

@@ -55,8 +55,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   TextEditingController _descriptionController = new TextEditingController();
   TextEditingController _ownerNameController = new TextEditingController();
   TextEditingController _ownerPhoneController = new TextEditingController();
-  TextEditingController _hashTag1Controller = new TextEditingController();
-  TextEditingController _hashTag2Controller = new TextEditingController();
   TextEditingController _publicPriceController = new TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
@@ -160,8 +158,8 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           _currentLayout,
           double.parse(_priceController.text.replaceAll(',', '')),
           _publicPriceController.text.isNotEmpty ? double.parse(_publicPriceController.text) : null,
-          _hashTag1Controller.text,
-          _hashTag2Controller.text,
+          null,
+          null,
           int.parse(_roomsController.text),
           int.parse(_floorController.text),
           int.parse(_numberOfFloorsController.text),
@@ -217,8 +215,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       _currentSubDistrict = flat.subDistrictId;
       _currentRepair = flat.flatRepair;
       _currentLayout = flat.layout;
-      _hashTag1Controller.text = flat.hashTag1 ?? '';
-      _hashTag2Controller.text = flat.hashTag2 ?? '';
       _landmarkController.text = flat.landmark ?? '';
       _priceController.text = NumberFormattingHelper.format(flat.price);
       if (flat.publicPrice != null) {
@@ -492,16 +488,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                     controller: _descriptionController,
                     maxLines: 4,
                     decoration: InputDecoration(labelText: 'Описание'),
-                  ),
-                  TextFormField(
-                    controller: _hashTag1Controller,
-                    maxLines: 4,
-                    decoration: InputDecoration(labelText: 'Хэштег 1'),
-                  ),
-                  TextFormField(
-                    controller: _hashTag2Controller,
-                    maxLines: 4,
-                    decoration: InputDecoration(labelText: 'Хэштег 2'),
                   ),
                   SizedBox(
                     height: 30,
