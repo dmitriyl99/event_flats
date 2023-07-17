@@ -284,6 +284,93 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Column(
+                    children: [
+                      Text(
+                        'Изображение',
+                        style: TextStyle(fontSize: 21),
+                      ),
+                      if (_images.isNotEmpty)
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Container(
+                                height: 100,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: _images
+                                      .map<Widget>((e) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: Image.memory(e),
+                                  ))
+                                      .toList(),
+                                ))
+                          ],
+                        ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.primaryColor)),
+                              onPressed: () async {
+                                final XFile? image = await _picker.pickImage(
+                                    source: ImageSource.camera,
+                                    imageQuality: 60);
+                                if (image != null) {
+                                  setState(() async {
+                                    _images.clear();
+                                    _images.add(await image.readAsBytes());
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                child: Text('С камеры',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
+                              )),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.primaryColor)),
+                              onPressed: () async {
+                                final List<XFile>? images = await _picker
+                                    .pickMultiImage(imageQuality: 60);
+                                print(images);
+                                if (images != null) {
+                                  List<Uint8List> converted = [];
+                                  for (var element in images) {
+                                    converted.add(await element.readAsBytes());
+                                  }
+                                  setState(() {
+                                    _images = converted;
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                child: Text('С устройства',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
+                              ))
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
                   Text(
                     'Адрес',
                     style: TextStyle(fontSize: 24),
@@ -495,93 +582,6 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                   Text(
                     'Изображение',
                     style: TextStyle(fontSize: 21),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'Изображение',
-                        style: TextStyle(fontSize: 21),
-                      ),
-                      if (_images.isNotEmpty)
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Container(
-                                height: 100,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: _images
-                                      .map<Widget>((e) => Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: Image.memory(e),
-                                          ))
-                                      .toList(),
-                                ))
-                          ],
-                        ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      AppColors.primaryColor)),
-                              onPressed: () async {
-                                final XFile? image = await _picker.pickImage(
-                                    source: ImageSource.camera,
-                                    imageQuality: 60);
-                                if (image != null) {
-                                  setState(() async {
-                                    _images.clear();
-                                    _images.add(await image.readAsBytes());
-                                  });
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                child: Text('С камеры',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white)),
-                              )),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      AppColors.primaryColor)),
-                              onPressed: () async {
-                                final List<XFile>? images = await _picker
-                                    .pickMultiImage(imageQuality: 60);
-                                print(images);
-                                if (images != null) {
-                                  List<Uint8List> converted = [];
-                                  for (var element in images) {
-                                    converted.add(await element.readAsBytes());
-                                  }
-                                  setState(() {
-                                    _images = converted;
-                                  });
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                child: Text('С устройства',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white)),
-                              ))
-                        ],
-                      )
-                    ],
                   ),
                   SizedBox(
                     height: 30,

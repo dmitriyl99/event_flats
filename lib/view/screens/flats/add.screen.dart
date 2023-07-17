@@ -274,6 +274,96 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Column(
+                    children: [
+                      Text(
+                        'Изображение',
+                        style: TextStyle(fontSize: 21),
+                      ),
+                      if (_imagesBytes.isNotEmpty)
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Container(
+                                height: 100,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: _imagesBytes
+                                      .map<Widget>((e) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: Image.memory(e),
+                                  ))
+                                      .toList(),
+                                ))
+                          ],
+                        ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.primaryColor)),
+                              onPressed: () async {
+                                final XFile? image = await _picker.pickImage(
+                                    source: ImageSource.camera,
+                                    imageQuality: 60);
+                                if (image != null) {
+                                  setState(() async {
+                                    _images.clear();
+                                    _images.add(image.path);
+                                    _imagesBytes.add(await image.readAsBytes());
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                child: Text('С камеры',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
+                              )),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.primaryColor)),
+                              onPressed: () async {
+                                final List<XFile>? images = await _picker
+                                    .pickMultiImage(imageQuality: 60);
+                                if (images != null) {
+                                  List<String> converted = [];
+                                  List<Uint8List> bytesImages = [];
+                                  List<String> stringsImages = [];
+                                  for (var element in images) {
+                                    converted.add(element.path);
+                                    bytesImages.add(await element.readAsBytes());
+                                  }
+                                  setState(() {
+                                    _images = converted;
+                                    _imagesBytes = bytesImages;
+                                    _imagesStrings = stringsImages;
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                child: Text('С устройства',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
+                              ))
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 30,),
                   Text(
                     'Адрес',
                     style: TextStyle(fontSize: 24),
@@ -488,98 +578,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                     controller: _descriptionController,
                     maxLines: 4,
                     decoration: InputDecoration(labelText: 'Описание'),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'Изображение',
-                        style: TextStyle(fontSize: 21),
-                      ),
-                      if (_imagesBytes.isNotEmpty)
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Container(
-                                height: 100,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: _imagesBytes
-                                      .map<Widget>((e) => Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: Image.memory(e),
-                                          ))
-                                      .toList(),
-                                ))
-                          ],
-                        ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      AppColors.primaryColor)),
-                              onPressed: () async {
-                                final XFile? image = await _picker.pickImage(
-                                    source: ImageSource.camera,
-                                    imageQuality: 60);
-                                if (image != null) {
-                                  setState(() async {
-                                    _images.clear();
-                                    _images.add(image.path);
-                                    _imagesBytes.add(await image.readAsBytes());
-                                  });
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                child: Text('С камеры',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white)),
-                              )),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      AppColors.primaryColor)),
-                              onPressed: () async {
-                                final List<XFile>? images = await _picker
-                                    .pickMultiImage(imageQuality: 60);
-                                if (images != null) {
-                                  List<String> converted = [];
-                                  List<Uint8List> bytesImages = [];
-                                  List<String> stringsImages = [];
-                                  for (var element in images) {
-                                    converted.add(element.path);
-                                    bytesImages.add(await element.readAsBytes());
-                                  }
-                                  setState(() {
-                                    _images = converted;
-                                    _imagesBytes = bytesImages;
-                                    _imagesStrings = stringsImages;
-                                  });
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                child: Text('С устройства',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white)),
-                              ))
-                        ],
-                      )
-                    ],
                   ),
                   SizedBox(
                     height: 30,
