@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 class FlatDto {
   final int? id;
   final int districtId;
@@ -17,9 +15,7 @@ class FlatDto {
   final double area;
   final String note;
   final List<String> phones;
-  final List<String>? images;
-  final List<Uint8List>? bytesImages;
-  final List<String>? imagesStrings;
+  final List<Map<String, dynamic>>? bytesImages;
   final String? ownerName;
 
   FlatDto(
@@ -38,10 +34,8 @@ class FlatDto {
       this.area,
       this.note,
       this.phones,
-      this.images,
       this.ownerName,
       this.bytesImages,
-      this.imagesStrings,
       {this.id});
 
   Map<String, dynamic> toJson() => <String, dynamic>{

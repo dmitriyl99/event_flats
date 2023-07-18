@@ -38,7 +38,8 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     var result = await Navigator.of(context)
         .pushNamed(EditFlatScreen.route, arguments: flat);
     if (result != null && result == true) {
-      setState(() {});
+      setState(() {
+      });
     }
   }
 
@@ -116,14 +117,14 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               if (snapshot.hasError || snapshot.data == null)
                 return Container();
               var urls = snapshot.data!;
-              print(urls);
               if (urls.length > 0) {
                 return Container(
                   height: 300,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: urls
-                        .map<Widget>((e) => Padding(
+                        .map<Widget>((e) {
+                          return Padding(
                       padding:
                       const EdgeInsets.symmetric(horizontal: 8),
                       child: CachedNetworkImage(
@@ -143,7 +144,8 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                           return Icon(Icons.error);
                         }
                       ),
-                    ))
+                    );
+                        })
                         .toList(),
                   ),
                 );
@@ -543,7 +545,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildImages(flat),
+                      _buildImages(this.flat),
                       _nameAndAddressSection(),
                       _divider(),
                       _roomsAndFloors(),

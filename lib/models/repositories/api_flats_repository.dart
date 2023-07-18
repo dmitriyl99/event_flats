@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:event_flats/events/flat_created.dart';
@@ -18,6 +18,7 @@ import 'package:event_flats/services/exceptions/user_empty.dart';
 import 'package:event_flats/services/exceptions/validation_exception.dart';
 import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../services/api_settings.dart';
 
@@ -38,7 +39,7 @@ class ApiFlatsRepository extends FlatsRepository {
     try {
       response = await _httpClient.post('',
           data: payload, options: _authorizationOptions());
-    } on DioError catch (err) {
+    } on DioException catch (err) {
       if (err.response == null) throw new NoInternetException();
       var response = err.response!;
       if (response.statusCode == 422)
@@ -51,15 +52,18 @@ class ApiFlatsRepository extends FlatsRepository {
     var data = response.data['data'] as Map<String, dynamic>;
     Flat createdFlat = Flat.fromJson(data);
     EventService.bus.fire(FlatCreated(createdFlat));
+    var uuid = Uuid();
     if (flat.bytesImages == null) return;
     flat.bytesImages!.forEach((file) async {
-      var timestamp = DateTime.now().millisecondsSinceEpoch;
-      var fileName = "$timestamp.jpeg";
-      var result = await FirebaseStorage.instance
+      var mimeType = file['mime'] as String;
+      var bytes = file['bytes'] as Uint8List;
+      var extension = mimeType.split('/')[1];
+      var fileName = uuid.v4() + '.${extension}';
+      await FirebaseStorage.instance
           .ref()
           .child('flats')
           .child('/${createdFlat.id}/$fileName')
-          .putData(file);
+          .putData(bytes);
     });
   }
 
@@ -69,7 +73,7 @@ class ApiFlatsRepository extends FlatsRepository {
     try {
       response =
           await _httpClient.get('/$id', options: _authorizationOptions());
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       if (error.response == null) throw new NoInternetException();
       var response = error.response!;
       if (response.statusCode == 500) throw new ServerErrorException();
@@ -90,7 +94,7 @@ class ApiFlatsRepository extends FlatsRepository {
     try {
       response = await _httpClient.get('',
           queryParameters: parameters, options: _authorizationOptions());
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       log(error.toString());
       if (error.response == null) throw new NoInternetException();
       var response = error.response!;
@@ -108,7 +112,7 @@ class ApiFlatsRepository extends FlatsRepository {
   Future<void> removeById(int id) async {
     try {
       await _httpClient.delete('/$id', options: _authorizationOptions());
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       if (error.response == null) throw new NoInternetException();
       var response = error.response!;
       if (response.statusCode == 500) throw new ServerErrorException();
@@ -126,7 +130,7 @@ class ApiFlatsRepository extends FlatsRepository {
     try {
       await _httpClient.patch('/$id/favorite',
           options: _authorizationOptions());
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       if (error.response == null) throw new NoInternetException();
       var response = error.response!;
       if (response.statusCode == 500) throw new ServerErrorException();
@@ -140,7 +144,7 @@ class ApiFlatsRepository extends FlatsRepository {
     try {
       await _httpClient.put('/${flat.id}',
           data: payload, options: _authorizationOptions());
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       if (error.response == null) throw new NoInternetException();
       var response = error.response!;
       if (response.statusCode == 422)
@@ -153,22 +157,33 @@ class ApiFlatsRepository extends FlatsRepository {
     }
     EventService.bus.fire(FlatUpdated());
     if (flat.bytesImages!.length != 0) {
-      try {
-        await FirebaseStorage.instance
-            .ref()
-            .child('flats')
-            .child('/${flat.id}')
-            .delete();
-      } catch (e) {
-      }
+      var result = await FirebaseStorage.instance
+          .ref()
+          .child('flats')
+          .child("/${flat.id}")
+          .listAll();
+      result.items.forEach((element) {
+        try {
+          element.delete();
+        } catch (e) {
+          print(e);
+        }
+      });
+      Uuid uuid = Uuid();
       flat.bytesImages!.forEach((file) async {
-        var timestamp = DateTime.now().millisecondsSinceEpoch;
-        var fileName = "$timestamp";
-        await FirebaseStorage.instance
-            .ref()
-            .child('flats')
-            .child('/${flat.id}/$fileName')
-            .putData(file);
+        var mimeType = file['mime'] as String;
+        var bytes = file['bytes'] as Uint8List;
+        var extension = mimeType.split('/')[1];
+        var fileName = uuid.v4() + '.${extension}';
+        try {
+          await FirebaseStorage.instance
+              .ref()
+              .child('flats')
+              .child('/${flat.id}/$fileName')
+              .putData(bytes);
+        } catch (e) {
+          print(e);
+        }
       });
     }
   }
@@ -177,7 +192,7 @@ class ApiFlatsRepository extends FlatsRepository {
   Future<void> sellFlat(int id) async {
     try {
       await _httpClient.patch('/$id/sell', options: _authorizationOptions());
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       if (error.response == null) throw new NoInternetException();
       var response = error.response!;
       if (response.statusCode == 422)

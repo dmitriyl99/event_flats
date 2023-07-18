@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:event_flats/helpers/number_formatting.dart';
 import 'package:event_flats/helpers/string.dart';
 import 'package:event_flats/models/dto/flat.dart';
@@ -40,7 +38,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   List<Map<String, dynamic>> _districts = [];
   List<String> _repairs = getRepairs();
 
-  List<Uint8List> _images = [];
+  List<Map<String, dynamic>> _images = [];
 
   late int _currentDistrict = 0;
   int? _currentSubDistrict;
@@ -167,8 +165,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           double.parse(_areaController.text),
           _descriptionController.text,
           phones,
-          null,
-          _ownerNameController.text, _images, null,
+          _ownerNameController.text, _images,
           id: id);
       try {
         await widget._flatsRepository.updateFlat(flat);
@@ -304,7 +301,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                       .map<Widget>((e) => Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8.0),
-                                    child: Image.memory(e),
+                                    child: Image.memory(e['bytes']),
                                   ))
                                       .toList(),
                                 ))
@@ -327,7 +324,10 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                                 if (image != null) {
                                   setState(() async {
                                     _images.clear();
-                                    _images.add(await image.readAsBytes());
+                                    _images.add({
+                                      'bytes': await image.readAsBytes(),
+                                      'mime': image.mimeType,
+                                    });
                                   });
                                 }
                               },
@@ -347,11 +347,13 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                               onPressed: () async {
                                 final List<XFile>? images = await _picker
                                     .pickMultiImage(imageQuality: 60);
-                                print(images);
                                 if (images != null) {
-                                  List<Uint8List> converted = [];
+                                  List<Map<String, dynamic>> converted = [];
                                   for (var element in images) {
-                                    converted.add(await element.readAsBytes());
+                                    converted.add({
+                                      'bytes': await element.readAsBytes(),
+                                      'mime': element.mimeType,
+                                    });
                                   }
                                   setState(() {
                                     _images = converted;
