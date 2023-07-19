@@ -1,49 +1,35 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:event_flats/models/flat.dart';
-
-import '../helpers/number_formatting.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class TelegramService {
   Future<void> sendMessageToChannel(Flat flat) async {
-
-    String text =
-        "${flat.numberOfRooms}/${flat.floor}/${flat.numberOfFloors} ${flat.subDistrict}\n"
-        "Состояние: ${flat.flatRepair} ${flat.area}кв.м\n"
-        "Ор-р: ${flat.landmark}\n"
-        "Цена: ${NumberFormattingHelper.format(flat.publicPrice ?? flat.price)}\n"
-        "Тел: +998998078071\n"
-        "#${flat.numberOfRooms}ком\n"
-        "<a href='https://t.me/iHometashkent'>Telegram</a> | <a href='https://www.instagram.com/tashkent_realtor'>Instagram</a>";
-    List<Map<String, dynamic>> media = [];
-    var photos = await flat.photosFirebase;
-    if (photos.length > 0) {
-      for (var photo in photos) {
-        media.add({
-          "type": "photo",
-          "media": (await photo)
-        });
-      }
+    var files = await FirebaseStorage.instance
+        .ref()
+        .child('flats')
+        .child(flat.id.toString() + '/')
+        .listAll();
+    List<String> downloadUrls = [];
+    for (var element in files.items) {
+      downloadUrls.add(await element.getDownloadURL());
     }
-    var payload = {"chat_id": -1001813277591, "text": text, "parse_mode": "HTML"};
-    var apiPath = 'sendMessage';
-    if (media.isNotEmpty) {
-      media[0]['caption'] = text;
-      media[0]['parse_mode'] = 'HTML';
-      payload = {"chat_id": -1001813277591, "media": jsonEncode(media)};
-      apiPath = 'sendMediaGroup';
-    }
-
-    String botToken = '6365499924:AAHL0ZX4TWTnx_3ZFDmhpm-ePmqUcYLP098';
-    print("https://api.telegram.org/bot$botToken/${apiPath}");
-    try {
-      final response = await Dio().post(
-          "https://api.telegram.org/bot$botToken/${apiPath}",
-          data: payload,
-          options: Options(responseType: ResponseType.json));
-    } on DioException catch (error) {
-      print(error.response!.data.toString());
-    }
+    Map<String, dynamic> payload = {
+      "number_of_rooms": flat.numberOfRooms,
+      "floor": flat.floor,
+      "number_of_floors": flat.numberOfFloors,
+      "sub_district": flat.subDistrict,
+      "repair": flat.flatRepair,
+      "area": flat.area,
+      "landmark": flat.landmark,
+      "description": flat.description,
+      "price": flat.publicPrice?.toInt() ?? flat.price.toInt(),
+      "photos": downloadUrls
+    };
+    print(payload);
+    Dio _httpClient = new Dio(BaseOptions(
+        baseUrl: 'http://164.92.88.167:8100',
+        responseType: ResponseType.json,
+        headers: {'Accept': 'application/json'}));
+    await _httpClient.post('', data: payload);
   }
 }
