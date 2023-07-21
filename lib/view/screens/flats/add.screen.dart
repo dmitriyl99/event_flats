@@ -35,7 +35,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
 
   List<Map<String, dynamic>> _districts = [];
   List<String> _repairs = getRepairs();
-  List<Uint8List> _images = [];
+  List<Map<String, dynamic>> _images = [];
 
   int _currentDistrict = 1;
   int? _currentSubDistrict;
@@ -520,7 +520,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                       .map<Widget>((e) => Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0),
-                                            child: Image.memory(e),
+                                            child: Image.memory(e['bytes'] as Uint8List),
                                           ))
                                       .toList(),
                                 ))
@@ -543,7 +543,10 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 if (image != null) {
                                   setState(() async {
                                     _images.clear();
-                                    _images.add(await image.readAsBytes());
+                                    _images.add({
+                                      'bytes': await image.readAsBytes(),
+                                      'mime': image.mimeType
+                                    });
                                   });
                                 }
                               },
@@ -564,12 +567,15 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 final List<XFile>? images = await _picker
                                     .pickMultiImage(imageQuality: 60);
                                 if (images != null) {
-                                  List<Uint8List> converted = [];
+                                  List<Map<String, dynamic>> bytesImages = [];
                                   for (var element in images) {
-                                    converted.add(await element.readAsBytes());
+                                    bytesImages.add({
+                                      'bytes': await element.readAsBytes(),
+                                      'mime': element.mimeType
+                                    });
                                   }
                                   setState(() {
-                                    _images = converted;
+                                    _images = bytesImages;
                                   });
                                 }
                               },

@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:event_flats/events/flat_created.dart';
@@ -17,6 +18,7 @@ import 'package:event_flats/services/exceptions/user_empty.dart';
 import 'package:event_flats/services/exceptions/validation_exception.dart';
 import 'package:event_flats/view/viewmodels/filter.viewmodel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../services/api_settings.dart';
 
@@ -50,12 +52,18 @@ class ApiFlatsRepository extends FlatsRepository {
     var data = response.data['data'] as Map<String, dynamic>;
     Flat createdFlat = Flat.fromJson(data);
     EventService.bus.fire(FlatCreated(createdFlat));
+    var uuid = Uuid();
     if (flat.images == null) return;
     flat.images!.forEach((file) async {
-      FormData formData = FormData.fromMap({
-        'image': MultipartFile.fromBytes(file)
-      });
-      await _httpClient.post("${flat.id}/image", data: formData);
+      var mimeType = file['mime'] as String;
+      var bytes = file['bytes'] as Uint8List;
+      var extension = mimeType.split('/')[1];
+      var fileName = uuid.v4() + '.${extension}';
+      await FirebaseStorage.instance
+          .ref()
+          .child('flats')
+          .child('/${createdFlat.id}/$fileName')
+          .putData(bytes);
     });
   }
 
@@ -149,23 +157,34 @@ class ApiFlatsRepository extends FlatsRepository {
     }
     EventService.bus.fire(FlatUpdated());
     if (flat.images == null) return;
-    print(flat.images);
     if (flat.images!.length != 0) {
-      try {
-        await FirebaseStorage.instance
-            .ref()
-            .child('flats')
-            .child('/${flat.id}')
-            .delete();
-      } on Exception {}
+      var result = await FirebaseStorage.instance
+          .ref()
+          .child('flats')
+          .child("/${flat.id}")
+          .listAll();
+      result.items.forEach((element) {
+        try {
+          element.delete();
+        } catch (e) {
+          print(e);
+        }
+      });
+      Uuid uuid = Uuid();
       flat.images!.forEach((file) async {
-        var timestamp = DateTime.now().millisecondsSinceEpoch;
-        var fileName = "$timestamp";
-        await FirebaseStorage.instance
-            .ref()
-            .child('flats')
-            .child('/${flat.id}/$fileName')
-            .putData(file);
+        var mimeType = file['mime'] as String;
+        var bytes = file['bytes'] as Uint8List;
+        var extension = mimeType.split('/')[1];
+        var fileName = uuid.v4() + '.${extension}';
+        try {
+          await FirebaseStorage.instance
+              .ref()
+              .child('flats')
+              .child('/${flat.id}/$fileName')
+              .putData(bytes);
+        } catch (e) {
+          print(e);
+        }
       });
     }
   }

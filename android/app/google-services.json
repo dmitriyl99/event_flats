@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "719753468627",
+    "project_id": "sultanflats-53ee9",
+    "storage_bucket": "sultanflats-53ee9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719753468627:android:788d1c14cd8324dac29226",
+        "android_client_info": {
+          "package_name": "uz.event.event_flats"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719753468627-855t1iqvhjv6vir7jb63id273v4o233a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSJtE3E-_2TdwLzeF_IGFcyxbjxI-0FaA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719753468627-855t1iqvhjv6vir7jb63id273v4o233a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

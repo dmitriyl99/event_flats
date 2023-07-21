@@ -14,7 +14,7 @@ import 'package:event_flats/view/components/errors.dart';
 import 'package:event_flats/view/resources/colors.dart';
 import 'package:event_flats/view/screens/flats/edit.screen.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../login.screen.dart';
 
@@ -48,9 +48,9 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
 
   void _launchPhone(String phone) async {
     String url = 'tel:$phone';
-    if (!(await canLaunch(url))) url = 'tel://$phone';
-    if (!(await canLaunch(url))) url = 'telprompt://$phone';
-    await launch(url);
+    if (!(await canLaunchUrlString(url))) url = 'tel://$phone';
+    if (!(await canLaunchUrlString(url))) url = 'telprompt://$phone';
+    await launchUrlString(url);
   }
 
   void _onCallButtonPressed(Flat flat) async {
@@ -103,38 +103,53 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
   }
 
   Widget _buildImages(Flat flat) {
-
-    if (flat.photos.isEmpty) {
-      return Container();
-    }
-    return Container(
-      height: 300,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: flat.photos.where((element) => element['watermarked'] == 0)
-            .map<Widget>((e) => Padding(
-          padding:
-          const EdgeInsets.symmetric(horizontal: 8),
-          child: CachedNetworkImage(
-            imageUrl: e['url'],
-            progressIndicatorBuilder:
-                (context, url, downloadProgress) =>
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(
-                            AppColors.primaryColor),
-                        value: downloadProgress.progress),
+    return FutureBuilder<List<Future<String>>>(
+        future: flat.photosFirebase,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done ||
+              snapshot.hasError) {
+            return Container();
+          }
+          return FutureBuilder<List<String>>(
+            future: Future.wait(snapshot.data!),
+            builder: (context, snapshot) {
+              if (snapshot.hasError || snapshot.data == null)
+                return Container();
+              var urls = snapshot.data!;
+              if (urls.length > 0) {
+                return Container(
+                  height: 300,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: urls
+                        .map<Widget>((e) => Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 8),
+                      child: CachedNetworkImage(
+                        imageUrl: e,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation(
+                                        AppColors.primaryColor),
+                                    value: downloadProgress.progress),
+                              ),
+                            ),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error),
+                      ),
+                    ))
+                        .toList(),
                   ),
-                ),
-            errorWidget: (context, url, error) =>
-                Icon(Icons.error),
-          ),
-        ))
-            .toList(),
-      ),
-    );
+                );
+              }
+              return Container();
+            },
+          );
+        });
   }
 
   @override
@@ -407,9 +422,25 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               borderRadius: BorderRadius.circular(15),
               side: BorderSide(color: Colors.white),
             ))),
-        onPressed: () {
+        onPressed: () async {
           var service = new TelegramService();
-          service.sendMessageToChannel(flat);
+          await service.sendMessageToChannel(flat);
+          showDialog(context: context, builder: (context) {
+            return AlertDialog(
+              title: const Text("Готово!"),
+              content: Container(
+                height: 70,
+                child: Center(
+                  child: Text('Сообщение отправлено в ваш канал!'),
+                ),
+              ),
+              actions: [
+                TextButton(onPressed: () {
+                  Navigator.of(context).pop();
+                }, child: Text('Ok'))
+              ],
+            );
+          });
         },
         child: Padding(
           padding: const EdgeInsets.all(10.0),
