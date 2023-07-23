@@ -286,7 +286,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
               width: 5,
             ),
             Text(flat.layout ?? 'Не указана',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500))
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))
           ],
         ),
       );

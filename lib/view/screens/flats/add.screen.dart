@@ -466,12 +466,12 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                               });
                             },
                             items: [
-                              DropdownMenuItem(value: 'Свердловская', child: Text('Свердловская')),
-                              DropdownMenuItem(value: 'Французская', child: Text('Французская')),
-                              DropdownMenuItem(value: 'Московская', child: Text('Московская')),
-                              DropdownMenuItem(value: 'Хрущевская', child: Text('Хрущевская')),
-                              DropdownMenuItem(value: 'Улучшенная', child: Text('Улучшенная')),
-                              DropdownMenuItem(value: 'Другая', child: Text('Другая')),
+                              DropdownMenuItem(value: 'Свердловская - Планировка', child: Text('Свердловская - Планировка')),
+                              DropdownMenuItem(value: 'Французская - Планировка', child: Text('Французская - Планировка')),
+                              DropdownMenuItem(value: 'Московская - Планировка', child: Text('Московская - Планировка')),
+                              DropdownMenuItem(value: 'Хрущевская - Планировка', child: Text('Хрущевская - Планировка')),
+                              DropdownMenuItem(value: 'Улучшенная - Планировка', child: Text('Улучшенная - Планировка')),
+                              DropdownMenuItem(value: 'Другая Планировка', child: Text('Другая Планировка')),
                             ]),
                       ),
                     );
@@ -569,9 +569,14 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                 if (images != null) {
                                   List<Map<String, dynamic>> bytesImages = [];
                                   for (var element in images) {
+                                    var mimeType = element.mimeType;
+                                    if (element.mimeType == null) {
+                                      mimeType = 'image/'+ element.path.split('/').last.split('.').last;
+                                    }
+                                    print(mimeType);
                                     bytesImages.add({
                                       'bytes': await element.readAsBytes(),
-                                      'mime': element.mimeType
+                                      'mime': mimeType
                                     });
                                   }
                                   setState(() {
