@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
     UsersRepository usersRepository =
         new UsersRepository(authenticationService);
     return MaterialApp(
-      title: 'HomeHub',
+      title: 'Sultan Flats',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData.dark().copyWith(
