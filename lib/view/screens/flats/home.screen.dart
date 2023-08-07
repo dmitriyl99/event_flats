@@ -61,7 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
             : null,
         bottomNavigationBar: BottomNavigationBar(
           onTap: _onTabTapped,
-          selectedIconTheme: Theme.of(context).iconTheme.copyWith(color: AppColors.primaryColor),
+          selectedIconTheme: Theme.of(context)
+              .iconTheme
+              .copyWith(color: AppColors.primaryColor),
           selectedItemColor: AppColors.primaryColor,
           currentIndex: _currentScreenIndex,
           items: [
