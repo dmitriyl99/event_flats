@@ -470,12 +470,12 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                               });
                             },
                             items: [
-                              DropdownMenuItem(value: 'Свердловская', child: Text('Свердловская')),
-                              DropdownMenuItem(value: 'Французская', child: Text('Французская')),
-                              DropdownMenuItem(value: 'Московская', child: Text('Московская')),
-                              DropdownMenuItem(value: 'Хрущевская', child: Text('Хрущевская')),
-                              DropdownMenuItem(value: 'Улучшенная', child: Text('Улучшенная')),
-                              DropdownMenuItem(value: 'Другая', child: Text('Другая')),
+                              DropdownMenuItem(value: 'Свердловская - Планировка', child: Text('Свердловская - Планировка')),
+                              DropdownMenuItem(value: 'Французская - Планировка', child: Text('Французская - Планировка')),
+                              DropdownMenuItem(value: 'Московская - Планировка', child: Text('Московская - Планировка')),
+                              DropdownMenuItem(value: 'Хрущевская - Планировка', child: Text('Хрущевская - Планировка')),
+                              DropdownMenuItem(value: 'Улучшенная - Планировка', child: Text('Улучшенная - Планировка')),
+                              DropdownMenuItem(value: 'Другая Планировка', child: Text('Другая Планировка')),
                             ]),
                       ),
                     );
