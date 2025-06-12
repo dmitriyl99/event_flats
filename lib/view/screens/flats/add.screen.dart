@@ -40,6 +40,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   int _currentDistrict = 1;
   int? _currentSubDistrict;
   String? _currentLayout;
+  bool _hasMortgage = false;
   late String _currentRepair = _repairs.first;
   TextEditingController _landmarkController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
@@ -51,7 +52,6 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
   TextEditingController _ownerNameController = new TextEditingController();
   TextEditingController _ownerPhoneController = new TextEditingController();
   TextEditingController _publicPriceController = new TextEditingController();
-
 
   final ImagePicker _picker = ImagePicker();
 
@@ -182,7 +182,9 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           _landmarkController.text,
           _currentLayout,
           double.parse(_priceController.text),
-          _publicPriceController.text.isNotEmpty ? double.parse(_publicPriceController.text) : null,
+          _publicPriceController.text.isNotEmpty
+              ? double.parse(_publicPriceController.text)
+              : null,
           null,
           null,
           int.parse(_roomsController.text),
@@ -190,9 +192,11 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
           int.parse(_numberOfFloorsController.text),
           _currentRepair,
           double.parse(_areaController.text),
+          _hasMortgage,
           _descriptionController.text,
           phones,
-          _ownerNameController.text, _imagesBytes);
+          _ownerNameController.text,
+          _imagesBytes);
       try {
         await widget._flatsRepository.createFlat(flat);
       } on ServerErrorException {
@@ -289,10 +293,11 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                                   scrollDirection: Axis.horizontal,
                                   children: _imagesBytes
                                       .map<Widget>((e) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: Image.memory(e['bytes'] as Uint8List),
-                                  ))
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Image.memory(
+                                                e['bytes'] as Uint8List),
+                                          ))
                                       .toList(),
                                 ))
                           ],
@@ -360,7 +365,9 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       )
                     ],
                   ),
-                  SizedBox(height: 30,),
+                  SizedBox(
+                    height: 30,
+                  ),
                   Text(
                     'Адрес',
                     style: TextStyle(fontSize: 24),
@@ -372,7 +379,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                           decoration: InputDecoration(labelText: "Район"),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<int>(
-                              dropdownColor: AppColors.darkBackground,
+                                dropdownColor: AppColors.darkBackground,
                                 value: _currentDistrict,
                                 isDense: true,
                                 onChanged: (value) {
@@ -392,10 +399,12 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                           ),
                         );
                       }),
-                  if (_districts.isNotEmpty && _districts
-                          .where((element) => element['id'] == _currentDistrict)
-                          .first['sub_districts'] !=
-                      null)
+                  if (_districts.isNotEmpty &&
+                      _districts
+                              .where((element) =>
+                                  element['id'] == _currentDistrict)
+                              .first['sub_districts'] !=
+                          null)
                     FormField<int?>(
                       enabled: _districts.isNotEmpty,
                       builder: (FormFieldState<int?> state) {
@@ -458,8 +467,8 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                   TextFormField(
                     controller: _publicPriceController,
                     keyboardType: TextInputType.number,
-                    decoration:
-                    InputDecoration(labelText: 'Публичная цена', prefixText: '\$'),
+                    decoration: InputDecoration(
+                        labelText: 'Публичная цена', prefixText: '\$'),
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -544,7 +553,7 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String?>(
                             dropdownColor: AppColors.darkBackground,
-                          focusNode: _layoutFocusNode,
+                            focusNode: _layoutFocusNode,
                             value: _currentLayout,
                             onChanged: (value) {
                               setState(() {
@@ -553,12 +562,24 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                               });
                             },
                             items: [
-                              DropdownMenuItem(value: 'Свердловская - Планировка', child: Text('Свердловская - Планировка')),
-                              DropdownMenuItem(value: 'Французская - Планировка', child: Text('Французская - Планировка')),
-                              DropdownMenuItem(value: 'Московская - Планировка', child: Text('Московская - Планировка')),
-                              DropdownMenuItem(value: 'Хрущевская - Планировка', child: Text('Хрущевская - Планировка')),
-                              DropdownMenuItem(value: 'Улучшенная - Планировка', child: Text('Улучшенная - Планировка')),
-                              DropdownMenuItem(value: 'Другая Планировка', child: Text('Другая Планировка')),
+                              DropdownMenuItem(
+                                  value: 'Свердловская - Планировка',
+                                  child: Text('Свердловская - Планировка')),
+                              DropdownMenuItem(
+                                  value: 'Французская - Планировка',
+                                  child: Text('Французская - Планировка')),
+                              DropdownMenuItem(
+                                  value: 'Московская - Планировка',
+                                  child: Text('Московская - Планировка')),
+                              DropdownMenuItem(
+                                  value: 'Хрущевская - Планировка',
+                                  child: Text('Хрущевская - Планировка')),
+                              DropdownMenuItem(
+                                  value: 'Улучшенная - Планировка',
+                                  child: Text('Улучшенная - Планировка')),
+                              DropdownMenuItem(
+                                  value: 'Другая Планировка',
+                                  child: Text('Другая Планировка')),
                             ]),
                       ),
                     );
@@ -626,6 +647,51 @@ class _AddFlatScreenState extends State<AddFlatScreen> {
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppColors.primaryColor),
+                              backgroundColor: _hasMortgage
+                                  ? AppColors.primaryColor
+                                  : Colors.transparent),
+                          onPressed: () async {
+                            setState(() {
+                              _hasMortgage = true;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text('Есть ипотека',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
+                          )),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppColors.primaryColor),
+                              backgroundColor: !_hasMortgage
+                                  ? AppColors.primaryColor
+                                  : Colors.transparent),
+                          onPressed: () async {
+                            setState(() {
+                              _hasMortgage = false;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text('Нет ипотеки',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
+                          ))
                     ],
                   ),
                   SizedBox(

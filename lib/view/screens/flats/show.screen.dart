@@ -38,8 +38,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
     var result = await Navigator.of(context)
         .pushNamed(EditFlatScreen.route, arguments: flat);
     if (result != null && result == true) {
-      setState(() {
-      });
+      setState(() {});
     }
   }
 
@@ -122,31 +121,26 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                   height: 300,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
-                    children: urls
-                        .map<Widget>((e) {
-                          return Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 8),
-                      child: CachedNetworkImage(
-                        imageUrl: e,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation(
-                                        AppColors.primaryColor),
-                                    value: downloadProgress.progress),
-                              ),
-                            ),
-                        errorWidget: (context, url, error) {
-                          return Icon(Icons.error);
-                        }
-                      ),
-                    );
-                        })
-                        .toList(),
+                    children: urls.map<Widget>((e) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: CachedNetworkImage(
+                            imageUrl: e,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation(
+                                                AppColors.primaryColor),
+                                            value: downloadProgress.progress),
+                                      ),
+                                    ),
+                            errorWidget: (context, url, error) {
+                              return Icon(Icons.error);
+                            }),
+                      );
+                    }).toList(),
                   ),
                 );
               }
@@ -255,6 +249,27 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
             ),
             Text(
               NumberFormattingHelper.currency(flat.price),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+            )
+          ],
+        ),
+      );
+    }
+
+    Widget _hasMargage() {
+      return Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Row(
+          children: [
+            Text(
+              'Есть ипотека:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              flat.hasMortgage ? 'Да' : 'Нет',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
             )
           ],
@@ -429,22 +444,26 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
         onPressed: () async {
           var service = new TelegramService();
           await service.sendMessageToChannel(flat);
-          showDialog(context: context, builder: (context) {
-            return AlertDialog(
-              title: const Text("Готово!"),
-              content: Container(
-                height: 100,
-                child: Center(
-                  child: Text('Сообщение отправлено в ваш канал!'),
-                ),
-              ),
-              actions: [
-                TextButton(onPressed: () {
-                  Navigator.of(context).pop();
-                }, child: Text('Ok'))
-              ],
-            );
-          });
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text("Готово!"),
+                  content: Container(
+                    height: 100,
+                    child: Center(
+                      child: Text('Сообщение отправлено в ваш канал!'),
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Ok'))
+                  ],
+                );
+              });
         },
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -558,6 +577,8 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                       _divider(),
                       _flatPrice(),
                       _divider(),
+                      _hasMargage(),
+                      _divider(),
                       _creator(),
                       _divider(),
                       if (flat.description != null &&
@@ -575,7 +596,7 @@ class _FlatShowScreenState extends State<FlatShowScreen> {
                         SizedBox(
                           height: 30,
                         ),
-                        _callButton(),
+                      _callButton(),
                       SizedBox(
                         height: 30,
                       ),

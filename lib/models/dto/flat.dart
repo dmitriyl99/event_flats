@@ -11,6 +11,7 @@ class FlatDto {
   final int roomsNumber;
   final int floor;
   final int floorsNumber;
+  final bool? hasMortgage;
   final String repair;
   final double area;
   final String note;
@@ -32,6 +33,7 @@ class FlatDto {
       this.floorsNumber,
       this.repair,
       this.area,
+      this.hasMortgage,
       this.note,
       this.phones,
       this.ownerName,
@@ -50,6 +52,7 @@ class FlatDto {
         'floors_number': floorsNumber,
         'rooms_number': roomsNumber,
         'owner_name': ownerName,
+        'has_mortgage': hasMortgage,
         'phones': phones,
         'price': price,
         'public_price': publicPrice,

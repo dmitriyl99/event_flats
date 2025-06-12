@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
     UsersRepository usersRepository =
         new UsersRepository(authenticationService);
     return MaterialApp(
-      title: 'HomeHub',
+      title: 'iHome',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData.dark().copyWith(
@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
             focusedBorder: UnderlineInputBorder(
                 borderSide: const BorderSide(color: Color(0xff7ddf2b)))),
         scaffoldBackgroundColor: AppColors.darkBackground,
-        cardTheme: CardTheme(color: AppColors.accentBackground),
+        cardTheme: CardThemeData(color: AppColors.accentBackground),
         dropdownMenuTheme: ThemeData.dark().dropdownMenuTheme.copyWith(),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
             backgroundColor: AppColors.primaryColor,

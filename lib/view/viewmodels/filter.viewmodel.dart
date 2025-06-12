@@ -10,6 +10,7 @@ class FilterViewModel {
   final String? repair;
   final String? layout;
   final double? area;
+  final bool? hasMorgage;
   final bool sortPriceDown;
   final bool sortPriceUp;
   final bool sortDistrict;
@@ -26,6 +27,7 @@ class FilterViewModel {
       this.repair,
       this.layout,
       this.area,
+      this.hasMorgage,
       this.roomsStart,
       this.roomsEnd,
       this.floorsStart,
@@ -52,12 +54,17 @@ class FilterViewModel {
     if (sortDate) {
       sortString += 'created_at:desc;';
     }
+    String _hasMorgage = '';
+    if (hasMorgage != null) {
+      _hasMorgage = hasMorgage == true ? '1' : '0';
+    }
     return {
       'district': district,
       'sub_district': subDistrict,
       'repair': repair,
       'layout': layout,
       'area': area,
+      'has_morgage': _hasMorgage,
       'is_favorite': favorite,
       'personal': personal,
       'creator_id': creatorId,

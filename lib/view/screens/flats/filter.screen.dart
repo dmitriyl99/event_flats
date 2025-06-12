@@ -30,6 +30,7 @@ class _FilterScreenState extends State<FilterScreen> {
   int? _roomsTo;
   int? _floorsFrom;
   int? _floorsTo;
+  bool? _hasMortgage;
 
   bool _nameSort = false;
   bool _priceUpSort = false;
@@ -120,6 +121,51 @@ class _FilterScreenState extends State<FilterScreen> {
             ),
           );
         });
+  }
+
+  Widget _hasMortgageFilter() {
+    return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppColors.primaryColor),
+                              backgroundColor: _hasMortgage == true
+                                  ? AppColors.primaryColor
+                                  : Colors.transparent),
+                          onPressed: () async {
+                            setState(() {
+                              _hasMortgage = true;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text('Есть ипотека',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
+                          )),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppColors.primaryColor),
+                              backgroundColor: _hasMortgage == false
+                                  ? AppColors.primaryColor
+                                  : Colors.transparent),
+                          onPressed: () async {
+                            setState(() {
+                              _hasMortgage = false;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text('Нет ипотеки',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
+                          ))
+                    ],
+                  );
   }
 
   Widget _subDistrictFilter() {
@@ -426,6 +472,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 _toPriceController.text = '';
                 _fromRoomsController.text = '';
                 _toRoomsController.text = '';
+                _hasMortgage = null;
                 _fromFloorsController.text = '';
                 _toFloorsController.text = '';
                 _currentRepair = _repairs[0];
@@ -470,6 +517,7 @@ class _FilterScreenState extends State<FilterScreen> {
         _priceUpSort = currentFilter.sortPriceUp;
         _priceDownSort = currentFilter.sortPriceDown;
         _nameSort = currentFilter.sortDistrict;
+        _hasMortgage = currentFilter.hasMorgage;
       }
       _firstLoaded = true;
     }
@@ -491,6 +539,7 @@ class _FilterScreenState extends State<FilterScreen> {
                     roomsStart: _roomsFrom,
                     roomsEnd: _roomsTo,
                     priceFrom: _priceFrom,
+                    hasMorgage: _hasMortgage,
                     priceTo: _priceTo,
                     repair:
                         _currentRepair == _repairs[0] ? null : _currentRepair,
@@ -544,6 +593,10 @@ class _FilterScreenState extends State<FilterScreen> {
                 height: 32,
               ),
               _layoutFilter(),
+              SizedBox(
+                height: 32,
+              ),
+              _hasMortgageFilter(),
               SizedBox(
                 height: 32,
               ),

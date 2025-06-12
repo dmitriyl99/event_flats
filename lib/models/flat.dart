@@ -18,6 +18,7 @@ class Flat {
   final String? landmark;
   final String? description;
   final String? ownerName;
+  final bool hasMortgage;
   final List<String>? phones;
   bool isFavorite;
   final String creatorName;
@@ -47,6 +48,7 @@ class Flat {
       this.area,
       this.sold,
       this.description,
+      this.hasMortgage,
       this.landmark,
       this.phones,
       this.creatorId,
@@ -79,6 +81,7 @@ class Flat {
         sold = json['sold'] == 1,
         landmark = json['landmark'],
         description = json['note'],
+        hasMortgage = json['has_mortgage'] == 1,
         ownerName = json['owner_name'],
         phones = List<String>.from(json['owner_phones']), // TODO: as array
         isFavorite = json['is_favorite'],
@@ -98,6 +101,7 @@ class Flat {
         'note': description,
         'repair': flatRepair,
         'floor': floor,
+        'has_mortgage': hasMortgage,
         'floor_number': numberOfFloors,
         'rooms_number': numberOfRooms,
         'owner_name': ownerName,

@@ -43,6 +43,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
   late int _currentDistrict = 0;
   int? _currentSubDistrict;
   String? _currentLayout;
+  bool _hasMortgage = false;
   late String _currentRepair = _repairs.first;
   TextEditingController _landmarkController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
@@ -155,7 +156,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           _landmarkController.text,
           _currentLayout,
           double.parse(_priceController.text.replaceAll(',', '')),
-          _publicPriceController.text.isNotEmpty ? double.parse(_publicPriceController.text) : null,
+          _publicPriceController.text.isNotEmpty ? double.parse(_publicPriceController.text.replaceAll(',', '')) : null,
           null,
           null,
           int.parse(_roomsController.text),
@@ -163,6 +164,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
           int.parse(_numberOfFloorsController.text),
           _currentRepair,
           double.parse(_areaController.text),
+          _hasMortgage,
           _descriptionController.text,
           phones,
           _ownerNameController.text, _images,
@@ -225,6 +227,7 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
       }
       _descriptionController.text = flat.description ?? '';
       _ownerNameController.text = flat.ownerName ?? '';
+      _hasMortgage = flat.hasMortgage;
       _loaded = true;
       _ownerPhoneController.text = flat.phones![0].toString();
       if (flat.phones != null && flat.phones!.length > 1) {
@@ -634,6 +637,51 @@ class _EditFlatScreenState extends State<EditFlatScreen> {
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppColors.primaryColor),
+                              backgroundColor: _hasMortgage
+                                  ? AppColors.primaryColor
+                                  : Colors.transparent),
+                          onPressed: () async {
+                            setState(() {
+                              _hasMortgage = true;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text('Есть ипотека',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
+                          )),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppColors.primaryColor),
+                              backgroundColor: !_hasMortgage
+                                  ? AppColors.primaryColor
+                                  : Colors.transparent),
+                          onPressed: () async {
+                            setState(() {
+                              _hasMortgage = false;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text('Нет ипотеки',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
+                          ))
                     ],
                   ),
                   SizedBox(

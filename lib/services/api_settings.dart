@@ -1,3 +1,3 @@
 class ApiSettings {
-  static const String host = 'http://164.92.88.167';
+  static const String host = 'http://143.244.155.151';
 }
