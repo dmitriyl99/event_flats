@@ -27,7 +27,7 @@ class TelegramService {
     };
     print(payload);
     Dio _httpClient = new Dio(BaseOptions(
-        baseUrl: 'http://164.92.88.167:8100',
+        baseUrl: 'http://143.244.155.151:8100',
         responseType: ResponseType.json,
         headers: {'Accept': 'application/json'}));
     await _httpClient.post('', data: payload);
